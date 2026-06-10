@@ -1,0 +1,15 @@
+# Allowlist: ignore everything in this Steam-managed tree, then un-ignore
+# only this project's own folders. Keeps stock AC apps and the rest of the
+# game out of git.
+/*
+!/.gitignore
+!/lua/
+/lua/*
+!/lua/projspike_lua/
+!/python/
+/python/*
+!/python/GRApp/
+
+# Noise inside tracked folders
+__pycache__/
+*.pyc
