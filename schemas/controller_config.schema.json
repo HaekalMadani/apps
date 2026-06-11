@@ -1,0 +1,112 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "trace/controller_config.schema.json",
+  "title": "Controller configuration (controller_config.json)",
+  "description": "Single source of every controller constant — no threshold may appear as a literal in Lua or Python code (impl plan section 6.3). Defaults here are the evaluation plan Phase 1 starting values; the file is tuned by the simulator in M4 and frozen (hash recorded) at Gate G1, with EVM finalised at Gate G2.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "config_id",
+    "mode",
+    "evm",
+    "qualification",
+    "quorum",
+    "probe",
+    "brake_initiation",
+    "salience",
+    "logging"
+  ],
+  "properties": {
+    "schema_version": { "const": 1 },
+    "config_id": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Human-readable id for this configuration revision, e.g. \"draft-m0\" or \"frozen-g1\"."
+    },
+    "mode": {
+      "type": "string",
+      "enum": ["adaptive", "static", "off"],
+      "description": "Condition switch (impl plan section 5). static: full pipeline runs, salience pinned to full. off: no elements, logging on (sessions 1 and 3)."
+    },
+    "evm": {
+      "type": "number",
+      "exclusiveMinimum": 0,
+      "description": "Expertise Variance Multiplier: tolerance band per metric = sigma_ref x EVM. Provisional default 3.0; finalised in Phase 2 (pilot)."
+    },
+    "qualification": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["window_passes", "required_passes", "dequalify_consecutive_failures"],
+      "properties": {
+        "window_passes": { "type": "integer", "minimum": 1 },
+        "required_passes": { "type": "integer", "minimum": 1 },
+        "dequalify_consecutive_failures": { "type": "integer", "minimum": 1 }
+      },
+      "description": "Per-corner qualification: criterion met in required_passes of the last window_passes passes; de-qualify on N consecutive failures."
+    },
+    "quorum": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["advance_threshold", "revert_threshold"],
+      "properties": {
+        "advance_threshold": { "type": "number", "exclusiveMinimum": 0, "maximum": 1 },
+        "revert_threshold": { "type": "number", "minimum": 0, "exclusiveMaximum": 1 }
+      },
+      "description": "Element-level quorum over applicable corners: advance stage at >= advance_threshold qualified share, revert below revert_threshold."
+    },
+    "probe": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["laps", "reversion_cap"],
+      "properties": {
+        "laps": { "type": "integer", "minimum": 1 },
+        "reversion_cap": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Max probe-reversion cycles per element per block; permanence is block-scoped, probes censored at block end."
+        }
+      }
+    },
+    "brake_initiation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["threshold", "debounce_ms"],
+      "properties": {
+        "threshold": {
+          "type": "number",
+          "exclusiveMinimum": 0,
+          "maximum": 1,
+          "description": "Brake input fraction that must be crossed inside the braking zone."
+        },
+        "debounce_ms": {
+          "type": "number",
+          "minimum": 0,
+          "description": "Input must stay above threshold for this long (debounce against pedal taps)."
+        }
+      }
+    },
+    "salience": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["full_alpha", "reduced_alpha"],
+      "properties": {
+        "full_alpha": { "type": "number", "exclusiveMinimum": 0, "maximum": 1 },
+        "reduced_alpha": { "type": "number", "exclusiveMinimum": 0, "maximum": 1 }
+      },
+      "description": "Marker alpha per stage. Reduced-salience visual form is an open M5 decision; the alpha constant lives here either way."
+    },
+    "logging": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["tick_rate_hz"],
+      "properties": {
+        "tick_rate_hz": {
+          "type": "number",
+          "exclusiveMinimum": 0,
+          "description": "Downsampled per-tick log rate. Default 20; raise only if brake-initiation debounce proves under-resolved."
+        }
+      }
+    }
+  }
+}

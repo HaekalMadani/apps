@@ -1,0 +1,86 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "trace/session_manifest.schema.json",
+  "title": "Session/block manifest (session_manifest.json)",
+  "description": "Written by trace-rt, one per block. Block metadata is entered in the experimenter panel and stamped here — the protocol never depends on editing files mid-session. Config hashes pin exactly which inputs the block ran with.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "block_id",
+    "participant_id",
+    "session",
+    "condition",
+    "pair_id",
+    "config_hashes",
+    "versions",
+    "started_at"
+  ],
+  "properties": {
+    "schema_version": { "const": 1 },
+    "block_id": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Unique block id; also embedded in the names of this block's output files."
+    },
+    "participant_id": { "type": "string", "minLength": 1 },
+    "session": { "type": "integer", "enum": [1, 2, 3, 4], "description": "1 baseline, 2 training, 3 unassisted, 4 optional retention probe." },
+    "condition": { "type": "string", "enum": ["adaptive", "static", "off"] },
+    "pair_id": { "type": "string", "minLength": 1 },
+    "sequence": {
+      "type": "string",
+      "enum": ["A", "B", "C", "D"],
+      "description": "Latin-square sequence assigned at enrolment (session 2 blocks)."
+    },
+    "config_hashes": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["annotation", "reference", "controller_config"],
+      "properties": {
+        "annotation": { "$ref": "#/definitions/sha256" },
+        "reference": { "$ref": "#/definitions/sha256" },
+        "controller_config": { "$ref": "#/definitions/sha256" }
+      },
+      "description": "SHA-256 of each input file as loaded at block start. (Hashing lands in M1 with the logger; null until then is not valid — the field is required from M1 on.)"
+    },
+    "versions": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["app", "csp", "ac"],
+      "properties": {
+        "app": { "type": "string" },
+        "csp": { "type": "string" },
+        "ac": { "type": "string" }
+      },
+      "description": "Apparatus versions; CSP and AC pinned at M3, updates forbidden until data collection ends."
+    },
+    "started_at": { "$ref": "#/definitions/timestamp" },
+    "ended_at": { "$ref": "#/definitions/timestamp" },
+    "laps_completed": { "type": "integer", "minimum": 0 },
+    "faults": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["at", "message"],
+        "properties": {
+          "at": { "$ref": "#/definitions/timestamp" },
+          "message": { "type": "string" }
+        }
+      },
+      "description": "Runtime errors / logging gaps recorded per the risk register (frozen-salience fault states, restarts)."
+    },
+    "notes": { "type": "string" }
+  },
+  "definitions": {
+    "sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "timestamp": {
+      "type": "string",
+      "minLength": 1,
+      "description": "ISO 8601 local timestamp."
+    }
+  }
+}

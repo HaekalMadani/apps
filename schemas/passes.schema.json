@@ -1,0 +1,108 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "trace/passes.schema.json",
+  "title": "Corner-pass record (one JSON-Lines record in passes_<block>.jsonl)",
+  "description": "Written by trace-rt when a pass closes (exit-gate crossing). One record per corner pass: raw metrics, per-element criterion booleans, per-corner qualification state, and the element-level controller stage at pass close. Metric/criterion fields are null when not measurable in that pass (e.g. no brake-initiation event found). Invalid laps' passes still feed the controller, flagged via valid=false.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "block_id",
+    "corner_id",
+    "lap",
+    "t_entry",
+    "t_exit",
+    "valid",
+    "metrics",
+    "criteria",
+    "qualified",
+    "stage"
+  ],
+  "properties": {
+    "schema_version": { "const": 1 },
+    "block_id": { "type": "string", "minLength": 1 },
+    "corner_id": { "type": "string", "minLength": 1 },
+    "lap": { "type": "integer", "minimum": 0 },
+    "t_entry": { "type": "number", "minimum": 0, "description": "Session-clock seconds at entry-gate crossing." },
+    "t_exit": { "type": "number", "minimum": 0 },
+    "valid": { "type": "boolean" },
+    "invalid_reasons": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "enum": ["wheels_outside", "wall_contact", "pit_transition", "first_lap", "incomplete"]
+      }
+    },
+    "metrics": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "brake_initiation_distance_m",
+        "min_corner_speed_kmh",
+        "speed_envelope_deviation_kmh",
+        "apex_lateral_distance_m"
+      ],
+      "properties": {
+        "brake_initiation_distance_m": {
+          "type": ["number", "null"],
+          "description": "Signed distance from reference brake point at brake initiation (positive = early)."
+        },
+        "brake_modulation": {
+          "type": ["object", "null"],
+          "description": "Brake-pressure modulation summary (supporting signal; exact fields settled in M4)."
+        },
+        "min_corner_speed_kmh": { "type": ["number", "null"] },
+        "speed_envelope_deviation_kmh": {
+          "type": ["number", "null"],
+          "description": "min_corner_speed minus reference mean (signed)."
+        },
+        "apex_lateral_distance_m": {
+          "type": ["number", "null"],
+          "description": "Lateral distance from the reference apex line at the apex gate (worst gate for compound corners)."
+        }
+      }
+    },
+    "criteria": { "$ref": "#/definitions/perElementNullableBool" },
+    "qualified": {
+      "$ref": "#/definitions/perElementBool",
+      "description": "Per-corner qualification state for this corner after this pass."
+    },
+    "stage": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["braking", "corner_speed", "apex"],
+      "properties": {
+        "braking": { "$ref": "#/definitions/stage" },
+        "corner_speed": { "$ref": "#/definitions/stage" },
+        "apex": { "$ref": "#/definitions/stage" }
+      },
+      "description": "Element-level controller stage at pass close (computed in all modes; salience pinned in static mode)."
+    }
+  },
+  "definitions": {
+    "stage": {
+      "type": "string",
+      "enum": ["full", "reduced", "probe", "removed"]
+    },
+    "perElementBool": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["braking", "corner_speed", "apex"],
+      "properties": {
+        "braking": { "type": "boolean" },
+        "corner_speed": { "type": "boolean" },
+        "apex": { "type": "boolean" }
+      }
+    },
+    "perElementNullableBool": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["braking", "corner_speed", "apex"],
+      "properties": {
+        "braking": { "type": ["boolean", "null"] },
+        "corner_speed": { "type": ["boolean", "null"] },
+        "apex": { "type": ["boolean", "null"] }
+      }
+    }
+  }
+}

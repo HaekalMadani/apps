@@ -1,0 +1,30 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  tests:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install trace-kit dependencies
+        run: pip install -r kit/requirements.txt
+
+      # M0 exit test: schema validation + Lua/Python validation parity
+      # (Lua side runs headlessly through lupa's LuaJIT 2.1, matching CSP).
+      - name: trace-kit tests
+        working-directory: kit
+        run: pytest -q
+
+      # In-game Python app core logic (pure modules, no `ac` needed).
+      - name: GRApp tests
+        working-directory: python/GRApp
+        run: pytest -q

@@ -1,0 +1,71 @@
+{
+  "schema_version": 1,
+  "pair_id": "example_pair",
+  "track": "example_track",
+  "car": "example_car",
+  "source_laps": {
+    "ai_laps": 12,
+    "human_laps": 12,
+    "ai_strength_pct": 98
+  },
+  "corners": [
+    {
+      "corner_id": "T1",
+      "source": "ai",
+      "braking": {
+        "world_pos": [120.5, 2.1, -340.2],
+        "spline_pos": 0.072,
+        "sigma_ref_m": 2.4
+      },
+      "apex": {
+        "gates": [
+          { "world_pos": [98.3, 2.0, -310.7], "spline_pos": 0.11 }
+        ],
+        "sigma_ref_m": 0.35
+      },
+      "corner_speed": {
+        "mean_kmh": 112.0,
+        "sigma_ref_kmh": 1.8
+      }
+    },
+    {
+      "corner_id": "T2",
+      "source": "human",
+      "braking": {
+        "world_pos": [-220.0, 4.5, 80.1],
+        "spline_pos": 0.378,
+        "sigma_ref_m": 3.1
+      },
+      "apex": {
+        "gates": [
+          { "world_pos": [-245.2, 4.4, 110.6], "spline_pos": 0.41 },
+          { "world_pos": [-260.8, 4.3, 140.2], "spline_pos": 0.445 }
+        ],
+        "sigma_ref_m": 0.5
+      },
+      "corner_speed": {
+        "mean_kmh": 88.5,
+        "sigma_ref_kmh": 2.2
+      }
+    },
+    {
+      "corner_id": "T3",
+      "source": "ai",
+      "braking": {
+        "world_pos": [40.7, 1.2, 410.9],
+        "spline_pos": 0.962,
+        "sigma_ref_m": 2.0
+      },
+      "apex": {
+        "gates": [
+          { "world_pos": [12.4, 1.1, 432.0], "spline_pos": 0.005 }
+        ],
+        "sigma_ref_m": 0.3
+      },
+      "corner_speed": {
+        "mean_kmh": 64.0,
+        "sigma_ref_kmh": 1.5
+      }
+    }
+  ]
+}

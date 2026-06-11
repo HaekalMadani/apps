@@ -1,0 +1,46 @@
+{
+  "schema_version": 1,
+  "track": "example_track",
+  "notes": "FAKE FIXTURE DATA for M0 validation tests and the in-game shell. Not a real track. Real annotation files are produced in M2 via the drive-and-mark annotator.",
+  "corners": [
+    {
+      "id": "T1",
+      "name": "First Corner",
+      "type": "medium",
+      "compound": false,
+      "entry_gate": 0.08,
+      "exit_gate": 0.14,
+      "zones": {
+        "braking": { "start": 0.06, "end": 0.1 },
+        "apex_gates": [0.11],
+        "corner_speed": { "start": 0.09, "end": 0.13 }
+      }
+    },
+    {
+      "id": "T2",
+      "name": "Chicane",
+      "type": "chicane",
+      "compound": true,
+      "entry_gate": 0.38,
+      "exit_gate": 0.47,
+      "zones": {
+        "braking": { "start": 0.36, "end": 0.4 },
+        "apex_gates": [0.41, 0.445],
+        "corner_speed": { "start": 0.39, "end": 0.46 }
+      }
+    },
+    {
+      "id": "T3",
+      "name": "Final Hairpin",
+      "type": "hairpin",
+      "compound": false,
+      "entry_gate": 0.97,
+      "exit_gate": 0.03,
+      "zones": {
+        "braking": { "start": 0.95, "end": 0.99 },
+        "apex_gates": [0.005],
+        "corner_speed": { "start": 0.98, "end": 0.02 }
+      }
+    }
+  ]
+}

@@ -1,0 +1,107 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "trace/reference.schema.json",
+  "title": "Per-corner reference table (reference_<pair>.json)",
+  "description": "Produced by trace-kit's reference extractor from logged AI laps (plus human validation laps where substituted). Stores per-metric sigma_ref only; tolerance bands are derived at run time as sigma_ref x EVM, with EVM living exclusively in controller_config.json (one source of constants). Corner ids must match the track's annotation file.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "pair_id", "track", "car", "corners"],
+  "properties": {
+    "schema_version": { "const": 1 },
+    "pair_id": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Car-track pair id, e.g. \"pair1\"."
+    },
+    "track": { "type": "string", "minLength": 1 },
+    "car": { "type": "string", "minLength": 1 },
+    "source_laps": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "ai_laps": { "type": "integer", "minimum": 0 },
+        "human_laps": { "type": "integer", "minimum": 0 },
+        "ai_strength_pct": { "type": "number", "minimum": 0, "maximum": 100 }
+      },
+      "description": "Provenance of the reference (documented per framing v5: 'AC AI, strength X%, n laps, fixed setup')."
+    },
+    "corners": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["corner_id", "source", "braking", "apex", "corner_speed"],
+        "properties": {
+          "corner_id": { "type": "string", "minLength": 1 },
+          "source": {
+            "type": "string",
+            "enum": ["ai", "human"],
+            "description": "Whether this corner's reference comes from the AI laps or was human-substituted (recorded per Gate G0)."
+          },
+          "braking": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["world_pos", "spline_pos", "sigma_ref_m"],
+            "properties": {
+              "world_pos": { "$ref": "#/definitions/vec3" },
+              "spline_pos": { "$ref": "#/definitions/spline" },
+              "sigma_ref_m": {
+                "type": "number",
+                "exclusiveMinimum": 0,
+                "description": "Std dev of reference brake-initiation distance, metres."
+              }
+            },
+            "description": "Expert brake-initiation point; world_pos is where the braking marker is drawn."
+          },
+          "apex": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["gates", "sigma_ref_m"],
+            "properties": {
+              "gates": {
+                "type": "array",
+                "minItems": 1,
+                "items": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": ["world_pos", "spline_pos"],
+                  "properties": {
+                    "world_pos": { "$ref": "#/definitions/vec3" },
+                    "spline_pos": { "$ref": "#/definitions/spline" }
+                  }
+                },
+                "description": "One entry per apex gate in the annotation (compound corners may have several)."
+              },
+              "sigma_ref_m": {
+                "type": "number",
+                "exclusiveMinimum": 0,
+                "description": "Std dev of reference lateral position at the apex gate(s), metres."
+              }
+            }
+          },
+          "corner_speed": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["mean_kmh", "sigma_ref_kmh"],
+            "properties": {
+              "mean_kmh": { "type": "number", "exclusiveMinimum": 0 },
+              "sigma_ref_kmh": { "type": "number", "exclusiveMinimum": 0 }
+            },
+            "description": "Minimum-corner-speed envelope: mean and std dev across reference laps."
+          }
+        }
+      }
+    }
+  },
+  "definitions": {
+    "vec3": {
+      "type": "array",
+      "items": { "type": "number" },
+      "minItems": 3,
+      "maxItems": 3,
+      "description": "AC world coordinate [x, y, z]."
+    },
+    "spline": { "type": "number", "minimum": 0, "maximum": 1 }
+  }
+}

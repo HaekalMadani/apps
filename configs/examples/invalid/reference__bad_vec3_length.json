@@ -1,0 +1,27 @@
+{
+  "schema_version": 1,
+  "pair_id": "example_pair",
+  "track": "example_track",
+  "car": "example_car",
+  "corners": [
+    {
+      "corner_id": "T1",
+      "source": "ai",
+      "braking": {
+        "world_pos": [120.5, 2.1],
+        "spline_pos": 0.072,
+        "sigma_ref_m": 2.4
+      },
+      "apex": {
+        "gates": [
+          { "world_pos": [98.3, 2.0, -310.7], "spline_pos": 0.11 }
+        ],
+        "sigma_ref_m": 0.35
+      },
+      "corner_speed": {
+        "mean_kmh": 112.0,
+        "sigma_ref_kmh": 1.8
+      }
+    }
+  ]
+}

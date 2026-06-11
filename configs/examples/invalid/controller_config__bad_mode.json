@@ -1,0 +1,30 @@
+{
+  "schema_version": 1,
+  "config_id": "bad-mode",
+  "mode": "adaptiv",
+  "evm": 3.0,
+  "qualification": {
+    "window_passes": 4,
+    "required_passes": 3,
+    "dequalify_consecutive_failures": 2
+  },
+  "quorum": {
+    "advance_threshold": 0.75,
+    "revert_threshold": 0.5
+  },
+  "probe": {
+    "laps": 3,
+    "reversion_cap": 2
+  },
+  "brake_initiation": {
+    "threshold": 0.1,
+    "debounce_ms": 100
+  },
+  "salience": {
+    "full_alpha": 1.0,
+    "reduced_alpha": 0.4
+  },
+  "logging": {
+    "tick_rate_hz": 20
+  }
+}

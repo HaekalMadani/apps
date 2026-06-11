@@ -1,0 +1,7 @@
+# trace-kit — offline Python toolkit (modern Python; conda env `ac_dev`).
+# Not subject to the in-game Python 3.3 constraints (those apply to python/ only).
+jsonschema>=4.17
+pytest>=7
+# LuaJIT embedded in Python: lets pytest drive the Lua validators headlessly
+# (the M0 validation-parity tests, and later the M4 golden-trace parity suite).
+lupa>=2.0

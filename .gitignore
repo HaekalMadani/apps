@@ -3,9 +3,18 @@
 # game out of git.
 /*
 !/.gitignore
+
+!/thesis_framing_v5.md
+!/implementation_plan_v1.md
+!/evaluation_plan_v1.md
+!/.github/
+!/schemas/
+!/configs/
+!/kit/
 !/lua/
 /lua/*
 !/lua/projspike_lua/
+!/lua/trace_rt/
 !/python/
 /python/*
 !/python/GRApp/

@@ -1,0 +1,84 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "trace/annotation.schema.json",
+  "title": "Corner annotation file (annotation_<track>.json)",
+  "description": "Manually authored, version-controlled per-track corner annotation. All spline positions are AC normalized track-spline values in [0, 1]. Zones may wrap the start/finish line, so start < end is NOT enforced. Consumed by trace-rt (pass tracker, renderer), the reference extractor, and the simulator.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "track", "corners"],
+  "properties": {
+    "schema_version": { "const": 1 },
+    "track": {
+      "type": "string",
+      "minLength": 1,
+      "description": "AC track id (folder name, optionally with layout suffix)."
+    },
+    "notes": { "type": "string" },
+    "corners": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "type", "compound", "entry_gate", "exit_gate", "zones"],
+        "properties": {
+          "id": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Stable corner id, e.g. \"T1\". Referenced by reference tables, pass records, and fade events."
+          },
+          "name": { "type": "string" },
+          "type": {
+            "type": "string",
+            "enum": ["slow", "medium", "fast", "hairpin", "chicane", "kink"],
+            "description": "Corner-type tag (descriptive only; not used by the controller)."
+          },
+          "compound": {
+            "type": "boolean",
+            "description": "True for chicanes / linked corners sharing one braking event (one braking zone, possibly multiple apex gates)."
+          },
+          "entry_gate": { "$ref": "#/definitions/spline" },
+          "exit_gate": { "$ref": "#/definitions/spline" },
+          "zones": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["braking", "apex_gates", "corner_speed"],
+            "properties": {
+              "braking": {
+                "$ref": "#/definitions/zone",
+                "description": "Zone within which the brake-initiation event is searched for."
+              },
+              "apex_gates": {
+                "type": "array",
+                "minItems": 1,
+                "items": { "$ref": "#/definitions/spline" },
+                "description": "Spline position(s) at which apex lateral distance is measured. More than one only for compound corners."
+              },
+              "corner_speed": {
+                "$ref": "#/definitions/zone",
+                "description": "Zone over which minimum corner speed is taken."
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "definitions": {
+    "spline": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 1,
+      "description": "Normalized track-spline position."
+    },
+    "zone": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["start", "end"],
+      "properties": {
+        "start": { "$ref": "#/definitions/spline" },
+        "end": { "$ref": "#/definitions/spline" }
+      }
+    }
+  }
+}

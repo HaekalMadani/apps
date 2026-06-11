@@ -1,0 +1,63 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "trace/fades.schema.json",
+  "title": "Controller event record (one JSON-Lines record in fades_<block>.jsonl)",
+  "description": "Written by trace-rt on every controller transition, including censoring and reversion-cap hits, with the triggering quorum statistics. The RQ1 fade-event timeline and the RQ3 alignment analysis are built from this stream.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "block_id",
+    "t",
+    "lap",
+    "element",
+    "transition",
+    "quorum"
+  ],
+  "properties": {
+    "schema_version": { "const": 1 },
+    "block_id": { "type": "string", "minLength": 1 },
+    "t": { "type": "number", "minimum": 0, "description": "Session-clock seconds." },
+    "lap": { "type": "integer", "minimum": 0 },
+    "element": {
+      "type": "string",
+      "enum": ["braking", "corner_speed", "apex"]
+    },
+    "transition": {
+      "type": "string",
+      "enum": [
+        "full_to_reduced",
+        "reduced_to_probe",
+        "probe_to_removed",
+        "probe_to_revert",
+        "reduced_to_full",
+        "censored",
+        "cap_reached"
+      ],
+      "description": "censored = block ended mid-probe (probe incomplete). cap_reached = reversion cap hit; element pinned for the rest of the block. reduced_to_full = quorum reversion from reduced salience."
+    },
+    "quorum": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["qualified_share", "qualified_corners", "applicable_corners"],
+      "properties": {
+        "qualified_share": { "type": "number", "minimum": 0, "maximum": 1 },
+        "qualified_corners": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "applicable_corners": { "type": "integer", "minimum": 1 },
+        "flipped_corners": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "Corners whose qualification changed on the pass that triggered this transition."
+        }
+      }
+    },
+    "reversion_count": {
+      "type": "integer",
+      "minimum": 0,
+      "description": "This element's probe-reversion cycles so far in this block."
+    }
+  }
+}

@@ -1,0 +1,18 @@
+{
+  "schema_version": 1,
+  "columns": [
+    { "name": "t", "type": "float", "unit": "s", "description": "Session-clock time of the sample." },
+    { "name": "lap", "type": "int", "description": "Lap counter (0-based, as reported by AC)." },
+    { "name": "spline", "type": "float", "description": "Normalized track-spline position [0, 1]." },
+    { "name": "pos_x", "type": "float", "unit": "m", "description": "Car world position X." },
+    { "name": "pos_y", "type": "float", "unit": "m", "description": "Car world position Y (up)." },
+    { "name": "pos_z", "type": "float", "unit": "m", "description": "Car world position Z." },
+    { "name": "speed_kmh", "type": "float", "unit": "km/h", "description": "Car speed." },
+    { "name": "brake", "type": "float", "description": "Brake input [0, 1]." },
+    { "name": "throttle", "type": "float", "description": "Throttle input [0, 1]." },
+    { "name": "steer", "type": "float", "description": "Steering input, normalized [-1, 1]." },
+    { "name": "gear", "type": "int", "description": "Gear index as reported by CSP (-1 reverse, 0 neutral, 1+ forward)." },
+    { "name": "wheels_outside", "type": "int", "description": "Number of wheels off the track surface (0-4)." },
+    { "name": "in_pit", "type": "bool", "description": "Car is in pit lane / pit transition." }
+  ]
+}
