@@ -1,0 +1,91 @@
+{
+  "schema_version": 1,
+  "track": "ks_silverstone-national",
+  "notes": "Re-derived 2026-09-08 from the AI reference block 1_s2_pair1_adaptive_20260908_005132 (ks_bmw_m235i_racing, AI 100 pct), replacing the 2026-07-09 drive-and-mark version. Three corrections. (1) Corner 1 was annotated as taken FLAT; at racing pace the car brakes hard there (205->146 km/h at spline 0.0436, 12/12 laps) - drive-and-mark is done slowly, where that corner genuinely needs no brakes. It now has a braking zone and is in the braking element's applicable set. (2) Corners 2 and 3 had braking zones that opened 18 m and 3 m AFTER the expert brake point, so every lap clamped to the zone start, giving a biased-late brake point and a fake near-zero sigma. (3) The old compound corner 3 is SPLIT into corners 3 and 4: the car brakes twice (0.6266, 207->96 km/h and 0.7205, 121->92 km/h) with 113 m of acceleration between them (95->124 km/h) and one apex after each, and framing v6 sec 107 makes separate braking events separate corners. National therefore has 4 corners, all with braking, which also lifts the braking element's quorum denominator from 2 to 4. Each braking zone starts ~60 m before the expert brake point (43 m on corner 4, limited by corner 3's exit) so novice early-braking is still detected, and ends at turn-in. Corner 3 uses a 15 m apex half-window so the window fits inside its shortened pass bracket. PENDING Gate G0 on-track review.",
+  "corners": [
+    {
+      "id": "1",
+      "type": "fast",
+      "compound": false,
+      "entry_gate": 0.0109,
+      "exit_gate": 0.1281,
+      "zones": {
+        "braking": {
+          "start": 0.0205,
+          "end": 0.0551
+        },
+        "apex_gates": [
+          0.097
+        ],
+        "apex_window_half_m": 20.0,
+        "corner_speed": {
+          "start": 0.0551,
+          "end": 0.1169
+        }
+      }
+    },
+    {
+      "id": "2",
+      "type": "fast",
+      "compound": false,
+      "entry_gate": 0.2701,
+      "exit_gate": 0.391,
+      "zones": {
+        "braking": {
+          "start": 0.2797,
+          "end": 0.326
+        },
+        "apex_gates": [
+          0.3512
+        ],
+        "apex_window_half_m": 20.0,
+        "corner_speed": {
+          "start": 0.326,
+          "end": 0.3729
+        }
+      }
+    },
+    {
+      "id": "3",
+      "type": "medium",
+      "compound": false,
+      "entry_gate": 0.5939,
+      "exit_gate": 0.697,
+      "zones": {
+        "braking": {
+          "start": 0.6035,
+          "end": 0.6482
+        },
+        "apex_gates": [
+          0.6878
+        ],
+        "apex_window_half_m": 15.0,
+        "corner_speed": {
+          "start": 0.6482,
+          "end": 0.69
+        }
+      }
+    },
+    {
+      "id": "4",
+      "type": "medium",
+      "compound": false,
+      "entry_gate": 0.698,
+      "exit_gate": 0.7787,
+      "zones": {
+        "braking": {
+          "start": 0.7038,
+          "end": 0.73
+        },
+        "apex_gates": [
+          0.7399
+        ],
+        "apex_window_half_m": 20.0,
+        "corner_speed": {
+          "start": 0.73,
+          "end": 0.7559
+        }
+      }
+    }
+  ]
+}

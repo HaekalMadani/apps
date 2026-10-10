@@ -4,6 +4,9 @@
   "title": "Session/block manifest (session_manifest.json)",
   "description": "Written by trace-rt, one per block. Block metadata is entered in the experimenter panel and stamped here — the protocol never depends on editing files mid-session. Config hashes pin exactly which inputs the block ran with.",
   "type": "object",
+  "dependencies": {
+    "aborted": ["abort_reason"]
+  },
   "additionalProperties": false,
   "required": [
     "schema_version",
@@ -30,15 +33,68 @@
     "sequence": {
       "type": "string",
       "enum": ["A", "B", "C", "D"],
-      "description": "Latin-square sequence assigned at enrolment (session 2 blocks)."
+      "description": "Counterbalanced 2x2 crossover sequence assigned at enrolment (session 2 blocks). Eval plan v2 corrected the earlier \"Latin square\" label: these are the full factorial of pair order x condition coupling, not a Latin square."
+    },
+    "track_id": {
+      "type": "string",
+      "minLength": 1,
+      "description": "AC track full id (folder + layout, '-' separated) the block ran on. Apparatus provenance, stamped from M3 on; optional so blocks recorded before M3 still validate."
+    },
+    "car_id": {
+      "type": "string",
+      "minLength": 1,
+      "description": "AC car id the block ran in. The reference table is per CAR-track pair, so this is what makes a block's pair_id verifiable against the reference it hashed. Stamped from M3 on; optional for pre-M3 blocks."
+    },
+    "autopilot": {
+      "const": true,
+      "description": "Present and true only when the AC AI drove this block (physics.setCarAutopilot), i.e. it is an AI reference recording. Study blocks omit the key entirely. Recorded from the sim's own car.isAIControlled rather than the panel toggle, so it reflects what actually happened."
+    },
+    "ai_level_pct": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 100,
+      "description": "AI strength this block was driven at, percent — the 'strength X%' half of the reference's documented provenance (framing v6: 'AC AI, strength X%, n laps, fixed setup'). Only meaningful alongside autopilot."
+    },
+    "track_length_m": {
+      "type": "number",
+      "exclusiveMinimum": 0,
+      "description": "AI-spline track length in metres as the runtime read it (ac.getSim().trackLengthM). Every spline-to-metre conversion depends on it, so it is pinned per block and cross-checked against the reference table's own value. Stamped from M3 on; optional for pre-M3 blocks."
+    },
+    "dev_block": {
+      "const": true,
+      "description": "Present and true only on a scratch/dev recording that opted out of the annotation gate. Study blocks omit the key entirely, so its presence excludes a block from participant data."
+    },
+    "dry_run": {
+      "const": true,
+      "description": "Present and true only on a block recorded during the M6 protocol dry run (the researcher driving as a fake participant). Follows the dev_block pattern: its presence excludes the block from participant data. A dry-run block is otherwise a FULL study block -- it passes the annotation and reference gates and runs the controller, which is the point of the rehearsal -- so without this flag the only thing distinguishing it from real data would be a participant id convention, and the M2 lesson is that a convention is not a constraint."
+    },
+    "aborted": {
+      "const": true,
+      "description": "Present and true only on a block the experimenter ABORTED from the panel. Follows the dev_block pattern deliberately: completed blocks omit the key entirely, so its mere presence excludes the block from participant data. The partial logs are still flushed and still validate — an abort discards the block, never the evidence of what happened."
+    },
+    "abort_reason": {
+      "enum": ["participant_request", "sim_or_app_crash", "hardware_fault", "experimenter_error", "protocol_deviation", "other"],
+      "description": "Why the block was aborted. A closed enum, chosen on the panel as a radio group rather than typed, per the M2 lesson that a free-text manifest field is a schema-invalid manifest waiting to happen. Free-text elaboration belongs in `notes`."
+    },
+    "disabled_elements": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": { "type": "string", "enum": ["braking", "corner_speed", "apex"] },
+      "description": "UI elements the controller disabled for this block because the track's annotation gives them ZERO applicable corners (impl plan section 7's degenerate case: an element applies to no corner, so its quorum has no denominator). A disabled element is pinned at full salience and never evaluated, and it emits no fade events -- a fade record with a zero denominator would be a fiction -- so this is where the fact is recorded. Absent when every element has at least one applicable corner, which is the case on both study tracks. Written from M4 on."
     },
     "config_hashes": {
       "type": "object",
       "additionalProperties": false,
       "required": ["annotation", "reference", "controller_config"],
       "properties": {
-        "annotation": { "$ref": "#/definitions/sha256" },
-        "reference": { "$ref": "#/definitions/sha256" },
+        "annotation": {
+          "oneOf": [{ "$ref": "#/definitions/sha256" }, { "type": "null" }],
+          "description": "SHA-256 of the per-track annotation this block loaded. null ONLY on a dev_block started without a valid annotation (pass tracking off); a participant block refuses to start in that case, so this is never null on study data."
+        },
+        "reference": {
+          "oneOf": [{ "$ref": "#/definitions/sha256" }, { "type": "null" }],
+          "description": "SHA-256 of the per-pair reference table this block loaded. null ONLY on a dev_block started without a valid reference — which is how the reference laps themselves are recorded, since the table cannot exist before they are. A participant block refuses to start in that case, so this is never null on study data."
+        },
         "controller_config": { "$ref": "#/definitions/sha256" }
       },
       "description": "SHA-256 of each input file as loaded at block start. (Hashing lands in M1 with the logger; null until then is not valid — the field is required from M1 on.)"

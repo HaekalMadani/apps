@@ -42,17 +42,23 @@
           "zones": {
             "type": "object",
             "additionalProperties": false,
-            "required": ["braking", "apex_gates", "corner_speed"],
+            "required": ["apex_gates", "apex_window_half_m", "corner_speed"],
             "properties": {
               "braking": {
                 "$ref": "#/definitions/zone",
-                "description": "Zone within which the brake-initiation event is searched for."
+                "description": "Zone within which the brake-initiation event is searched for. OPTIONAL: absent on corners taken without braking; such a corner is not in the braking-point element's applicable set (no marker rendered, no braking criterion evaluated, excluded from that element's quorum denominator)."
               },
               "apex_gates": {
                 "type": "array",
                 "minItems": 1,
                 "items": { "$ref": "#/definitions/spline" },
-                "description": "Spline position(s) at which apex lateral distance is measured. More than one only for compound corners."
+                "description": "Spline position(s) at which the apex evaluation window is centred. More than one only for compound corners."
+              },
+              "apex_window_half_m": {
+                "type": "number",
+                "exclusiveMinimum": 0,
+                "maximum": 100,
+                "description": "Half-width, in metres of track length, of the spline window centred on each apex gate over which RMS lateral deviation from the expert line is taken (framing v6: never a single-point sample at the gate, which is noisy and gameable). Metres rather than spline units so the value is track-length independent; the runtime and the extractor convert with the AI-spline track length. Default 20.0 (impl plan section 7), reviewed per corner at Gate G0. The maximum is a typo guard: a half-width above 100 m would swallow whole neighbouring corners."
               },
               "corner_speed": {
                 "$ref": "#/definitions/zone",

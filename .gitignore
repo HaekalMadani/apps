@@ -4,12 +4,18 @@
 /*
 !/.gitignore
 
-!/thesis_framing_v5.md
-!/implementation_plan_v1.md
-!/evaluation_plan_v1.md
+!/CLAUDE.md
+!/thesis_framing_v6.md
+!/implementation_plan_v2.md
+!/evaluation_plan_v2.md
+!/DATASET_README.md
 !/.github/
 !/schemas/
 !/configs/
+# The controller parity corpus: the only state the runtime and the simulator
+# share besides controller_config.json (impl plan section 3), and the artefact
+# Gate G1 rests on.
+!/golden_traces/
 !/kit/
 !/lua/
 /lua/*
@@ -22,3 +28,4 @@
 # Noise inside tracked folders
 __pycache__/
 *.pyc
+.pytest_cache/

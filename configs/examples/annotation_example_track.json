@@ -11,9 +11,18 @@
       "entry_gate": 0.08,
       "exit_gate": 0.14,
       "zones": {
-        "braking": { "start": 0.06, "end": 0.1 },
-        "apex_gates": [0.11],
-        "corner_speed": { "start": 0.09, "end": 0.13 }
+        "braking": {
+          "start": 0.06,
+          "end": 0.1
+        },
+        "apex_gates": [
+          0.11
+        ],
+        "apex_window_half_m": 20.0,
+        "corner_speed": {
+          "start": 0.09,
+          "end": 0.13
+        }
       }
     },
     {
@@ -24,22 +33,59 @@
       "entry_gate": 0.38,
       "exit_gate": 0.47,
       "zones": {
-        "braking": { "start": 0.36, "end": 0.4 },
-        "apex_gates": [0.41, 0.445],
-        "corner_speed": { "start": 0.39, "end": 0.46 }
+        "braking": {
+          "start": 0.36,
+          "end": 0.4
+        },
+        "apex_gates": [
+          0.41,
+          0.445
+        ],
+        "apex_window_half_m": 20.0,
+        "corner_speed": {
+          "start": 0.39,
+          "end": 0.46
+        }
       }
     },
     {
       "id": "T3",
+      "name": "Flat Sweeper",
+      "type": "fast",
+      "compound": false,
+      "entry_gate": 0.6,
+      "exit_gate": 0.7,
+      "zones": {
+        "apex_gates": [
+          0.65
+        ],
+        "apex_window_half_m": 20.0,
+        "corner_speed": {
+          "start": 0.62,
+          "end": 0.68
+        }
+      }
+    },
+    {
+      "id": "T4",
       "name": "Final Hairpin",
       "type": "hairpin",
       "compound": false,
       "entry_gate": 0.97,
       "exit_gate": 0.03,
       "zones": {
-        "braking": { "start": 0.95, "end": 0.99 },
-        "apex_gates": [0.005],
-        "corner_speed": { "start": 0.98, "end": 0.02 }
+        "braking": {
+          "start": 0.95,
+          "end": 0.99
+        },
+        "apex_gates": [
+          0.005
+        ],
+        "apex_window_half_m": 20.0,
+        "corner_speed": {
+          "start": 0.98,
+          "end": 0.02
+        }
       }
     }
   ]

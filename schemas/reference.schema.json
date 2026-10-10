@@ -2,10 +2,10 @@
   "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "trace/reference.schema.json",
   "title": "Per-corner reference table (reference_<pair>.json)",
-  "description": "Produced by trace-kit's reference extractor from logged AI laps (plus human validation laps where substituted). Stores per-metric sigma_ref only; tolerance bands are derived at run time as sigma_ref x EVM, with EVM living exclusively in controller_config.json (one source of constants). Corner ids must match the track's annotation file.",
+  "description": "Produced by trace-kit's reference extractor from logged AI laps (plus human validation laps where substituted). Stores per-metric sigma_ref only; tolerance bands are derived at run time as max(sigma_ref x EVM_source, floor), with the multipliers and floors living exclusively in controller_config.json (one source of constants). EVM is source-dependent, so each corner records whether its reference is AI or human-substituted. Corner ids must match the track's annotation file.",
   "type": "object",
   "additionalProperties": false,
-  "required": ["schema_version", "pair_id", "track", "car", "corners"],
+  "required": ["schema_version", "pair_id", "track", "car", "track_length_m", "corners"],
   "properties": {
     "schema_version": { "const": 1 },
     "pair_id": {
@@ -13,17 +13,43 @@
       "minLength": 1,
       "description": "Car-track pair id, e.g. \"pair1\"."
     },
-    "track": { "type": "string", "minLength": 1 },
-    "car": { "type": "string", "minLength": 1 },
+    "track": {
+      "type": "string",
+      "minLength": 1,
+      "description": "AC track full id (folder + layout, '-' separated) — must match the annotation file's `track` and the loaded track, or the runtime refuses the block."
+    },
+    "car": {
+      "type": "string",
+      "minLength": 1,
+      "description": "AC car id (ac.getCarID) the reference laps were driven in. The reference is per CAR-track pair: bands and brake points do not transfer between cars."
+    },
+    "track_length_m": {
+      "type": "number",
+      "exclusiveMinimum": 0,
+      "description": "AI-spline track length in metres (ac.getSim().trackLengthM) as read when the reference laps were recorded. Pinned here because every spline-to-metre conversion in the pipeline — brake-initiation distance, apex window half-width — depends on it, and the offline extractor and simulator must use the same value the runtime did."
+    },
     "source_laps": {
       "type": "object",
       "additionalProperties": false,
       "properties": {
         "ai_laps": { "type": "integer", "minimum": 0 },
         "human_laps": { "type": "integer", "minimum": 0 },
-        "ai_strength_pct": { "type": "number", "minimum": 0, "maximum": 100 }
+        "ai_strength_pct": { "type": "number", "minimum": 0, "maximum": 100 },
+        "human_driver": {
+          "type": "string",
+          "description": "Who drove the human validation laps, as a ROLE not a name (e.g. \"researcher (not a study participant)\"). Published with the dataset; a researcher-driven reference is a stated limitation, not a hidden one."
+        },
+        "setup": {
+          "type": "string",
+          "description": "The fixed setup all reference and participant laps use, e.g. \"default (car ships)\" — framing v6 requires one fixed setup per pair."
+        },
+        "lap_time_cov_pct": {
+          "type": "number",
+          "minimum": 0,
+          "description": "Coefficient of variation of the reference laps' times, in PERCENT, as measured at extraction. Gate G0 requires < 1%. Stored so the gate is auditable from the committed table alone rather than only from the extractor's console output at the time it ran."
+        }
       },
-      "description": "Provenance of the reference (documented per framing v5: 'AC AI, strength X%, n laps, fixed setup')."
+      "description": "Provenance of the reference (documented per framing v6: 'AC AI, strength X%, n laps, fixed setup')."
     },
     "corners": {
       "type": "array",
@@ -31,13 +57,41 @@
       "items": {
         "type": "object",
         "additionalProperties": false,
-        "required": ["corner_id", "source", "braking", "apex", "corner_speed"],
+        "required": ["corner_id", "source", "contributing_laps", "apex", "corner_speed"],
         "properties": {
           "corner_id": { "type": "string", "minLength": 1 },
           "source": {
             "type": "string",
             "enum": ["ai", "human"],
             "description": "Whether this corner's reference comes from the AI laps or was human-substituted (recorded per Gate G0)."
+          },
+          "contributing_laps": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["clean_passes", "apex", "corner_speed"],
+            "properties": {
+              "clean_passes": {
+                "type": "integer",
+                "minimum": 1,
+                "description": "Clean passes of this corner across all reference blocks — the denominator the per-element counts below are out of."
+              },
+              "braking": {
+                "type": "integer",
+                "minimum": 0,
+                "description": "Passes a brake-initiation point was detected on. OPTIONAL: absent iff the corner has no `braking` reference (no annotated braking zone), mirroring that field."
+              },
+              "apex": {
+                "type": "integer",
+                "minimum": 0,
+                "description": "Passes whose apex window(s) were fully sampled and so contributed to the expert line and the RMS statistics."
+              },
+              "corner_speed": {
+                "type": "integer",
+                "minimum": 0,
+                "description": "Passes a minimum corner speed was found on."
+              }
+            },
+            "description": "How many reference passes actually built each of this corner's three references. Gate G0 requires every corner to meet the extractor's minimum contributing-lap count (trace_kit.reference.MIN_LAPS_PER_CORNER); persisting the counts is what makes that clause checkable from the repository instead of only from the console at extraction time. A small count next to a tiny sigma_ref is the signature of a mis-fitted zone, not of a repeatable driver."
           },
           "braking": {
             "type": "object",
@@ -48,16 +102,16 @@
               "spline_pos": { "$ref": "#/definitions/spline" },
               "sigma_ref_m": {
                 "type": "number",
-                "exclusiveMinimum": 0,
-                "description": "Std dev of reference brake-initiation distance, metres."
+                "minimum": 0,
+                "description": "Std dev of the reference laps' brake-initiation points, in metres of track length along the spline ((spline_lap - spline_mean) x track_length_m). Metres, not spline units, because the tolerance band and its floor are stated in metres."
               }
             },
-            "description": "Expert brake-initiation point; world_pos is where the braking marker is drawn."
+            "description": "Expert brake-initiation point (mean over the reference laps); world_pos is where the braking marker is drawn, spline_pos is the datum the per-pass distance metric is signed against. OPTIONAL: absent iff the corner's annotation has no braking zone (corner not applicable to the braking-point element)."
           },
           "apex": {
             "type": "object",
             "additionalProperties": false,
-            "required": ["gates", "sigma_ref_m"],
+            "required": ["gates", "mean_rms_m", "sigma_ref_m"],
             "properties": {
               "gates": {
                 "type": "array",
@@ -65,20 +119,40 @@
                 "items": {
                   "type": "object",
                   "additionalProperties": false,
-                  "required": ["world_pos", "spline_pos"],
+                  "required": ["world_pos", "spline_pos", "line"],
                   "properties": {
                     "world_pos": { "$ref": "#/definitions/vec3" },
-                    "spline_pos": { "$ref": "#/definitions/spline" }
+                    "spline_pos": { "$ref": "#/definitions/spline" },
+                    "line": {
+                      "type": "array",
+                      "minItems": 2,
+                      "items": {
+                        "type": "object",
+                        "additionalProperties": false,
+                        "required": ["spline_pos", "world_pos"],
+                        "properties": {
+                          "spline_pos": { "$ref": "#/definitions/spline" },
+                          "world_pos": { "$ref": "#/definitions/vec3" }
+                        }
+                      },
+                      "description": "The expert LINE across this gate's apex window: mean reference world position sampled at regular spline steps over [gate - apex_window_half_m, gate + apex_window_half_m]. Samples are ordered along the driving direction and may wrap start/finish. The metric is RMS lateral deviation from this line over the window (framing v6), so a single gate point is not sufficient — this array is what makes the metric computable."
+                    }
                   }
                 },
-                "description": "One entry per apex gate in the annotation (compound corners may have several)."
+                "description": "One entry per apex gate in the annotation (compound corners may have several). world_pos is where the apex marker is drawn; `line` is what the metric is measured against."
+              },
+              "mean_rms_m": {
+                "type": "number",
+                "minimum": 0,
+                "description": "Mean, across the reference laps, of each lap's RMS lateral deviation from the mean expert line over this corner's apex window(s). The criterion is a deviation from an ideal rather than a two-sided band about a mean, so the pass threshold is mean_rms_m + band, not |x - mean| <= band."
               },
               "sigma_ref_m": {
                 "type": "number",
-                "exclusiveMinimum": 0,
-                "description": "Std dev of reference lateral position at the apex gate(s), metres."
+                "minimum": 0,
+                "description": "Std dev, across the reference laps, of those per-lap RMS deviations. Same units as the per-pass metric, so band = max(sigma_ref_m x EVM_source, floor) applies directly."
               }
-            }
+            },
+            "description": "One RMS value per corner pass, taken over the union of this corner's apex windows — a compound corner with two apex gates still yields ONE apex criterion boolean."
           },
           "corner_speed": {
             "type": "object",
@@ -86,9 +160,9 @@
             "required": ["mean_kmh", "sigma_ref_kmh"],
             "properties": {
               "mean_kmh": { "type": "number", "exclusiveMinimum": 0 },
-              "sigma_ref_kmh": { "type": "number", "exclusiveMinimum": 0 }
+              "sigma_ref_kmh": { "type": "number", "minimum": 0 }
             },
-            "description": "Minimum-corner-speed envelope: mean and std dev across reference laps."
+            "description": "Minimum-corner-speed envelope: mean and std dev across reference laps. A sigma of exactly 0 is legal and expected at some corners — the AC AI is consistent by construction — which is what the band FLOORS in controller_config.json exist to absorb (eval plan v2). The guard against a spuriously tiny sigma is a minimum contributing-lap count in the extractor, not a schema bound."
           }
         }
       }

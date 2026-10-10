@@ -1,0 +1,532 @@
+{
+  "total_streams": 2800,
+  "block_laps": 15,
+  "novice_model": {
+    "brake_offset0_m": 25.0,
+    "brake_sigma_m": 4.0,
+    "speed_offset0_kmh": 12.0,
+    "speed_sigma_kmh": 2.0,
+    "apex_offset0_m": 1.2,
+    "apex_sigma_m": 0.3,
+    "difficulty_min": 0.6,
+    "difficulty_max": 1.6
+  },
+  "targets": [
+    {
+      "id": "typical_improver_traverses",
+      "statement": "A typical improver fully traverses the machine (full -> reduced -> probe -> removed) for at least 2 of 3 elements within one training block of 15 laps.",
+      "operationalisation": "The target is about the TYPICAL learner, so it is read as the median stream: at least half of typical_improver streams must traverse 2 of 3 elements.",
+      "measured": {
+        "share_traversing_2_of_3": 0.5925,
+        "median_elements_removed": 2.0
+      },
+      "threshold": 0.5,
+      "met": true
+    },
+    {
+      "id": "non_improver_never_fades",
+      "statement": "A non-improver never leaves full salience.",
+      "operationalisation": "Read strictly: NO non_improver stream may move any element off full. This is what bounds the bands from above, and it is the direction the design says to err on (premature withdrawal is worse than delayed).",
+      "measured": {
+        "share_with_any_fade": 0.0
+      },
+      "threshold": 0.0,
+      "met": true
+    },
+    {
+      "id": "regression_reverts_promptly",
+      "statement": "Reversion triggers on broad regression within one lap of onset when regression is synchronised across corners, and within two laps when it is staggered; and broad regression is never answered by removal.",
+      "operationalisation": "Measured as EXCESS latency over the arithmetic floor (see earliest_reversion_lap), read as the median stream for the same reason the first target is. The raw lag from the first corner's onset is reported too, but it is not the bar: reversion latency has a floor set by the de-qualification rule and by how many corners must regress before a majority exists, and eval plan v2's 'within two laps when staggered' sits BELOW that floor for onsets one lap apart across four corners - a majority has not regressed until the third lap, so no threshold tuning can reach it. Excess latency is the part the controller is responsible for, and it reproduces the eval plan's own numbers exactly where regression is synchronised. The removal clause is an M4 addition: it is the safety property the latency is a proxy for and admits no tolerable failures, so it is read strictly - but it counts only removals that happen once the regression could ALREADY have been detected. An element removed before that point was removed on evidence that was still good, and block-scoped permanence then keeps it removed; that is the design working, not a misfire. A negative excess latency is likewise not an anomaly: inside a probe the evidence windows have just been reset, so a regressing corner never re-qualifies rather than having to de-qualify, and the reversion can beat the de-qualification floor.",
+      "measured": {
+        "synchronised_median_excess_laps": 0,
+        "staggered_median_excess_laps": 0.0,
+        "synchronised_share_at_the_floor": 0.758,
+        "staggered_share_at_the_floor": 0.8258,
+        "synchronised_median_lag_from_first_onset": 1,
+        "staggered_median_lag_from_first_onset": 3.0,
+        "n_synchronised_reversions": 777,
+        "n_staggered_reversions": 798,
+        "share_removed_despite_regression": 0.0
+      },
+      "threshold": {
+        "median_excess_laps": 1,
+        "share_removed_despite_regression": 0.0
+      },
+      "met": true
+    }
+  ],
+  "by_type": {
+    "fast_improver": {
+      "description": "Learns quickly; the lap-budget case framing v6 puts at 9-11 laps.",
+      "streams": 400,
+      "stats": {
+        "mean_elements_removed": 1.88,
+        "share_any_fade": 1.0,
+        "share_all_three_removed": 0.0,
+        "median_removal_lap": 11.0,
+        "share_any_reversion": 0.0675,
+        "share_cap_reached": 0.0,
+        "share_censored": 0.12,
+        "null_criteria": 0
+      },
+      "curves": {
+        "braking": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.005,
+          0.0175,
+          0.0425,
+          0.06,
+          0.0675,
+          0.0675,
+          0.06
+        ],
+        "corner_speed": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0925,
+          0.7425,
+          0.97,
+          1.08,
+          1.705,
+          1.945,
+          2.065,
+          2.6925,
+          2.9325,
+          2.9675,
+          2.9775
+        ],
+        "apex": [
+          0.0,
+          0.0,
+          0.0,
+          0.0125,
+          0.225,
+          0.77,
+          0.9775,
+          1.1775,
+          1.6225,
+          1.875,
+          2.0925,
+          2.5575,
+          2.805,
+          2.865,
+          2.9
+        ]
+      }
+    },
+    "typical_improver": {
+      "description": "The design target's subject: the middle of the improving range.",
+      "streams": 400,
+      "stats": {
+        "mean_elements_removed": 1.555,
+        "share_any_fade": 1.0,
+        "share_all_three_removed": 0.0,
+        "median_removal_lap": 13.0,
+        "share_any_reversion": 0.05,
+        "share_cap_reached": 0.0,
+        "share_censored": 0.3825,
+        "null_criteria": 0
+      },
+      "curves": {
+        "braking": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0025,
+          0.0175,
+          0.0325,
+          0.045
+        ],
+        "corner_speed": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0175,
+          0.1825,
+          0.615,
+          0.89,
+          1.1075,
+          1.4975,
+          1.82,
+          2.0575,
+          2.48,
+          2.7925
+        ],
+        "apex": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.005,
+          0.09,
+          0.43,
+          0.76,
+          0.965,
+          1.2375,
+          1.5875,
+          1.8325,
+          2.175,
+          2.53,
+          2.73
+        ]
+      }
+    },
+    "slow_improver": {
+      "description": "Improves, but not fast enough to traverse inside one block.",
+      "streams": 400,
+      "stats": {
+        "mean_elements_removed": 0.005,
+        "share_any_fade": 0.8875,
+        "share_all_three_removed": 0.0,
+        "median_removal_lap": 14.0,
+        "share_any_reversion": 0.0,
+        "share_cap_reached": 0.0,
+        "share_censored": 0.1625,
+        "null_criteria": 0
+      },
+      "curves": {
+        "braking": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "corner_speed": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0025,
+          0.0075,
+          0.03,
+          0.0725,
+          0.1975,
+          0.345,
+          0.5825
+        ],
+        "apex": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.03,
+          0.1025,
+          0.175,
+          0.29,
+          0.4875,
+          0.7125,
+          0.915
+        ]
+      }
+    },
+    "non_improver": {
+      "description": "Never improves; the second design target says the scaffold must stay.",
+      "streams": 400,
+      "stats": {
+        "mean_elements_removed": 0.0,
+        "share_any_fade": 0.0,
+        "share_all_three_removed": 0.0,
+        "median_removal_lap": null,
+        "share_any_reversion": 0.0,
+        "share_cap_reached": 0.0,
+        "share_censored": 0.0,
+        "null_criteria": 0
+      },
+      "curves": {
+        "braking": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "corner_speed": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "apex": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ]
+      }
+    },
+    "erratic": {
+      "description": "Improves on average but with heavy lap-to-lap noise; the learner the reversion cap and the hysteresis dead band exist for.",
+      "streams": 400,
+      "stats": {
+        "mean_elements_removed": 0.005,
+        "share_any_fade": 0.5325,
+        "share_all_three_removed": 0.0,
+        "median_removal_lap": 12.5,
+        "share_any_reversion": 0.0425,
+        "share_cap_reached": 0.0,
+        "share_censored": 0.03,
+        "null_criteria": 0
+      },
+      "curves": {
+        "braking": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "corner_speed": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.015,
+          0.06,
+          0.125,
+          0.22,
+          0.275,
+          0.325,
+          0.35,
+          0.3825,
+          0.39,
+          0.405
+        ],
+        "apex": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.005,
+          0.0475,
+          0.09,
+          0.1725,
+          0.21,
+          0.235,
+          0.1925,
+          0.21,
+          0.225,
+          0.285,
+          0.2925
+        ]
+      }
+    },
+    "synchronised_regressor": {
+      "description": "Improves, then every corner regresses in the SAME lap. Only synthetic streams do this, which is why the one-lap reversion target applies here and nowhere else.",
+      "streams": 400,
+      "stats": {
+        "mean_elements_removed": 0.0,
+        "share_any_fade": 0.015,
+        "share_all_three_removed": 0.0,
+        "median_removal_lap": null,
+        "share_any_reversion": 0.015,
+        "share_cap_reached": 0.0,
+        "share_censored": 0.0,
+        "null_criteria": 0
+      },
+      "curves": {
+        "braking": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "corner_speed": [
+          0.0,
+          0.0,
+          0.0,
+          0.0025,
+          0.105,
+          0.735,
+          0.9875,
+          0.8925,
+          0.255,
+          0.0025,
+          0.0025,
+          0.0025,
+          0.0025,
+          0.0025,
+          0.0025
+        ],
+        "apex": [
+          0.0,
+          0.0,
+          0.0,
+          0.0125,
+          0.2525,
+          0.7575,
+          0.9625,
+          0.7625,
+          0.23,
+          0.02,
+          0.015,
+          0.0125,
+          0.0125,
+          0.0125,
+          0.0125
+        ]
+      }
+    },
+    "staggered_regressor": {
+      "description": "Improves, then regresses one corner per lap - the honest shape of real regression, and the stream eval plan v2 added to keep the reversion target from being stated against synthetic behaviour only.",
+      "streams": 400,
+      "stats": {
+        "mean_elements_removed": 0.003,
+        "share_any_fade": 0.4425,
+        "share_all_three_removed": 0.0,
+        "median_removal_lap": 9,
+        "share_any_reversion": 0.4425,
+        "share_cap_reached": 0.0,
+        "share_censored": 0.0,
+        "null_criteria": 0
+      },
+      "curves": {
+        "braking": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "corner_speed": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.1075,
+          0.7125,
+          0.985,
+          1.04,
+          1.035,
+          0.8775,
+          0.395,
+          0.2375,
+          0.22,
+          0.22,
+          0.22
+        ],
+        "apex": [
+          0.0,
+          0.0,
+          0.0,
+          0.0075,
+          0.235,
+          0.79,
+          0.9775,
+          1.11,
+          1.07,
+          0.935,
+          0.5175,
+          0.335,
+          0.3025,
+          0.3025,
+          0.3025
+        ]
+      }
+    }
+  },
+  "config_id": "frozen-g1",
+  "config_sha256": "c10fadc8ad8518902d4a7e3db1a581afbc003598a95fd47d0d07dbf30b345650",
+  "seed": "trace-g1"
+}

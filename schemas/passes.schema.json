@@ -33,6 +33,17 @@
         "enum": ["wheels_outside", "wall_contact", "pit_transition", "first_lap", "incomplete"]
       }
     },
+    "max_wheels_outside": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 4,
+      "description": "Worst wheels-outside count seen during the pass. The raw input to the wheels_outside validity gate, stamped so the gate's decision is reconstructible from the logs alone."
+    },
+    "max_collision_depth_m": {
+      "type": "number",
+      "minimum": 0,
+      "description": "Deepest collision recorded during the pass, metres (ac.StateCar.collisionDepth), 0 when the car never touched anything. The raw input to the wall_contact validity gate. Logged because the gate is a THRESHOLD on this value, not a test for non-zero: a kerb graze is a collision of a few millimetres that costs no speed and is simply fast driving, while a barrier strike is deep and expensive. Without this field a wall_contact flag can only be second-guessed by inference from speed traces, which is how the first false positives were found."
+    },
     "metrics": {
       "type": "object",
       "additionalProperties": false,
@@ -40,29 +51,72 @@
         "brake_initiation_distance_m",
         "min_corner_speed_kmh",
         "speed_envelope_deviation_kmh",
-        "apex_lateral_distance_m"
+        "apex_rms_m"
       ],
       "properties": {
         "brake_initiation_distance_m": {
           "type": ["number", "null"],
-          "description": "Signed distance from reference brake point at brake initiation (positive = early)."
+          "description": "Signed distance from the reference brake point at brake initiation, metres of track length (positive = EARLIER than the reference). null when no sustained brake application was found inside the corner's braking zone, or when the corner has no braking zone at all — a null is NO EVIDENCE, not a failure, and the pass does not enter the braking element's evidence window (M4 decision)."
+        },
+        "brake_initiation": {
+          "oneOf": [
+            {
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["t", "spline_pos"],
+              "properties": {
+                "t": { "type": "number", "minimum": 0 },
+                "spline_pos": { "type": "number", "minimum": 0, "maximum": 1 }
+              }
+            },
+            { "type": "null" }
+          ],
+          "description": "The RAW brake-initiation sample (impl plan section 2.1.4): the session-clock time and spline position of the detected event. Stamped so the pilot's event-log audit can reconstruct the braking gate's exact input from the logs alone — the 20 Hz tick log cannot resolve it, because the evaluator consumes per-frame samples."
+        },
+        "brake_rolling_mean_distance_m": {
+          "type": ["number", "null"],
+          "description": "Rolling mean of this corner's PRIOR brake-initiation distances (the passes forming the current qualification window), which is the consistency gate's datum. null on the first pass of a corner, where there is no prior sample and the consistency gate is vacuously met."
         },
         "brake_modulation": {
-          "type": ["object", "null"],
-          "description": "Brake-pressure modulation summary (supporting signal; exact fields settled in M4)."
+          "oneOf": [
+            {
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["peak", "releases"],
+              "properties": {
+                "peak": { "type": "number", "minimum": 0, "maximum": 1, "description": "Peak brake input over the pass." },
+                "releases": { "type": "integer", "minimum": 0, "description": "Times brake input fell back below the initiation threshold after the initiation event, within the pass." }
+              }
+            },
+            { "type": "null" }
+          ],
+          "description": "Brake-pressure modulation summary. DESCRIPTIVE ONLY — framing v6 logs it and does not gate on it. null when no brake initiation was detected."
         },
         "min_corner_speed_kmh": { "type": ["number", "null"] },
         "speed_envelope_deviation_kmh": {
           "type": ["number", "null"],
           "description": "min_corner_speed minus reference mean (signed)."
         },
-        "apex_lateral_distance_m": {
+        "apex_rms_m": {
           "type": ["number", "null"],
-          "description": "Lateral distance from the reference apex line at the apex gate (worst gate for compound corners)."
+          "description": "RMS lateral deviation from the expert apex line over the corner's apex window(s), metres. Never a single-point sample at the gate (framing v6: that is noisy and gameable). A compound corner's several windows yield ONE value, taken over their union. null when the pass did not cover a whole window."
         }
       }
     },
-    "criteria": { "$ref": "#/definitions/perElementNullableBool" },
+    "criteria": {
+      "allOf": [{ "$ref": "#/definitions/perElementNullableBool" }],
+      "description": "Per-pass, per-element criterion booleans — the unit the controller's 3-of-4 rule consumes. null means the metric was not measurable on this pass (no evidence): the pass does not enter that element's evidence window and cannot contribute a consecutive failure."
+    },
+    "braking_gates": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["accuracy", "consistency"],
+      "properties": {
+        "accuracy": { "type": ["boolean", "null"], "description": "Brake-initiation distance inside the corner's tolerance band." },
+        "consistency": { "type": ["boolean", "null"], "description": "Brake-initiation distance within the consistency delta of the corner's rolling mean. Vacuously true on a corner's first pass." }
+      },
+      "description": "The braking criterion's two gates, logged SEPARATELY (eval plan v2, Session 2 outputs). criteria.braking is their conjunction. Separating them is what makes the 'consistent but inaccurate' learner — reliably 30 m early — visible in the data rather than only in the design rationale."
+    },
     "qualified": {
       "$ref": "#/definitions/perElementBool",
       "description": "Per-corner qualification state for this corner after this pass."

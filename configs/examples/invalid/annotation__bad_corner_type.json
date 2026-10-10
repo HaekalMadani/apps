@@ -9,9 +9,18 @@
       "entry_gate": 0.08,
       "exit_gate": 0.14,
       "zones": {
-        "braking": { "start": 0.06, "end": 0.1 },
-        "apex_gates": [0.11],
-        "corner_speed": { "start": 0.09, "end": 0.13 }
+        "braking": {
+          "start": 0.06,
+          "end": 0.1
+        },
+        "apex_gates": [
+          0.11
+        ],
+        "apex_window_half_m": 20.0,
+        "corner_speed": {
+          "start": 0.09,
+          "end": 0.13
+        }
       }
     }
   ]

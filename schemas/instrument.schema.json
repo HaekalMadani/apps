@@ -1,0 +1,155 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "trace/instrument.schema.json",
+  "title": "Instrument response file (instrument_<instrument>_<key>.json)",
+  "description": "One administration of one study instrument, saved alongside the block files in the session directory. The evaluation plan's after-every-session integrity check verifies that 'questionnaire files saved' — which is only checkable if the responses are machine-readable and schema-constrained, so they are files like every other output rather than paper that is transcribed later. DRAFT content: the item sets below mirror the constructs the evaluation plan already names (Phase 3) and are for review before ethics submission, not a validated scale (the exception is NASA-TLX, which is a published instrument used in its raw/unweighted form).\n\nNaming: `instrument_<instrument>_<key>.json`, where key is the block_id for block-scoped instruments (nasa_tlx, administered immediately after each training block) and `<participant_id>_s<session>` for session-scoped ones.",
+  "type": "object",
+  "required": ["schema_version", "instrument", "participant_id", "session", "recorded_at", "responses"],
+  "properties": {
+    "schema_version": { "const": 1 },
+    "instrument": {
+      "enum": ["pre_study", "nasa_tlx", "post_study", "interview"],
+      "description": "pre_study: session 1 intake (driving history, sim hours, league check against the inclusion criteria). nasa_tlx: immediately after each session-2 training block. post_study: the session-3 confidence and perceived-dependence questionnaire. interview: the session-3 semi-structured interview's metadata and file references (the content lives in the audio and notes files, not here)."
+    },
+    "participant_id": { "type": "string", "minLength": 1 },
+    "session": { "type": "integer", "minimum": 1, "maximum": 3 },
+    "block_id": {
+      "type": "string",
+      "description": "Required for nasa_tlx: the training block the ratings refer to. A TLX score with no block attached cannot be compared between conditions, which is the one thing the eval plan asks of it."
+    },
+    "recorded_at": { "$ref": "#/definitions/timestamp" },
+    "dry_run": {
+      "const": true,
+      "description": "Present and true only on a protocol dry run (M6, researcher as fake participant). Follows the dev_block/aborted pattern: its presence excludes the file from participant data."
+    },
+    "notes": { "type": "string" },
+    "responses": { "type": "object" }
+  },
+  "allOf": [
+    {
+      "if": { "properties": { "instrument": { "const": "nasa_tlx" } }, "required": ["instrument"] },
+      "then": {
+        "required": ["block_id"],
+        "properties": {
+          "responses": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["variant", "mental_demand", "physical_demand", "temporal_demand",
+                         "performance", "effort", "frustration"],
+            "properties": {
+              "variant": {
+                "const": "raw",
+                "description": "Raw (unweighted) NASA-TLX, i.e. RTLX: the six subscales are reported and averaged without the pairwise weighting procedure. Recorded explicitly so the thesis states which variant was used rather than leaving it to be inferred."
+              },
+              "mental_demand": { "$ref": "#/definitions/tlxScale" },
+              "physical_demand": { "$ref": "#/definitions/tlxScale" },
+              "temporal_demand": { "$ref": "#/definitions/tlxScale" },
+              "performance": { "$ref": "#/definitions/tlxScale" },
+              "effort": { "$ref": "#/definitions/tlxScale" },
+              "frustration": { "$ref": "#/definitions/tlxScale" }
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": { "properties": { "instrument": { "const": "pre_study" } }, "required": ["instrument"] },
+      "then": {
+        "properties": {
+          "responses": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["age_years", "sim_racing_hours_total", "league_participation",
+                         "eligibility_confirmed"],
+            "properties": {
+              "age_years": { "type": "integer", "minimum": 16, "maximum": 100 },
+              "sim_racing_hours_total": {
+                "type": "number",
+                "minimum": 0,
+                "description": "Inclusion criterion (framing v6 line 177): under 20 hours across any title."
+              },
+              "league_participation": {
+                "type": "boolean",
+                "description": "Inclusion criterion: must be false. Recorded rather than screened silently so an exclusion can be explained in the dataset README."
+              },
+              "titles_played": { "type": "array", "items": { "type": "string" } },
+              "gaming_hours_per_week": { "type": "number", "minimum": 0 },
+              "wheel_experience": { "enum": ["none", "some", "regular"] },
+              "holds_driving_licence": { "type": "boolean" },
+              "real_world_driving_years": { "type": "number", "minimum": 0 },
+              "eligibility_confirmed": {
+                "type": "boolean",
+                "description": "The experimenter's recorded decision at intake. Kept separate from the raw criteria so a disagreement between the two is visible at analysis instead of silently resolved."
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": { "properties": { "instrument": { "const": "post_study" } }, "required": ["instrument"] },
+      "then": {
+        "properties": {
+          "responses": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["confidence_overall", "confidence_braking", "confidence_corner_speed",
+                         "confidence_apex", "dependence_braking", "dependence_corner_speed",
+                         "dependence_apex", "noticed_fading"],
+            "properties": {
+              "confidence_overall": { "$ref": "#/definitions/likert7" },
+              "confidence_braking": { "$ref": "#/definitions/likert7" },
+              "confidence_corner_speed": { "$ref": "#/definitions/likert7" },
+              "confidence_apex": { "$ref": "#/definitions/likert7" },
+              "dependence_braking": { "$ref": "#/definitions/likert7" },
+              "dependence_corner_speed": { "$ref": "#/definitions/likert7" },
+              "dependence_apex": { "$ref": "#/definitions/likert7" },
+              "noticed_fading": {
+                "type": "boolean",
+                "description": "RQ3's alignment analysis turns on this: whether the participant noticed elements disappearing at all."
+              },
+              "noticed_when": { "type": "string" }
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": { "properties": { "instrument": { "const": "interview" } }, "required": ["instrument"] },
+      "then": {
+        "properties": {
+          "responses": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["consent_to_record", "duration_min"],
+            "properties": {
+              "consent_to_record": { "type": "boolean" },
+              "duration_min": { "type": "number", "minimum": 0 },
+              "audio_file": { "type": "string" },
+              "notes_file": { "type": "string" }
+            }
+          }
+        }
+      }
+    }
+  ],
+  "additionalProperties": false,
+  "definitions": {
+    "timestamp": {
+      "type": "string",
+      "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}$"
+    },
+    "tlxScale": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 100,
+      "description": "NASA-TLX subscale, 0-100 in steps of 5 (the standard 21-point scale read onto 0-100)."
+    },
+    "likert7": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 7,
+      "description": "7-point Likert item, 1 = strongly disagree, 7 = strongly agree."
+    }
+  }
+}

@@ -23,6 +23,8 @@ FORMATS = {
     "ticks_columns": "ticks_columns.schema.json",
     "passes": "passes.schema.json",
     "fades": "fades.schema.json",
+    "golden_trace": "golden_trace.schema.json",
+    "instrument": "instrument.schema.json",
 }
 
 # Formats whose validator also exists in lua/trace_rt/lib/validate.lua.

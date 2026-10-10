@@ -1,0 +1,121 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="926" height="728" viewBox="0 0 926 728" font-family="Helvetica,Arial,sans-serif">
+<rect width="100%" height="100%" fill="#ffffff"/>
+<text x="58" y="26" font-size="15" font-weight="bold">Simulated fade trajectories by learner type</text>
+<text x="58" y="44" font-size="10.5" fill="#555">Mean controller stage over 400 streams per type, 15 laps, config "frozen-g1". Higher is less scaffolding.</text>
+<rect x="848" y="18" width="10" height="10" fill="#2a63b0"/>
+<text x="863" y="27" font-size="10.5">apex</text>
+<rect x="726" y="18" width="10" height="10" fill="#1d7a54"/>
+<text x="741" y="27" font-size="10.5">corner speed</text>
+<rect x="644" y="18" width="10" height="10" fill="#c8501e"/>
+<text x="659" y="27" font-size="10.5">braking</text>
+<text x="58" y="54" font-size="11.5" font-weight="bold">fast improver</text>
+<rect x="58" y="62" width="260" height="170" fill="#fbfbfb" stroke="#dddddd"/>
+<line x1="58" y1="232.0" x2="318" y2="232.0" stroke="#eeeeee"/>
+<text x="52" y="235.0" font-size="9" text-anchor="end" fill="#666">full</text>
+<line x1="58" y1="175.3" x2="318" y2="175.3" stroke="#eeeeee"/>
+<text x="52" y="178.3" font-size="9" text-anchor="end" fill="#666">reduced</text>
+<line x1="58" y1="118.7" x2="318" y2="118.7" stroke="#eeeeee"/>
+<text x="52" y="121.7" font-size="9" text-anchor="end" fill="#666">probe</text>
+<line x1="58" y1="62.0" x2="318" y2="62.0" stroke="#eeeeee"/>
+<text x="52" y="65.0" font-size="9" text-anchor="end" fill="#666">removed</text>
+<polyline points="58.0,232.0 76.6,232.0 95.1,232.0 113.7,232.0 132.3,232.0 150.9,232.0 169.4,232.0 188.0,232.0 206.6,231.7 225.1,231.0 243.7,229.6 262.3,228.6 280.9,228.2 299.4,228.2 318.0,228.6" fill="none" stroke="#c8501e" stroke-width="1.8" stroke-linejoin="round"/>
+<polyline points="58.0,232.0 76.6,232.0 95.1,232.0 113.7,232.0 132.3,226.8 150.9,189.9 169.4,177.0 188.0,170.8 206.6,135.4 225.1,121.8 243.7,115.0 262.3,79.4 280.9,65.8 299.4,63.8 318.0,63.3" fill="none" stroke="#1d7a54" stroke-width="1.8" stroke-linejoin="round"/>
+<polyline points="58.0,232.0 76.6,232.0 95.1,232.0 113.7,231.3 132.3,219.2 150.9,188.4 169.4,176.6 188.0,165.3 206.6,140.1 225.1,125.8 243.7,113.4 262.3,87.1 280.9,73.0 299.4,69.6 318.0,67.7" fill="none" stroke="#2a63b0" stroke-width="1.8" stroke-linejoin="round"/>
+<text x="58.0" y="245" font-size="9" text-anchor="middle" fill="#666">0</text>
+<text x="188.0" y="245" font-size="9" text-anchor="middle" fill="#666">7</text>
+<text x="318.0" y="245" font-size="9" text-anchor="middle" fill="#666">14</text>
+<text x="188.0" y="258" font-size="9" text-anchor="middle" fill="#666">lap</text>
+<text x="58" y="272" font-size="9" fill="#444">removed 1.88/3 mean, any fade 100%, reversion 7%</text>
+<text x="352" y="54" font-size="11.5" font-weight="bold">typical improver</text>
+<rect x="352" y="62" width="260" height="170" fill="#fbfbfb" stroke="#dddddd"/>
+<line x1="352" y1="232.0" x2="612" y2="232.0" stroke="#eeeeee"/>
+<line x1="352" y1="175.3" x2="612" y2="175.3" stroke="#eeeeee"/>
+<line x1="352" y1="118.7" x2="612" y2="118.7" stroke="#eeeeee"/>
+<line x1="352" y1="62.0" x2="612" y2="62.0" stroke="#eeeeee"/>
+<polyline points="352.0,232.0 370.6,232.0 389.1,232.0 407.7,232.0 426.3,232.0 444.9,232.0 463.4,232.0 482.0,232.0 500.6,232.0 519.1,232.0 537.7,232.0 556.3,231.9 574.9,231.0 593.4,230.2 612.0,229.4" fill="none" stroke="#c8501e" stroke-width="1.8" stroke-linejoin="round"/>
+<polyline points="352.0,232.0 370.6,232.0 389.1,232.0 407.7,232.0 426.3,232.0 444.9,231.0 463.4,221.7 482.0,197.2 500.6,181.6 519.1,169.2 537.7,147.1 556.3,128.9 574.9,115.4 593.4,91.5 612.0,73.8" fill="none" stroke="#1d7a54" stroke-width="1.8" stroke-linejoin="round"/>
+<polyline points="352.0,232.0 370.6,232.0 389.1,232.0 407.7,232.0 426.3,231.7 444.9,226.9 463.4,207.6 482.0,188.9 500.6,177.3 519.1,161.9 537.7,142.0 556.3,128.2 574.9,108.8 593.4,88.6 612.0,77.3" fill="none" stroke="#2a63b0" stroke-width="1.8" stroke-linejoin="round"/>
+<text x="352.0" y="245" font-size="9" text-anchor="middle" fill="#666">0</text>
+<text x="482.0" y="245" font-size="9" text-anchor="middle" fill="#666">7</text>
+<text x="612.0" y="245" font-size="9" text-anchor="middle" fill="#666">14</text>
+<text x="482.0" y="258" font-size="9" text-anchor="middle" fill="#666">lap</text>
+<text x="352" y="272" font-size="9" fill="#444">removed 1.55/3 mean, any fade 100%, reversion 5%</text>
+<text x="646" y="54" font-size="11.5" font-weight="bold">slow improver</text>
+<rect x="646" y="62" width="260" height="170" fill="#fbfbfb" stroke="#dddddd"/>
+<line x1="646" y1="232.0" x2="906" y2="232.0" stroke="#eeeeee"/>
+<line x1="646" y1="175.3" x2="906" y2="175.3" stroke="#eeeeee"/>
+<line x1="646" y1="118.7" x2="906" y2="118.7" stroke="#eeeeee"/>
+<line x1="646" y1="62.0" x2="906" y2="62.0" stroke="#eeeeee"/>
+<polyline points="646.0,232.0 664.6,232.0 683.1,232.0 701.7,232.0 720.3,232.0 738.9,232.0 757.4,232.0 776.0,232.0 794.6,232.0 813.1,232.0 831.7,232.0 850.3,232.0 868.9,232.0 887.4,232.0 906.0,232.0" fill="none" stroke="#c8501e" stroke-width="1.8" stroke-linejoin="round"/>
+<polyline points="646.0,232.0 664.6,232.0 683.1,232.0 701.7,232.0 720.3,232.0 738.9,232.0 757.4,232.0 776.0,232.0 794.6,231.9 813.1,231.6 831.7,230.3 850.3,227.9 868.9,220.8 887.4,212.4 906.0,199.0" fill="none" stroke="#1d7a54" stroke-width="1.8" stroke-linejoin="round"/>
+<polyline points="646.0,232.0 664.6,232.0 683.1,232.0 701.7,232.0 720.3,232.0 738.9,232.0 757.4,232.0 776.0,232.0 794.6,230.3 813.1,226.2 831.7,222.1 850.3,215.6 868.9,204.4 887.4,191.6 906.0,180.2" fill="none" stroke="#2a63b0" stroke-width="1.8" stroke-linejoin="round"/>
+<text x="646.0" y="245" font-size="9" text-anchor="middle" fill="#666">0</text>
+<text x="776.0" y="245" font-size="9" text-anchor="middle" fill="#666">7</text>
+<text x="906.0" y="245" font-size="9" text-anchor="middle" fill="#666">14</text>
+<text x="776.0" y="258" font-size="9" text-anchor="middle" fill="#666">lap</text>
+<text x="646" y="272" font-size="9" fill="#444">removed 0.01/3 mean, any fade 89%, reversion 0%</text>
+<text x="58" y="282" font-size="11.5" font-weight="bold">non improver</text>
+<rect x="58" y="290" width="260" height="170" fill="#fbfbfb" stroke="#dddddd"/>
+<line x1="58" y1="460.0" x2="318" y2="460.0" stroke="#eeeeee"/>
+<text x="52" y="463.0" font-size="9" text-anchor="end" fill="#666">full</text>
+<line x1="58" y1="403.3" x2="318" y2="403.3" stroke="#eeeeee"/>
+<text x="52" y="406.3" font-size="9" text-anchor="end" fill="#666">reduced</text>
+<line x1="58" y1="346.7" x2="318" y2="346.7" stroke="#eeeeee"/>
+<text x="52" y="349.7" font-size="9" text-anchor="end" fill="#666">probe</text>
+<line x1="58" y1="290.0" x2="318" y2="290.0" stroke="#eeeeee"/>
+<text x="52" y="293.0" font-size="9" text-anchor="end" fill="#666">removed</text>
+<polyline points="58.0,460.0 76.6,460.0 95.1,460.0 113.7,460.0 132.3,460.0 150.9,460.0 169.4,460.0 188.0,460.0 206.6,460.0 225.1,460.0 243.7,460.0 262.3,460.0 280.9,460.0 299.4,460.0 318.0,460.0" fill="none" stroke="#c8501e" stroke-width="1.8" stroke-linejoin="round"/>
+<polyline points="58.0,460.0 76.6,460.0 95.1,460.0 113.7,460.0 132.3,460.0 150.9,460.0 169.4,460.0 188.0,460.0 206.6,460.0 225.1,460.0 243.7,460.0 262.3,460.0 280.9,460.0 299.4,460.0 318.0,460.0" fill="none" stroke="#1d7a54" stroke-width="1.8" stroke-linejoin="round"/>
+<polyline points="58.0,460.0 76.6,460.0 95.1,460.0 113.7,460.0 132.3,460.0 150.9,460.0 169.4,460.0 188.0,460.0 206.6,460.0 225.1,460.0 243.7,460.0 262.3,460.0 280.9,460.0 299.4,460.0 318.0,460.0" fill="none" stroke="#2a63b0" stroke-width="1.8" stroke-linejoin="round"/>
+<text x="58.0" y="473" font-size="9" text-anchor="middle" fill="#666">0</text>
+<text x="188.0" y="473" font-size="9" text-anchor="middle" fill="#666">7</text>
+<text x="318.0" y="473" font-size="9" text-anchor="middle" fill="#666">14</text>
+<text x="188.0" y="486" font-size="9" text-anchor="middle" fill="#666">lap</text>
+<text x="58" y="500" font-size="9" fill="#444">removed 0.00/3 mean, any fade 0%, reversion 0%</text>
+<text x="352" y="282" font-size="11.5" font-weight="bold">erratic</text>
+<rect x="352" y="290" width="260" height="170" fill="#fbfbfb" stroke="#dddddd"/>
+<line x1="352" y1="460.0" x2="612" y2="460.0" stroke="#eeeeee"/>
+<line x1="352" y1="403.3" x2="612" y2="403.3" stroke="#eeeeee"/>
+<line x1="352" y1="346.7" x2="612" y2="346.7" stroke="#eeeeee"/>
+<line x1="352" y1="290.0" x2="612" y2="290.0" stroke="#eeeeee"/>
+<polyline points="352.0,460.0 370.6,460.0 389.1,460.0 407.7,460.0 426.3,460.0 444.9,460.0 463.4,460.0 482.0,460.0 500.6,460.0 519.1,460.0 537.7,460.0 556.3,460.0 574.9,460.0 593.4,460.0 612.0,460.0" fill="none" stroke="#c8501e" stroke-width="1.8" stroke-linejoin="round"/>
+<polyline points="352.0,460.0 370.6,460.0 389.1,460.0 407.7,460.0 426.3,460.0 444.9,459.1 463.4,456.6 482.0,452.9 500.6,447.5 519.1,444.4 537.7,441.6 556.3,440.2 574.9,438.3 593.4,437.9 612.0,437.1" fill="none" stroke="#1d7a54" stroke-width="1.8" stroke-linejoin="round"/>
+<polyline points="352.0,460.0 370.6,460.0 389.1,460.0 407.7,460.0 426.3,459.7 444.9,457.3 463.4,454.9 482.0,450.2 500.6,448.1 519.1,446.7 537.7,449.1 556.3,448.1 574.9,447.2 593.4,443.9 612.0,443.4" fill="none" stroke="#2a63b0" stroke-width="1.8" stroke-linejoin="round"/>
+<text x="352.0" y="473" font-size="9" text-anchor="middle" fill="#666">0</text>
+<text x="482.0" y="473" font-size="9" text-anchor="middle" fill="#666">7</text>
+<text x="612.0" y="473" font-size="9" text-anchor="middle" fill="#666">14</text>
+<text x="482.0" y="486" font-size="9" text-anchor="middle" fill="#666">lap</text>
+<text x="352" y="500" font-size="9" fill="#444">removed 0.01/3 mean, any fade 53%, reversion 4%</text>
+<text x="646" y="282" font-size="11.5" font-weight="bold">synchronised regressor</text>
+<rect x="646" y="290" width="260" height="170" fill="#fbfbfb" stroke="#dddddd"/>
+<line x1="646" y1="460.0" x2="906" y2="460.0" stroke="#eeeeee"/>
+<line x1="646" y1="403.3" x2="906" y2="403.3" stroke="#eeeeee"/>
+<line x1="646" y1="346.7" x2="906" y2="346.7" stroke="#eeeeee"/>
+<line x1="646" y1="290.0" x2="906" y2="290.0" stroke="#eeeeee"/>
+<polyline points="646.0,460.0 664.6,460.0 683.1,460.0 701.7,460.0 720.3,460.0 738.9,460.0 757.4,460.0 776.0,460.0 794.6,460.0 813.1,460.0 831.7,460.0 850.3,460.0 868.9,460.0 887.4,460.0 906.0,460.0" fill="none" stroke="#c8501e" stroke-width="1.8" stroke-linejoin="round"/>
+<polyline points="646.0,460.0 664.6,460.0 683.1,460.0 701.7,459.9 720.3,454.1 738.9,418.4 757.4,404.0 776.0,409.4 794.6,445.6 813.1,459.9 831.7,459.9 850.3,459.9 868.9,459.9 887.4,459.9 906.0,459.9" fill="none" stroke="#1d7a54" stroke-width="1.8" stroke-linejoin="round"/>
+<polyline points="646.0,460.0 664.6,460.0 683.1,460.0 701.7,459.3 720.3,445.7 738.9,417.1 757.4,405.5 776.0,416.8 794.6,447.0 813.1,458.9 831.7,459.1 850.3,459.3 868.9,459.3 887.4,459.3 906.0,459.3" fill="none" stroke="#2a63b0" stroke-width="1.8" stroke-linejoin="round"/>
+<text x="646.0" y="473" font-size="9" text-anchor="middle" fill="#666">0</text>
+<text x="776.0" y="473" font-size="9" text-anchor="middle" fill="#666">7</text>
+<text x="906.0" y="473" font-size="9" text-anchor="middle" fill="#666">14</text>
+<text x="776.0" y="486" font-size="9" text-anchor="middle" fill="#666">lap</text>
+<text x="646" y="500" font-size="9" fill="#444">removed 0.00/3 mean, any fade 2%, reversion 2%</text>
+<text x="58" y="510" font-size="11.5" font-weight="bold">staggered regressor</text>
+<rect x="58" y="518" width="260" height="170" fill="#fbfbfb" stroke="#dddddd"/>
+<line x1="58" y1="688.0" x2="318" y2="688.0" stroke="#eeeeee"/>
+<text x="52" y="691.0" font-size="9" text-anchor="end" fill="#666">full</text>
+<line x1="58" y1="631.3" x2="318" y2="631.3" stroke="#eeeeee"/>
+<text x="52" y="634.3" font-size="9" text-anchor="end" fill="#666">reduced</text>
+<line x1="58" y1="574.7" x2="318" y2="574.7" stroke="#eeeeee"/>
+<text x="52" y="577.7" font-size="9" text-anchor="end" fill="#666">probe</text>
+<line x1="58" y1="518.0" x2="318" y2="518.0" stroke="#eeeeee"/>
+<text x="52" y="521.0" font-size="9" text-anchor="end" fill="#666">removed</text>
+<polyline points="58.0,688.0 76.6,688.0 95.1,688.0 113.7,688.0 132.3,688.0 150.9,688.0 169.4,688.0 188.0,688.0 206.6,688.0 225.1,688.0 243.7,688.0 262.3,688.0 280.9,688.0 299.4,688.0 318.0,688.0" fill="none" stroke="#c8501e" stroke-width="1.8" stroke-linejoin="round"/>
+<polyline points="58.0,688.0 76.6,688.0 95.1,688.0 113.7,688.0 132.3,681.9 150.9,647.6 169.4,632.2 188.0,629.1 206.6,629.4 225.1,638.3 243.7,665.6 262.3,674.5 280.9,675.5 299.4,675.5 318.0,675.5" fill="none" stroke="#1d7a54" stroke-width="1.8" stroke-linejoin="round"/>
+<polyline points="58.0,688.0 76.6,688.0 95.1,688.0 113.7,687.6 132.3,674.7 150.9,643.2 169.4,632.6 188.0,625.1 206.6,627.4 225.1,635.0 243.7,658.7 262.3,669.0 280.9,670.9 299.4,670.9 318.0,670.9" fill="none" stroke="#2a63b0" stroke-width="1.8" stroke-linejoin="round"/>
+<text x="58.0" y="701" font-size="9" text-anchor="middle" fill="#666">0</text>
+<text x="188.0" y="701" font-size="9" text-anchor="middle" fill="#666">7</text>
+<text x="318.0" y="701" font-size="9" text-anchor="middle" fill="#666">14</text>
+<text x="188.0" y="714" font-size="9" text-anchor="middle" fill="#666">lap</text>
+<text x="58" y="728" font-size="9" fill="#444">removed 0.00/3 mean, any fade 44%, reversion 44%</text>
+</svg>

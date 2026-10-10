@@ -3,24 +3,88 @@
   "pair_id": "example_pair",
   "track": "example_track",
   "car": "example_car",
+  "track_length_m": 3200.0,
   "source_laps": {
     "ai_laps": 12,
     "human_laps": 12,
-    "ai_strength_pct": 98
+    "ai_strength_pct": 98,
+    "human_driver": "researcher (not a study participant)",
+    "setup": "default (car ships)",
+    "lap_time_cov_pct": 0.42
   },
   "corners": [
     {
       "corner_id": "T1",
       "source": "ai",
+      "contributing_laps": {
+        "clean_passes": 12,
+        "braking": 12,
+        "apex": 12,
+        "corner_speed": 12
+      },
       "braking": {
-        "world_pos": [120.5, 2.1, -340.2],
+        "world_pos": [
+          120.5,
+          2.1,
+          -340.2
+        ],
         "spline_pos": 0.072,
         "sigma_ref_m": 2.4
       },
       "apex": {
         "gates": [
-          { "world_pos": [98.3, 2.0, -310.7], "spline_pos": 0.11 }
+          {
+            "world_pos": [
+              98.3,
+              2.0,
+              -310.7
+            ],
+            "spline_pos": 0.11,
+            "line": [
+              {
+                "spline_pos": 0.10375,
+                "world_pos": [
+                  86.3,
+                  2.0,
+                  -326.7
+                ]
+              },
+              {
+                "spline_pos": 0.106875,
+                "world_pos": [
+                  92.3,
+                  2.0,
+                  -318.7
+                ]
+              },
+              {
+                "spline_pos": 0.11,
+                "world_pos": [
+                  98.3,
+                  2.0,
+                  -310.7
+                ]
+              },
+              {
+                "spline_pos": 0.113125,
+                "world_pos": [
+                  104.3,
+                  2.0,
+                  -302.7
+                ]
+              },
+              {
+                "spline_pos": 0.11625,
+                "world_pos": [
+                  110.3,
+                  2.0,
+                  -294.7
+                ]
+              }
+            ]
+          }
         ],
+        "mean_rms_m": 0.315,
         "sigma_ref_m": 0.35
       },
       "corner_speed": {
@@ -31,16 +95,125 @@
     {
       "corner_id": "T2",
       "source": "human",
+      "contributing_laps": {
+        "clean_passes": 12,
+        "braking": 12,
+        "apex": 12,
+        "corner_speed": 12
+      },
       "braking": {
-        "world_pos": [-220.0, 4.5, 80.1],
+        "world_pos": [
+          -220.0,
+          4.5,
+          80.1
+        ],
         "spline_pos": 0.378,
         "sigma_ref_m": 3.1
       },
       "apex": {
         "gates": [
-          { "world_pos": [-245.2, 4.4, 110.6], "spline_pos": 0.41 },
-          { "world_pos": [-260.8, 4.3, 140.2], "spline_pos": 0.445 }
+          {
+            "world_pos": [
+              -245.2,
+              4.4,
+              110.6
+            ],
+            "spline_pos": 0.41,
+            "line": [
+              {
+                "spline_pos": 0.40375,
+                "world_pos": [
+                  -257.2,
+                  4.4,
+                  94.6
+                ]
+              },
+              {
+                "spline_pos": 0.406875,
+                "world_pos": [
+                  -251.2,
+                  4.4,
+                  102.6
+                ]
+              },
+              {
+                "spline_pos": 0.41,
+                "world_pos": [
+                  -245.2,
+                  4.4,
+                  110.6
+                ]
+              },
+              {
+                "spline_pos": 0.413125,
+                "world_pos": [
+                  -239.2,
+                  4.4,
+                  118.6
+                ]
+              },
+              {
+                "spline_pos": 0.41625,
+                "world_pos": [
+                  -233.2,
+                  4.4,
+                  126.6
+                ]
+              }
+            ]
+          },
+          {
+            "world_pos": [
+              -260.8,
+              4.3,
+              140.2
+            ],
+            "spline_pos": 0.445,
+            "line": [
+              {
+                "spline_pos": 0.43875,
+                "world_pos": [
+                  -272.8,
+                  4.3,
+                  124.2
+                ]
+              },
+              {
+                "spline_pos": 0.441875,
+                "world_pos": [
+                  -266.8,
+                  4.3,
+                  132.2
+                ]
+              },
+              {
+                "spline_pos": 0.445,
+                "world_pos": [
+                  -260.8,
+                  4.3,
+                  140.2
+                ]
+              },
+              {
+                "spline_pos": 0.448125,
+                "world_pos": [
+                  -254.8,
+                  4.3,
+                  148.2
+                ]
+              },
+              {
+                "spline_pos": 0.45125,
+                "world_pos": [
+                  -248.8,
+                  4.3,
+                  156.2
+                ]
+              }
+            ]
+          }
         ],
+        "mean_rms_m": 0.45,
         "sigma_ref_m": 0.5
       },
       "corner_speed": {
@@ -51,15 +224,144 @@
     {
       "corner_id": "T3",
       "source": "ai",
+      "contributing_laps": {
+        "clean_passes": 12,
+        "apex": 12,
+        "corner_speed": 12
+      },
+      "apex": {
+        "gates": [
+          {
+            "world_pos": [
+              -80.0,
+              3.0,
+              260.5
+            ],
+            "spline_pos": 0.65,
+            "line": [
+              {
+                "spline_pos": 0.64375,
+                "world_pos": [
+                  -92.0,
+                  3.0,
+                  244.5
+                ]
+              },
+              {
+                "spline_pos": 0.646875,
+                "world_pos": [
+                  -86.0,
+                  3.0,
+                  252.5
+                ]
+              },
+              {
+                "spline_pos": 0.65,
+                "world_pos": [
+                  -80.0,
+                  3.0,
+                  260.5
+                ]
+              },
+              {
+                "spline_pos": 0.653125,
+                "world_pos": [
+                  -74.0,
+                  3.0,
+                  268.5
+                ]
+              },
+              {
+                "spline_pos": 0.65625,
+                "world_pos": [
+                  -68.0,
+                  3.0,
+                  276.5
+                ]
+              }
+            ]
+          }
+        ],
+        "mean_rms_m": 0.36,
+        "sigma_ref_m": 0.4
+      },
+      "corner_speed": {
+        "mean_kmh": 156.0,
+        "sigma_ref_kmh": 2.6
+      }
+    },
+    {
+      "corner_id": "T4",
+      "source": "ai",
+      "contributing_laps": {
+        "clean_passes": 12,
+        "braking": 12,
+        "apex": 12,
+        "corner_speed": 12
+      },
       "braking": {
-        "world_pos": [40.7, 1.2, 410.9],
+        "world_pos": [
+          40.7,
+          1.2,
+          410.9
+        ],
         "spline_pos": 0.962,
         "sigma_ref_m": 2.0
       },
       "apex": {
         "gates": [
-          { "world_pos": [12.4, 1.1, 432.0], "spline_pos": 0.005 }
+          {
+            "world_pos": [
+              12.4,
+              1.1,
+              432.0
+            ],
+            "spline_pos": 0.005,
+            "line": [
+              {
+                "spline_pos": 0.99875,
+                "world_pos": [
+                  0.4,
+                  1.1,
+                  416.0
+                ]
+              },
+              {
+                "spline_pos": 0.001875,
+                "world_pos": [
+                  6.4,
+                  1.1,
+                  424.0
+                ]
+              },
+              {
+                "spline_pos": 0.005,
+                "world_pos": [
+                  12.4,
+                  1.1,
+                  432.0
+                ]
+              },
+              {
+                "spline_pos": 0.008125,
+                "world_pos": [
+                  18.4,
+                  1.1,
+                  440.0
+                ]
+              },
+              {
+                "spline_pos": 0.01125,
+                "world_pos": [
+                  24.4,
+                  1.1,
+                  448.0
+                ]
+              }
+            ]
+          }
         ],
+        "mean_rms_m": 0.27,
         "sigma_ref_m": 0.3
       },
       "corner_speed": {

@@ -1,0 +1,6078 @@
+{
+  "grid": {
+    "band_floors.braking_m": [
+      5.0,
+      8.0,
+      12.0,
+      16.0
+    ],
+    "band_floors.corner_speed_kmh": [
+      3.0,
+      4.0,
+      5.0
+    ],
+    "band_floors.apex_m": [
+      0.5,
+      0.8,
+      1.2
+    ],
+    "criteria.consistency_delta_ratio": [
+      0.5,
+      0.75,
+      1.0,
+      1.5
+    ]
+  },
+  "streams_per_type_per_pair": 25,
+  "seed": "trace-g1",
+  "candidates": [
+    {
+      "params": {
+        "band_floors.braking_m": 5.0,
+        "band_floors.corner_speed_kmh": 3.0,
+        "band_floors.apex_m": 0.5,
+        "criteria.consistency_delta_ratio": 0.5
+      },
+      "looseness": 4.0,
+      "targets": [
+        {
+          "id": "typical_improver_traverses",
+          "met": false,
+          "measured": {
+            "share_traversing_2_of_3": 0.2,
+            "median_elements_removed": 1.0
+          }
+        },
+        {
+          "id": "non_improver_never_fades",
+          "met": true,
+          "measured": {
+            "share_with_any_fade": 0.0
+          }
+        },
+        {
+          "id": "regression_reverts_promptly",
+          "met": true,
+          "measured": {
+            "synchronised_median_excess_laps": 0,
+            "staggered_median_excess_laps": -1.0,
+            "synchronised_share_at_the_floor": 0.6552,
+            "staggered_share_at_the_floor": 0.8571,
+            "synchronised_median_lag_from_first_onset": 1,
+            "staggered_median_lag_from_first_onset": 2.0,
+            "n_synchronised_reversions": 87,
+            "n_staggered_reversions": 98,
+            "share_removed_despite_regression": 0.0
+          }
+        }
+      ],
+      "all_met": false
+    },
+    {
+      "params": {
+        "band_floors.braking_m": 5.0,
+        "band_floors.corner_speed_kmh": 3.0,
+        "band_floors.apex_m": 0.5,
+        "criteria.consistency_delta_ratio": 0.75
+      },
+      "looseness": 4.5,
+      "targets": [
+        {
+          "id": "typical_improver_traverses",
+          "met": false,
+          "measured": {
+            "share_traversing_2_of_3": 0.2,
+            "median_elements_removed": 1.0
+          }
+        },
+        {
+          "id": "non_improver_never_fades",
+          "met": true,
+          "measured": {
+            "share_with_any_fade": 0.0
+          }
+        },
+        {
+          "id": "regression_reverts_promptly",
+          "met": true,
+          "measured": {
+            "synchronised_median_excess_laps": 0,
+            "staggered_median_excess_laps": -1.0,
+            "synchronised_share_at_the_floor": 0.6552,
+            "staggered_share_at_the_floor": 0.8571,
+            "synchronised_median_lag_from_first_onset": 1,
+            "staggered_median_lag_from_first_onset": 2.0,
+            "n_synchronised_reversions": 87,
+            "n_staggered_reversions": 98,
+            "share_removed_despite_regression": 0.0
+          }
+        }
+      ],
+      "all_met": false
+    },
+    {
+      "params": {
+        "band_floors.braking_m": 5.0,
+        "band_floors.corner_speed_kmh": 3.0,
+        "band_floors.apex_m": 0.5,
+        "criteria.consistency_delta_ratio": 1.0
+      },
+      "looseness": 5.0,
+      "targets": [
+        {
+          "id": "typical_improver_traverses",
+          "met": false,
+          "measured": {
+            "share_traversing_2_of_3": 0.2,
+            "median_elements_removed": 1.0
+          }
+        },
+        {
+          "id": "non_improver_never_fades",
+          "met": true,
+          "measured": {
+            "share_with_any_fade": 0.0
+          }
+        },
+        {
+          "id": "regression_reverts_promptly",
+          "met": true,
+          "measured": {
+            "synchronised_median_excess_laps": 0,
+            "staggered_median_excess_laps": -1,
+            "synchronised_share_at_the_floor": 0.6552,
+            "staggered_share_at_the_floor": 0.8485,
+            "synchronised_median_lag_from_first_onset": 1,
+            "staggered_median_lag_from_first_onset": 2,
+            "n_synchronised_reversions": 87,
+            "n_staggered_reversions": 99,
+            "share_removed_despite_regression": 0.0
+          }
+        }
+      ],
+      "all_met": false
+    },
+    {
+      "params": {
+        "band_floors.braking_m": 5.0,
+        "band_floors.corner_speed_kmh": 3.0,
+        "band_floors.apex_m": 0.5,
+        "criteria.consistency_delta_ratio": 1.5
+      },
+      "looseness": 6.0,
+      "targets": [
+        {
+          "id": "typical_improver_traverses",
+          "met": false,
+          "measured": {
+            "share_traversing_2_of_3": 0.24,
+            "median_elements_removed": 1.0
+          }
+        },
+        {
+          "id": "non_improver_never_fades",
+          "met": true,
+          "measured": {
+            "share_with_any_fade": 0.0
+          }
+        },
+        {
+          "id": "regression_reverts_promptly",
+          "met": true,
+          "measured": {
+            "synchronised_median_excess_laps": 0,
+            "staggered_median_excess_laps": -1,
+            "synchronised_share_at_the_floor": 0.6264,
+            "staggered_share_at_the_floor": 0.8252,
+            "synchronised_median_lag_from_first_onset": 1,
+            "staggered_median_lag_from_first_onset": 2,
+            "n_synchronised_reversions": 91,
+            "n_staggered_reversions": 103,
+            "share_removed_despite_regression": 0.0
+          }
+        }
+      ],
+      "all_met": false
+    },
+    {
+      "params": {
+        "band_floors.braking_m": 5.0,
+        "band_floors.corner_speed_kmh": 3.0,
+        "band_floors.apex_m": 0.8,
+        "criteria.consistency_delta_ratio": 0.5
+      },
+      "looseness": 4.6,
+      "targets": [
+        {
+          "id": "typical_improver_traverses",
+          "met": false,
+          "measured": {
+            "share_traversing_2_of_3": 0.22,
+            "median_elements_removed": 1.0
+          }
+        },
+        {
+          "id": "non_improver_never_fades",
+          "met": true,
+          "measured": {
+            "share_with_any_fade": 0.0
+          }
+        },
+        {
+          "id": "regression_reverts_promptly",
+          "met": false,
+          "measured": {
+            "synchronised_median_excess_laps": 0.0,
+            "staggered_median_excess_laps": -1,
+            "synchronised_share_at_the_floor": 0.5227,
+            "staggered_share_at_the_floor": 0.9231,
+            "synchronised_median_lag_from_first_onset": 1.0,
+            "staggered_median_lag_from_first_onset": 2,
+            "n_synchronised_reversions": 88,
+            "n_staggered_reversions": 91,
+            "share_removed_despite_regression": 0.02
+          }
+        }
+      ],
+      "all_met": false
+    },
+    {
+      "params": {
+        "band_floors.braking_m": 5.0,
+        "band_floors.corner_speed_kmh": 3.0,
+        "band_floors.apex_m": 0.8,
+        "criteria.consistency_delta_ratio": 0.75
+      },
+      "looseness": 5.1,
+      "targets": [
+        {
+          "id": "typical_improver_traverses",
+          "met": false,
+          "measured": {
+            "share_traversing_2_of_3": 0.22,
+            "median_elements_removed": 1.0
+          }
+        },
+        {
+          "id": "non_improver_never_fades",
+          "met": true,
+          "measured": {
+            "share_with_any_fade": 0.0
+          }
+        },
+        {
+          "id": "regression_reverts_promptly",
+          "met": false,
+          "measured": {
+            "synchronised_median_excess_laps": 0.0,
+            "staggered_median_excess_laps": -1,
+            "synchronised_share_at_the_floor": 0.5227,
+            "staggered_share_at_the_floor": 0.9231,
+            "synchronised_median_lag_from_first_onset": 1.0,
+            "staggered_median_lag_from_first_onset": 2,
+            "n_synchronised_reversions": 88,
+            "n_staggered_reversions": 91,
+            "share_removed_despite_regression": 0.02
+          }
+        }
+      ],
+      "all_met": false
+    },
+    {
+      "params": {
+        "band_floors.braking_m": 5.0,
+        "band_floors.corner_speed_kmh": 3.0,
+        "band_floors.apex_m": 0.8,
+        "criteria.consistency_delta_ratio": 1.0
+      },
+      "looseness": 5.6,
+      "targets": [
+        {
+          "id": "typical_improver_traverses",
+          "met": false,
+          "measured": {
+            "share_traversing_2_of_3": 0.22,
+            "median_elements_removed": 1.0
+          }
+        },
+        {
+          "id": "non_improver_never_fades",
+          "met": true,
+          "measured": {
+            "share_with_any_fade": 0.0
+          }
+        },
+        {
+          "id": "regression_reverts_promptly",
+          "met": false,
+          "measured": {
+            "synchronised_median_excess_laps": 0.0,
+            "staggered_median_excess_laps": -0.5,
+            "synchronised_share_at_the_floor": 0.5227,
+            "staggered_share_at_the_floor": 0.913,
+            "synchronised_median_lag_from_first_onset": 1.0,
+            "staggered_median_lag_from_first_onset": 2.5,
+            "n_synchronised_reversions": 88,
+            "n_staggered_reversions": 92,
+            "share_removed_despite_regression": 0.02
+          }
+        }
+      ],
+      "all_met": false
+    },
+    {
+      "params": {
+        "band_floors.braking_m": 5.0,
+        "band_floors.corner_speed_kmh": 3.0,
+        "band_floors.apex_m": 0.8,
+        "criteria.consistency_delta_ratio": 1.5
+      },
+      "looseness": 6.6,
+      "targets": [
+        {
+          "id": "typical_improver_traverses",
+          "met": false,
+          "measured": {
+            "share_traversing_2_of_3": 0.26,
+            "median_elements_removed": 1.0
+          }
+        },
+        {
+          "id": "non_improver_never_fades",
+          "met": true,
+          "measured": {
+            "share_with_any_fade": 0.0
+          }
+        },
+        {
+          "id": "regression_reverts_promptly",
+          "met": false,
+          "measured": {
+            "synchronised_median_excess_laps": 0.5,
+            "staggered_median_excess_laps": 0.0,
+            "synchronised_share_at_the_floor": 0.5,
+            "staggered_share_at_the_floor": 0.8854,
+            "synchronised_median_lag_from_first_onset": 1.5,
+            "staggered_median_lag_from_first_onset": 3.0,
+            "n_synchronised_reversions": 92,
+            "n_staggered_reversions": 96,
+            "share_removed_despite_regression": 0.02
+          }
+        }
+      ],
+      "all_met": false
+    },
+    {
+      "params": {
+        "band_floors.braking_m": 5.0,
+        "band_floors.corner_speed_kmh": 3.0,
+        "band_floors.apex_m": 1.2,
+        "criteria.consistency_delta_ratio": 0.5
+      },
+      "looseness": 5.4,
+      "targets": [
+        {
+          "id": "typical_improver_traverses",
+          "met": false,
+          "measured": {
+            "share_traversing_2_of_3": 0.22,
+            "median_elements_removed": 1.0
+          }
+        },
+        {
+          "id": "non_improver_never_fades",
+          "met": false,
+          "measured": {
+            "share_with_any_fade": 0.22
+          }
+        },
+        {
+          "id": "regression_reverts_promptly",
+          "met": false,
+          "measured": {
+            "synchronised_median_excess_laps": 1.0,
+            "staggered_median_excess_laps": -1.0,
+            "synchronised_share_at_the_floor": 0.3171,
+            "staggered_share_at_the_floor": 0.9194,
+            "synchronised_median_lag_from_first_onset": 2.0,
+            "staggered_median_lag_from_first_onset": 2.0,
+            "n_synchronised_reversions": 82,
+            "n_staggered_reversions": 62,
+            "share_removed_despite_regression": 0.18
+          }
+        }
+      ],
+      "all_met": false
+    },
+    {
+      "params": {
+        "band_floors.braking_m": 5.0,
+        "band_floors.corner_speed_kmh": 3.0,
+        "band_floors.apex_m": 1.2,
+        "criteria.consistency_delta_ratio": 0.75
+      },
+      "looseness": 5.9,
+      "targets": [
+        {
+          "id": "typical_improver_traverses",
+          "met": false,
+          "measured": {
+            "share_traversing_2_of_3": 0.22,
+            "median_elements_removed": 1.0
+          }
+        },
+        {
+          "id": "non_improver_never_fades",
+          "met": false,
+          "measured": {
+            "share_with_any_fade": 0.22
+          }
+        },
+        {
+          "id": "regression_reverts_promptly",
+          "met": false,
+          "measured": {
+            "synchronised_median_excess_laps": 1.0,
+            "staggered_median_excess_laps": -1.0,
+            "synchronised_share_at_the_floor": 0.3171,
+            "staggered_share_at_the_floor": 0.9194,
+            "synchronised_median_lag_from_first_onset": 2.0,
+            "staggered_median_lag_from_first_onset": 2.0,
+            "n_synchronised_reversions": 82,
+            "n_staggered_reversions": 62,
+            "share_removed_despite_regression": 0.18
+          }
+        }
+      ],
+      "all_met": false
+    },
+    {
+      "params": {
+        "band_floors.braking_m": 5.0,
+        "band_floors.corner_speed_kmh": 3.0,
+        "band_floors.apex_m": 1.2,
+        "criteria.consistency_delta_ratio": 1.0
+      },
+      "looseness": 6.4,
+      "targets": [
+        {
+          "id": "typical_improver_traverses",
+          "met": false,
+          "measured": {
+            "share_traversing_2_of_3": 0.22,
+            "median_elements_removed": 1.0
+          }
+        },
+        {
+          "id": "non_improver_never_fades",
+          "met": false,
+          "measured": {
+            "share_with_any_fade": 0.22
+          }
+        },
+        {
+          "id": "regression_reverts_promptly",
+          "met": false,
+          "measured": {
+            "synchronised_median_excess_laps": 1.0,
+            "staggered_median_excess_laps": -1,
+            "synchronised_share_at_the_floor": 0.3171,
+            "staggered_share_at_the_floor": 0.9048,
+            "synchronised_median_lag_from_first_onset": 2.0,
+            "staggered_median_lag_from_first_onset": 2,
+            "n_synchronised_reversions": 82,
+            "n_staggered_reversions": 63,
+            "share_removed_despite_regression": 0.18
+          }
+        }
+      ],
+      "all_met": false
+    },
+    {
+      "params": {
+        "band_floors.braking_m": 5.0,
+        "band_floors.corner_speed_kmh": 3.0,
+        "band_floors.apex_m": 1.2,
+        "criteria.consistency_delta_ratio": 1.5
+      },
+      "looseness": 7.4,
+      "targets": [
+        {
+          "id": "typical_improver_traverses",
+          "met": false,
+          "measured": {
+            "share_traversing_2_of_3": 0.26,
+            "median_elements_removed": 1.0
+          }
+        },
+        {
+          "id": "non_improver_never_fades",
+          "met": false,
+          "measured": {
+            "share_with_any_fade": 0.22
+          }
+        },
+        {
+          "id": "regression_reverts_promptly",
+          "met": false,
+          "measured": {
+            "synchronised_median_excess_laps": 1.0,
+            "staggered_median_excess_laps": -1,
+            "synchronised_share_at_the_floor": 0.3023,
+            "staggered_share_at_the_floor": 0.8657,
+            "synchronised_median_lag_from_first_onset": 2.0,
+            "staggered_median_lag_from_first_onset": 2,
+            "n_synchronised_reversions": 86,
+            "n_staggered_reversions": 67,
+            "share_removed_despite_regression": 0.18
+          }
+        }
+      ],
+      "all_met": false
+    },
+    {
+      "params": {
+        "band_floors.braking_m": 5.0,
+        "band_floors.corner_speed_kmh": 4.0,
+        "band_floors.apex_m": 0.5,
+        "criteria.consistency_delta_ratio": 0.5
+      },
+      "looseness": 4.333333,
+      "targets": [
+        {
+          "id": "typical_improver_traverses",
+          "met": true,
+          "measured": {
+            "share_traversing_2_of_3": 0.5,
+            "median_elements_removed": 1.5
+          }
+        },
+        {
+          "id": "non_improver_never_fades",
+          "met": true,
+          "measured": {
+            "share_with_any_fade": 0.0
+          }
+        },
+        {
+          "id": "regression_reverts_promptly",
+          "met": true,
+          "measured": {
+            "synchronised_median_excess_laps": 0.0,
+            "staggered_median_excess_laps": 0.0,
+            "synchronised_share_at_the_floor": 0.7755,
+            "staggered_share_at_the_floor": 0.83,
+            "synchronised_median_lag_from_first_onset": 1.0,
+            "staggered_median_lag_from_first_onset": 3.0,
+            "n_synchronised_reversions": 98,
+            "n_staggered_reversions": 100,
+            "share_removed_despite_regression": 0.0
+          }
+        }
+      ],
+      "all_met": true
+    },
+    {
+      "params": {
+        "band_floors.braking_m": 5.0,
+        "band_floors.corner_speed_kmh": 4.0,
+        "band_floors.apex_m": 0.5,
+        "criteria.consistency_delta_ratio": 0.75
+      },
+      "looseness": 4.833333,
+      "targets": [
+        {
+          "id": "typical_improver_traverses",
+          "met": true,
+          "measured": {
+            "share_traversing_2_of_3": 0.5,
+            "median_elements_removed": 1.5
+          }
+        },
+        {
+          "id": "non_improver_never_fades",
+          "met": true,
+          "measured": {
+            "share_with_any_fade": 0.0
+          }
+        },
+        {
+          "id": "regression_reverts_promptly",
+          "met": true,
+          "measured": {
+            "synchronised_median_excess_laps": 0.0,
+            "staggered_median_excess_laps": 0.0,
+            "synchronised_share_at_the_floor": 0.7755,
+            "staggered_share_at_the_floor": 0.83,
+            "synchronised_median_lag_from_first_onset": 1.0,
+            "staggered_median_lag_from_first_onset": 3.0,
+            "n_synchronised_reversions": 98,
+            "n_staggered_reversions": 100,
+            "share_removed_despite_regression": 0.0
+          }
+        }
+      ],
+      "all_met": true
+    },
+    {
+      "params": {
+        "band_floors.braking_m": 5.0,
+        "band_floors.corner_speed_kmh": 4.0,
+        "band_floors.apex_m": 0.5,
+        "criteria.consistency_delta_ratio": 1.0
+      },
+      "looseness": 5.333333,
+      "targets": [
+        {
+          "id": "typical_improver_traverses",
+          "met": true,
+          "measured": {
+            "share_traversing_2_of_3": 0.5,
+            "median_elements_removed": 1.5
+          }
+        },
+        {
+          "id": "non_improver_never_fades",
+          "met": true,
+          "measured": {
+            "share_with_any_fade": 0.0
+          }
+        },
+        {
+          "id": "regression_reverts_promptly",
+          "met": true,
+          "measured": {
+            "synchronised_median_excess_laps": 0.0,
+            "staggered_median_excess_laps": 0,
+            "synchronised_share_at_the_floor": 0.7755,
+            "staggered_share_at_the_floor": 0.8218,
+            "synchronised_median_lag_from_first_onset": 1.0,
+            "staggered_median_lag_from_first_onset": 3,
+            "n_synchronised_reversions": 98,
+            "n_staggered_reversions": 101,
+            "share_removed_despite_regression": 0.0
+          }
+        }
+      ],
+      "all_met": true
+    },
+    {
+      "params": {
+        "band_floors.braking_m": 5.0,
+        "band_floors.corner_speed_kmh": 4.0,
+        "band_floors.apex_m": 0.5,
+        "criteria.consistency_delta_ratio": 1.5
+      },
+      "looseness": 6.333333,
+      "targets": [
+        {
+          "id": "typical_improver_traverses",
+          "met": true,
+          "measured": {
+            "share_traversing_2_of_3": 0.5,
+            "median_elements_removed": 1.5
+          }
+        },
+        {
+          "id": "non_improver_never_fades",
+          "met": true,
+          "measured": {
+            "share_with_any_fade": 0.0
+          }
+        },
+        {
+          "id": "regression_reverts_promptly",
+          "met": true,
+          "measured": {
+            "synchronised_median_excess_laps": 0.0,
+            "staggered_median_excess_laps": 0,
+            "synchronised_share_at_the_floor": 0.7451,
+            "staggered_share_at_the_floor": 0.8,
+            "synchronised_median_lag_from_first_onset": 1.0,
+            "staggered_median_lag_from_first_onset": 3,
+            "n_synchronised_reversions": 102,
+            "n_staggered_reversions": 105,
+            "share_removed_despite_regression": 0.0
+          }
+        }
+      ],
+      "all_met": true
+    },
+    {
+      "params": {
+        "band_floors.braking_m": 5.0,
+        "band_floors.corner_speed_kmh": 4.0,
+        "band_floors.apex_m": 0.8,
+        "criteria.consistency_delta_ratio": 0.5
+      },
+      "looseness": 4.933333,
+      "targets": [
+        {
+          "id": "typical_improver_traverses",
+          "met": true,
+          "measured": {
+            "share_traversing_2_of_3": 0.74,
+            "median_elements_removed": 2.0
+          }
+        },
+        {
+          "id": "non_improver_never_fades",
+          "met": true,
+          "measured": {
+            "share_with_any_fade": 0.0
+          }
+        },
+        {
+          "id": "regression_reverts_promptly",
+          "met": false,
+          "measured": {
+            "synchronised_median_excess_laps": 0,
+            "staggered_median_excess_laps": 0,
+            "synchronised_share_at_the_floor": 0.6566,
+            "staggered_share_at_the_floor": 0.8925,
+            "synchronised_median_lag_from_first_onset": 1,
+            "staggered_median_lag_from_first_onset": 3,
+            "n_synchronised_reversions": 99,
+            "n_staggered_reversions": 93,
+            "share_removed_despite_regression": 0.02
+          }
+        }
+      ],
+      "all_met": false
+    },
+    {
+      "params": {
+        "band_floors.braking_m": 5.0,
+        "band_floors.corner_speed_kmh": 4.0,
+        "band_floors.apex_m": 0.8,
+        "criteria.consistency_delta_ratio": 0.75
+      },
+      "looseness": 5.433333,
+      "targets": [
+        {
+          "id": "typical_improver_traverses",
+          "met": true,
+          "measured": {
+            "share_traversing_2_of_3": 0.74,
+            "median_elements_removed": 2.0
+          }
+        },
+        {
+          "id": "non_improver_never_fades",
+          "met": true,
+          "measured": {
+            "share_with_any_fade": 0.0
+          }
+        },
+        {
+          "id": "regression_reverts_promptly",
+          "met": false,
+          "measured": {
+            "synchronised_median_excess_laps": 0,
+            "staggered_median_excess_laps": 0,
+            "synchronised_share_at_the_floor": 0.6566,
+            "staggered_share_at_the_floor": 0.8925,
+            "synchronised_median_lag_from_first_onset": 1,
+            "staggered_median_lag_from_first_onset": 3,
+            "n_synchronised_reversions": 99,
+            "n_staggered_reversions": 93,
+            "share_removed_despite_regression": 0.02
+          }
+        }
+      ],
+      "all_met": false
+    },
+    {
+      "params": {
+        "band_floors.braking_m": 5.0,
+        "band_floors.corner_speed_kmh": 4.0,
+        "band_floors.apex_m": 0.8,
+        "criteria.consistency_delta_ratio": 1.0
+      },
+      "looseness": 5.933333,
+      "targets": [
+        {
+          "id": "typical_improver_traverses",
+          "met": true,
+          "measured": {
+            "share_traversing_2_of_3": 0.74,
+            "median_elements_removed": 2.0
+          }
+        },
+        {
+          "id": "non_improver_never_fades",
+          "met": true,
+          "measured": {
+            "share_with_any_fade": 0.0
+          }
+        },
+        {
+          "id": "regression_reverts_promptly",
+          "met": false,
+          "measured": {
+            "synchronised_median_excess_laps": 0,
+            "staggered_median_excess_laps": 0.0,
+            "synchronised_share_at_the_floor": 0.6566,
+            "staggered_share_at_the_floor": 0.883,
+            "synchronised_median_lag_from_first_onset": 1,
+            "staggered_median_lag_from_first_onset": 3.0,
+            "n_synchronised_reversions": 99,
+            "n_staggered_reversions": 94,
+            "share_removed_despite_regression": 0.02
+          }
+        }
+      ],
+      "all_met": false
+    },
+    {
+      "params": {
+        "band_floors.braking_m": 5.0,
+        "band_floors.corner_speed_kmh": 4.0,
+        "band_floors.apex_m": 0.8,
+        "criteria.consistency_delta_ratio": 1.5
+      },
+      "looseness": 6.933333,
+      "targets": [
+        {
+          "id": "typical_improver_traverses",
+          "met": true,
+          "measured": {
+            "share_traversing_2_of_3": 0.74,
+            "median_elements_removed": 2.0
+          }
+        },
+        {
+          "id": "non_improver_never_fades",
+          "met": true,
+          "measured": {
+            "share_with_any_fade": 0.0
+          }
+        },
+        {
+          "id": "regression_reverts_promptly",
+          "met": false,
+          "measured": {
+            "synchronised_median_excess_laps": 0,
+            "staggered_median_excess_laps": 0.0,
+            "synchronised_share_at_the_floor": 0.6311,
+            "staggered_share_at_the_floor": 0.8571,
+            "synchronised_median_lag_from_first_onset": 1,
+            "staggered_median_lag_from_first_onset": 3.0,
+            "n_synchronised_reversions": 103,
+            "n_staggered_reversions": 98,
+            "share_removed_despite_regression": 0.02
+          }
+        }
+      ],
+      "all_met": false
+    },
+    {
+      "params": {
+        "band_floors.braking_m": 5.0,
+        "band_floors.corner_speed_kmh": 4.0,
+        "band_floors.apex_m": 1.2,
+        "criteria.consistency_delta_ratio": 0.5
+      },
+      "looseness": 5.733333,
+      "targets": [
+        {
+          "id": "typical_improver_traverses",
+          "met": true,
+          "measured": {
+            "share_traversing_2_of_3": 0.74,
+            "median_elements_removed": 2.0
+          }
+        },
+        {
+          "id": "non_improver_never_fades",
+          "met": false,
+          "measured": {
+            "share_with_any_fade": 0.22
+          }
+        },
+        {
+          "id": "regression_reverts_promptly",
+          "met": false,
+          "measured": {
+            "synchronised_median_excess_laps": 1,
+            "staggered_median_excess_laps": 0.0,
+            "synchronised_share_at_the_floor": 0.4839,
+            "staggered_share_at_the_floor": 0.875,
+            "synchronised_median_lag_from_first_onset": 2,
+            "staggered_median_lag_from_first_onset": 3.0,
+            "n_synchronised_reversions": 93,
+            "n_staggered_reversions": 64,
+            "share_removed_despite_regression": 0.18
+          }
+        }
+      ],
+      "all_met": false
+    },
+    {
+      "params": {
+        "band_floors.braking_m": 5.0,
+        "band_floors.corner_speed_kmh": 4.0,
+        "band_floors.apex_m": 1.2,
+        "criteria.consistency_delta_ratio": 0.75
+      },
+      "looseness": 6.233333,
+      "targets": [
+        {
+          "id": "typical_improver_traverses",
+          "met": true,
+          "measured": {
+            "share_traversing_2_of_3": 0.74,
+            "median_elements_removed": 2.0
+          }
+        },
+        {
+          "id": "non_improver_never_fades",
+          "met": false,
+          "measured": {
+            "share_with_any_fade": 0.22
+          }
+        },
+        {
+          "id": "regression_reverts_promptly",
+          "met": false,
+          "measured": {
+            "synchronised_median_excess_laps": 1,
+            "staggered_median_excess_laps": 0.0,
+            "synchronised_share_at_the_floor": 0.4839,
+            "staggered_share_at_the_floor": 0.875,
+            "synchronised_median_lag_from_first_onset": 2,
+            "staggered_median_lag_from_first_onset": 3.0,
+            "n_synchronised_reversions": 93,
+            "n_staggered_reversions": 64,
+            "share_removed_despite_regression": 0.18
+          }
+        }
+      ],
+      "all_met": false
+    },
+    {
+      "params": {
+        "band_floors.braking_m": 5.0,
+        "band_floors.corner_speed_kmh": 4.0,
+        "band_floors.apex_m": 1.2,
+        "criteria.consistency_delta_ratio": 1.0
+      },
+      "looseness": 6.733333,
+      "targets": [
+        {
+          "id": "typical_improver_traverses",
+          "met": true,
+          "measured": {
+            "share_traversing_2_of_3": 0.74,
+            "median_elements_removed": 2.0
+          }
+        },
+        {
+          "id": "non_improver_never_fades",
+          "met": false,
+          "measured": {
+            "share_with_any_fade": 0.22
+          }
+        },
+        {
+          "id": "regression_reverts_promptly",
+          "met": false,
+          "measured": {
+            "synchronised_median_excess_laps": 1,
+            "staggered_median_excess_laps": 0,
+            "synchronised_share_at_the_floor": 0.4839,
+            "staggered_share_at_the_floor": 0.8615,
+            "synchronised_median_lag_from_first_onset": 2,
+            "staggered_median_lag_from_first_onset": 3,
+            "n_synchronised_reversions": 93,
+            "n_staggered_reversions": 65,
+            "share_removed_despite_regression": 0.18
+          }
+        }
+      ],
+      "all_met": false
+    },
+    {
+      "params": {
+        "band_floors.braking_m": 5.0,
+        "band_floors.corner_speed_kmh": 4.0,
+        "band_floors.apex_m": 1.2,
+        "criteria.consistency_delta_ratio": 1.5
+      },
+      "looseness": 7.733333,
+      "targets": [
+        {
+          "id": "typical_improver_traverses",
+          "met": true,
+          "measured": {
+            "share_traversing_2_of_3": 0.74,
+            "median_elements_removed": 2.0
+          }
+        },
+        {
+          "id": "non_improver_never_fades",
+          "met": false,
+          "measured": {
+            "share_with_any_fade": 0.22
+          }
+        },
+        {
+          "id": "regression_reverts_promptly",
+          "met": false,
+          "measured": {
+            "synchronised_median_excess_laps": 1,
+            "staggered_median_excess_laps": 0,
+            "synchronised_share_at_the_floor": 0.4639,
+            "staggered_share_at_the_floor": 0.8261,
+            "synchronised_median_lag_from_first_onset": 2,
+            "staggered_median_lag_from_first_onset": 3,
+            "n_synchronised_reversions": 97,
+            "n_staggered_reversions": 69,
+            "share_removed_despite_regression": 0.18
+          }
+        }
+      ],
+      "all_met": false
+    },
+    {
+      "params": {
+        "band_floors.braking_m": 5.0,
+        "band_floors.corner_speed_kmh": 5.0,
+        "band_floors.apex_m": 0.5,
+        "criteria.consistency_delta_ratio": 0.5
+      },
+      "looseness": 4.666667,
+      "targets": [
+        {
+          "id": "typical_improver_traverses",
+          "met": true,
+          "measured": {
+            "share_traversing_2_of_3": 0.7,
+            "median_elements_removed": 2.0
+          }
+        },
+        {
+          "id": "non_improver_never_fades",
+          "met": true,
+          "measured": {
+            "share_with_any_fade": 0.0
+          }
+        },
+        {
+          "id": "regression_reverts_promptly",
+          "met": true,
+          "measured": {
+            "synchronised_median_excess_laps": 0.0,
+            "staggered_median_excess_laps": 0.0,
+            "synchronised_share_at_the_floor": 0.8265,
+            "staggered_share_at_the_floor": 0.78,
+            "synchronised_median_lag_from_first_onset": 1.0,
+            "staggered_median_lag_from_first_onset": 3.0,
+            "n_synchronised_reversions": 98,
+            "n_staggered_reversions": 100,
+            "share_removed_despite_regression": 0.0
+          }
+        }
+      ],
+      "all_met": true
+    },
+    {
+      "params": {
+        "band_floors.braking_m": 5.0,
+        "band_floors.corner_speed_kmh": 5.0,
+        "band_floors.apex_m": 0.5,
+        "criteria.consistency_delta_ratio": 0.75
+      },
+      "looseness": 5.166667,
+      "targets": [
+        {
+          "id": "typical_improver_traverses",
+          "met": true,
+          "measured": {
+            "share_traversing_2_of_3": 0.7,
+            "median_elements_removed": 2.0
+          }
+        },
+        {
+          "id": "non_improver_never_fades",
+          "met": true,
+          "measured": {
+            "share_with_any_fade": 0.0
+          }
+        },
+        {
+          "id": "regression_reverts_promptly",
+          "met": true,
+          "measured": {
+            "synchronised_median_excess_laps": 0.0,
+            "staggered_median_excess_laps": 0.0,
+            "synchronised_share_at_the_floor": 0.8265,
+            "staggered_share_at_the_floor": 0.78,
+            "synchronised_median_lag_from_first_onset": 1.0,
+            "staggered_median_lag_from_first_onset": 3.0,
+            "n_synchronised_reversions": 98,
+            "n_staggered_reversions": 100,
+            "share_removed_despite_regression": 0.0
+          }
+        }
+      ],
+      "all_met": true
+    },
+    {
+      "params": {
+        "band_floors.braking_m": 5.0,
+        "band_floors.corner_speed_kmh": 5.0,
+        "band_floors.apex_m": 0.5,
+        "criteria.consistency_delta_ratio": 1.0
+      },
+      "looseness": 5.666667,
+      "targets": [
+        {
+          "id": "typical_improver_traverses",
+          "met": true,
+          "measured": {
+            "share_traversing_2_of_3": 0.7,
+            "median_elements_removed": 2.0
+          }
+        },
+        {
+          "id": "non_improver_never_fades",
+          "met": true,
+          "measured": {
+            "share_with_any_fade": 0.0
+          }
+        },
+        {
+          "id": "regression_reverts_promptly",
+          "met": true,
+          "measured": {
+            "synchronised_median_excess_laps": 0.0,
+            "staggered_median_excess_laps": 0,
+            "synchronised_share_at_the_floor": 0.8265,
+            "staggered_share_at_the_floor": 0.7723,
+            "synchronised_median_lag_from_first_onset": 1.0,
+            "staggered_median_lag_from_first_onset": 3,
+            "n_synchronised_reversions": 98,
+            "n_staggered_reversions": 101,
+            "share_removed_despite_regression": 0.0
+          }
+        }
+      ],
+      "all_met": true
+    },
+    {
+      "params": {
+        "band_floors.braking_m": 5.0,
+        "band_floors.corner_speed_kmh": 5.0,
+        "band_floors.apex_m": 0.5,
+        "criteria.consistency_delta_ratio": 1.5
+      },
+      "looseness": 6.666667,
+      "targets": [
+        {
+          "id": "typical_improver_traverses",
+          "met": true,
+          "measured": {
+            "share_traversing_2_of_3": 0.7,
+            "median_elements_removed": 2.0
+          }
+        },
+        {
+          "id": "non_improver_never_fades",
+          "met": true,
+          "measured": {
+            "share_with_any_fade": 0.0
+          }
+        },
+        {
+          "id": "regression_reverts_promptly",
+          "met": true,
+          "measured": {
+            "synchronised_median_excess_laps": 0.0,
+            "staggered_median_excess_laps": 0,
+            "synchronised_share_at_the_floor": 0.7941,
+            "staggered_share_at_the_floor": 0.7524,
+            "synchronised_median_lag_from_first_onset": 1.0,
+            "staggered_median_lag_from_first_onset": 3,
+            "n_synchronised_reversions": 102,
+            "n_staggered_reversions": 105,
+            "share_removed_despite_regression": 0.0
+          }
+        }
+      ],
+      "all_met": true
+    },
+    {
+      "params": {
+        "band_floors.braking_m": 5.0,
+        "band_floors.corner_speed_kmh": 5.0,
+        "band_floors.apex_m": 0.8,
+        "criteria.consistency_delta_ratio": 0.5
+      },
+      "looseness": 5.266667,
+      "targets": [
+        {
+          "id": "typical_improver_traverses",
+          "met": true,
+          "measured": {
+            "share_traversing_2_of_3": 0.98,
+            "median_elements_removed": 2.0
+          }
+        },
+        {
+          "id": "non_improver_never_fades",
+          "met": true,
+          "measured": {
+            "share_with_any_fade": 0.0
+          }
+        },
+        {
+          "id": "regression_reverts_promptly",
+          "met": false,
+          "measured": {
+            "synchronised_median_excess_laps": 0,
+            "staggered_median_excess_laps": 0,
+            "synchronised_share_at_the_floor": 0.7071,
+            "staggered_share_at_the_floor": 0.8387,
+            "synchronised_median_lag_from_first_onset": 1,
+            "staggered_median_lag_from_first_onset": 3,
+            "n_synchronised_reversions": 99,
+            "n_staggered_reversions": 93,
+            "share_removed_despite_regression": 0.02
+          }
+        }
+      ],
+      "all_met": false
+    },
+    {
+      "params": {
+        "band_floors.braking_m": 5.0,
+        "band_floors.corner_speed_kmh": 5.0,
+        "band_floors.apex_m": 0.8,
+        "criteria.consistency_delta_ratio": 0.75
+      },
+      "looseness": 5.766667,
+      "targets": [
+        {
+          "id": "typical_improver_traverses",
+          "met": true,
+          "measured": {
+            "share_traversing_2_of_3": 0.98,
+            "median_elements_removed": 2.0
+          }
+        },
+        {
+          "id": "non_improver_never_fades",
+          "met": true,
+          "measured": {
+            "share_with_any_fade": 0.0
+          }
+        },
+        {
+          "id": "regression_reverts_promptly",
+          "met": false,
+          "measured": {
+            "synchronised_median_excess_laps": 0,
+            "staggered_median_excess_laps": 0,
+            "synchronised_share_at_the_floor": 0.7071,
+            "staggered_share_at_the_floor": 0.8387,
+            "synchronised_median_lag_from_first_onset": 1,
+            "staggered_median_lag_from_first_onset": 3,
+            "n_synchronised_reversions": 99,
+            "n_staggered_reversions": 93,
+            "share_removed_despite_regression": 0.02
+          }
+        }
+      ],
+      "all_met": false
+    },
+    {
+      "params": {
+        "band_floors.braking_m": 5.0,
+        "band_floors.corner_speed_kmh": 5.0,
+        "band_floors.apex_m": 0.8,
+        "criteria.consistency_delta_ratio": 1.0
+      },
+      "looseness": 6.266667,
+      "targets": [
+        {
+          "id": "typical_improver_traverses",
+          "met": true,
+          "measured": {
+            "share_traversing_2_of_3": 0.98,
+            "median_elements_removed": 2.0
+          }
+        },
+        {
+          "id": "non_improver_never_fades",
+          "met": true,
+          "measured": {
+            "share_with_any_fade": 0.0
+          }
+        },
+        {
+          "id": "regression_reverts_promptly",
+          "met": false,
+          "measured": {
+            "synchronised_median_excess_laps": 0,
+            "staggered_median_excess_laps": 0.0,
+            "synchronised_share_at_the_floor": 0.7071,
+            "staggered_share_at_the_floor": 0.8298,
+            "synchronised_median_lag_from_first_onset": 1,
+            "staggered_median_lag_from_first_onset": 3.0,
+            "n_synchronised_reversions": 99,
+            "n_staggered_reversions": 94,
+            "share_removed_despite_regression": 0.02
+          }
+        }
+      ],
+      "all_met": false
+    },
+    {
+      "params": {
+        "band_floors.braking_m": 5.0,
+        "band_floors.corner_speed_kmh": 5.0,
+        "band_floors.apex_m": 0.8,
+        "criteria.consistency_delta_ratio": 1.5
+      },
+      "looseness": 7.266667,
+      "targets": [
+        {
+          "id": "typical_improver_traverses",
+          "met": true,
+          "measured": {
+            "share_traversing_2_of_3": 0.98,
+            "median_elements_removed": 2.0
+          }
+        },
+        {
+          "id": "non_improver_never_fades",
+          "met": true,
+          "measured": {
+            "share_with_any_fade": 0.0
+          }
+        },
+        {
+          "id": "regression_reverts_promptly",
+          "met": false,
+          "measured": {
+            "synchronised_median_excess_laps": 0,
+            "staggered_median_excess_laps": 0.0,
+            "synchronised_share_at_the_floor": 0.6796,
+            "staggered_share_at_the_floor": 0.8061,
+            "synchronised_median_lag_from_first_onset": 1,
+            "staggered_median_lag_from_first_onset": 3.0,
+            "n_synchronised_reversions": 103,
+            "n_staggered_reversions": 98,
+            "share_removed_despite_regression": 0.02
+          }
+        }
+      ],
+      "all_met": false
+    },
+    {
+      "params": {
+        "band_floors.braking_m": 5.0,
+        "band_floors.corner_speed_kmh": 5.0,
+        "band_floors.apex_m": 1.2,
+        "criteria.consistency_delta_ratio": 0.5
+      },
+      "looseness": 6.066667,
+      "targets": [
+        {
+          "id": "typical_improver_traverses",
+          "met": true,
+          "measured": {
+            "share_traversing_2_of_3": 0.98,
+            "median_elements_removed": 2.0
+          }
+        },
+        {
+          "id": "non_improver_never_fades",
+          "met": false,
+          "measured": {
+            "share_with_any_fade": 0.22
+          }
+        },
+        {
+          "id": "regression_reverts_promptly",
+          "met": false,
+          "measured": {
+            "synchronised_median_excess_laps": 0,
+            "staggered_median_excess_laps": 0.0,
+            "synchronised_share_at_the_floor": 0.5376,
+            "staggered_share_at_the_floor": 0.7969,
+            "synchronised_median_lag_from_first_onset": 1,
+            "staggered_median_lag_from_first_onset": 3.0,
+            "n_synchronised_reversions": 93,
+            "n_staggered_reversions": 64,
+            "share_removed_despite_regression": 0.18
+          }
+        }
+      ],
+      "all_met": false
+    },
+    {
+      "params": {
+        "band_floors.braking_m": 5.0,
+        "band_floors.corner_speed_kmh": 5.0,
+        "band_floors.apex_m": 1.2,
+        "criteria.consistency_delta_ratio": 0.75
+      },
+      "looseness": 6.566667,
+      "targets": [
+        {
+          "id": "typical_improver_traverses",
+          "met": true,
+          "measured": {
+            "share_traversing_2_of_3": 0.98,
+            "median_elements_removed": 2.0
+          }
+        },
+        {
+          "id": "non_improver_never_fades",
+          "met": false,
+          "measured": {
+            "share_with_any_fade": 0.22
+          }
+        },
+        {
+          "id": "regression_reverts_promptly",
+          "met": false,
+          "measured": {
+            "synchronised_median_excess_laps": 0,
+            "staggered_median_excess_laps": 0.0,
+            "synchronised_share_at_the_floor": 0.5376,
+            "staggered_share_at_the_floor": 0.7969,
+            "synchronised_median_lag_from_first_onset": 1,
+            "staggered_median_lag_from_first_onset": 3.0,
+            "n_synchronised_reversions": 93,
+            "n_staggered_reversions": 64,
+            "share_removed_despite_regression": 0.18
+          }
+        }
+      ],
+      "all_met": false
+    },
+    {
+      "params": {
+        "band_floors.braking_m": 5.0,
+        "band_floors.corner_speed_kmh": 5.0,
+        "band_floors.apex_m": 1.2,
+        "criteria.consistency_delta_ratio": 1.0
+      },
+      "looseness": 7.066667,
+      "targets": [
+        {
+          "id": "typical_improver_traverses",
+          "met": true,
+          "measured": {
+            "share_traversing_2_of_3": 0.98,
+            "median_elements_removed": 2.0
+          }
+        },
+        {
+          "id": "non_improver_never_fades",
+          "met": false,
+          "measured": {
+            "share_with_any_fade": 0.22
+          }
+        },
+        {
+          "id": "regression_reverts_promptly",
+          "met": false,
+          "measured": {
+            "synchronised_median_excess_laps": 0,
+            "staggered_median_excess_laps": 0,
+            "synchronised_share_at_the_floor": 0.5376,
+            "staggered_share_at_the_floor": 0.7846,
+            "synchronised_median_lag_from_first_onset": 1,
+            "staggered_median_lag_from_first_onset": 3,
+            "n_synchronised_reversions": 93,
+            "n_staggered_reversions": 65,
+            "share_removed_despite_regression": 0.18
+          }
+        }
+      ],
+      "all_met": false
+    },
+    {
+      "params": {
+        "band_floors.braking_m": 5.0,
+        "band_floors.corner_speed_kmh": 5.0,
+        "band_floors.apex_m": 1.2,
+        "criteria.consistency_delta_ratio": 1.5
+      },
+      "looseness": 8.066667,
+      "targets": [
+        {
+          "id": "typical_improver_traverses",
+          "met": true,
+          "measured": {
+            "share_traversing_2_of_3": 0.98,
+            "median_elements_removed": 2.0
+          }
+        },
+        {
+          "id": "non_improver_never_fades",
+          "met": false,
+          "measured": {
+            "share_with_any_fade": 0.22
+          }
+        },
+        {
+          "id": "regression_reverts_promptly",
+          "met": false,
+          "measured": {
+            "synchronised_median_excess_laps": 0,
+            "staggered_median_excess_laps": 0,
+            "synchronised_share_at_the_floor": 0.5155,
+            "staggered_share_at_the_floor": 0.7536,
+            "synchronised_median_lag_from_first_onset": 1,
+            "staggered_median_lag_from_first_onset": 3,
+            "n_synchronised_reversions": 97,
+            "n_staggered_reversions": 69,
+            "share_removed_despite_regression": 0.18
+          }
+        }
+      ],
+      "all_met": false
+    },
+    {
+      "params": {
+        "band_floors.braking_m": 8.0,
+        "band_floors.corner_speed_kmh": 3.0,
+        "band_floors.apex_m": 0.5,
+        "criteria.consistency_delta_ratio": 0.5
+      },
+      "looseness": 4.6,
+      "targets": [
+        {
+          "id": "typical_improver_traverses",
+          "met": false,
+          "measured": {
+            "share_traversing_2_of_3": 0.2,
+            "median_elements_removed": 1.0
+          }
+        },
+        {
+          "id": "non_improver_never_fades",
+          "met": true,
+          "measured": {
+            "share_with_any_fade": 0.0
+          }
+        },
+        {
+          "id": "regression_reverts_promptly",
+          "met": true,
+          "measured": {
+            "synchronised_median_excess_laps": 0,
+            "staggered_median_excess_laps": -1.0,
+            "synchronised_share_at_the_floor": 0.6552,
+            "staggered_share_at_the_floor": 0.8571,
+            "synchronised_median_lag_from_first_onset": 1,
+            "staggered_median_lag_from_first_onset": 2.0,
+            "n_synchronised_reversions": 87,
+            "n_staggered_reversions": 98,
+            "share_removed_despite_regression": 0.0
+          }
+        }
+      ],
+      "all_met": false
+    },
+    {
+      "params": {
+        "band_floors.braking_m": 8.0,
+        "band_floors.corner_speed_kmh": 3.0,
+        "band_floors.apex_m": 0.5,
+        "criteria.consistency_delta_ratio": 0.75
+      },
+      "looseness": 5.1,
+      "targets": [
+        {
+          "id": "typical_improver_traverses",
+          "met": false,
+          "measured": {
+            "share_traversing_2_of_3": 0.22,
+            "median_elements_removed": 1.0
+          }
+        },
+        {
+          "id": "non_improver_never_fades",
+          "met": true,
+          "measured": {
+            "share_with_any_fade": 0.0
+          }
+        },
+        {
+          "id": "regression_reverts_promptly",
+          "met": true,
+          "measured": {
+            "synchronised_median_excess_laps": 0,
+            "staggered_median_excess_laps": 0,
+            "synchronised_share_at_the_floor": 0.6404,
+            "staggered_share_at_the_floor": 0.8165,
+            "synchronised_median_lag_from_first_onset": 1,
+            "staggered_median_lag_from_first_onset": 3,
+            "n_synchronised_reversions": 89,
+            "n_staggered_reversions": 109,
+            "share_removed_despite_regression": 0.0
+          }
+        }
+      ],
+      "all_met": false
+    },
+    {
+      "params": {
+        "band_floors.braking_m": 8.0,
+        "band_floors.corner_speed_kmh": 3.0,
+        "band_floors.apex_m": 0.5,
+        "criteria.consistency_delta_ratio": 1.0
+      },
+      "looseness": 5.6,
+      "targets": [
+        {
+          "id": "typical_improver_traverses",
+          "met": false,
+          "measured": {
+            "share_traversing_2_of_3": 0.28,
+            "median_elements_removed": 1.0
+          }
+        },
+        {
+          "id": "non_improver_never_fades",
+          "met": true,
+          "measured": {
+            "share_with_any_fade": 0.0
+          }
+        },
+        {
+          "id": "regression_reverts_promptly",
+          "met": true,
+          "measured": {
+            "synchronised_median_excess_laps": 0,
+            "staggered_median_excess_laps": 0,
+            "synchronised_share_at_the_floor": 0.6129,
+            "staggered_share_at_the_floor": 0.816,
+            "synchronised_median_lag_from_first_onset": 1,
+            "staggered_median_lag_from_first_onset": 3,
+            "n_synchronised_reversions": 93,
+            "n_staggered_reversions": 125,
+            "share_removed_despite_regression": 0.0
+          }
+        }
+      ],
+      "all_met": false
+    },
+    {
+      "params": {
+        "band_floors.braking_m": 8.0,
+        "band_floors.corner_speed_kmh": 3.0,
+        "band_floors.apex_m": 0.5,
+        "criteria.consistency_delta_ratio": 1.5
+      },
+      "looseness": 6.6,
+      "targets": [
+        {
+          "id": "typical_improver_traverses",
+          "met": true,
+          "measured": {
+            "share_traversing_2_of_3": 0.58,
+            "median_elements_removed": 2.0
+          }
+        },
+        {
+          "id": "non_improver_never_fades",
+          "met": true,
+          "measured": {
+            "share_with_any_fade": 0.0
+          }
+        },
+        {
+          "id": "regression_reverts_promptly",
+          "met": true,
+          "measured": {
+            "synchronised_median_excess_laps": 0,
+            "staggered_median_excess_laps": -1,
+            "synchronised_share_at_the_floor": 0.531,
+            "staggered_share_at_the_floor": 0.8828,
+            "synchronised_median_lag_from_first_onset": 1,
+            "staggered_median_lag_from_first_onset": 2,
+            "n_synchronised_reversions": 113,
+            "n_staggered_reversions": 145,
+            "share_removed_despite_regression": 0.0
+          }
+        }
+      ],
+      "all_met": true
+    },
+    {
+      "params": {
+        "band_floors.braking_m": 8.0,
+        "band_floors.corner_speed_kmh": 3.0,
+        "band_floors.apex_m": 0.8,
+        "criteria.consistency_delta_ratio": 0.5
+      },
+      "looseness": 5.2,
+      "targets": [
+        {
+          "id": "typical_improver_traverses",
+          "met": false,
+          "measured": {
+            "share_traversing_2_of_3": 0.22,
+            "median_elements_removed": 1.0
+          }
+        },
+        {
+          "id": "non_improver_never_fades",
+          "met": true,
+          "measured": {
+            "share_with_any_fade": 0.0
+          }
+        },
+        {
+          "id": "regression_reverts_promptly",
+          "met": false,
+          "measured": {
+            "synchronised_median_excess_laps": 0.0,
+            "staggered_median_excess_laps": -1,
+            "synchronised_share_at_the_floor": 0.5227,
+            "staggered_share_at_the_floor": 0.9231,
+            "synchronised_median_lag_from_first_onset": 1.0,
+            "staggered_median_lag_from_first_onset": 2,
+            "n_synchronised_reversions": 88,
+            "n_staggered_reversions": 91,
+            "share_removed_despite_regression": 0.02
+          }
+        }
+      ],
+      "all_met": false
+    },
+    {
+      "params": {
+        "band_floors.braking_m": 8.0,
+        "band_floors.corner_speed_kmh": 3.0,
+        "band_floors.apex_m": 0.8,
+        "criteria.consistency_delta_ratio": 0.75
+      },
+      "looseness": 5.7,
+      "targets": [
+        {
+          "id": "typical_improver_traverses",
+          "met": false,
+          "measured": {
+            "share_traversing_2_of_3": 0.24,
+            "median_elements_removed": 1.0
+          }
+        },
+        {
+          "id": "non_improver_never_fades",
+          "met": true,
+          "measured": {
+            "share_with_any_fade": 0.0
+          }
+        },
+        {
+          "id": "regression_reverts_promptly",
+          "met": false,
+          "measured": {
+            "synchronised_median_excess_laps": 0.0,
+            "staggered_median_excess_laps": 0.0,
+            "synchronised_share_at_the_floor": 0.5111,
+            "staggered_share_at_the_floor": 0.8725,
+            "synchronised_median_lag_from_first_onset": 1.0,
+            "staggered_median_lag_from_first_onset": 3.0,
+            "n_synchronised_reversions": 90,
+            "n_staggered_reversions": 102,
+            "share_removed_despite_regression": 0.02
+          }
+        }
+      ],
+      "all_met": false
+    },
+    {
+      "params": {
+        "band_floors.braking_m": 8.0,
+        "band_floors.corner_speed_kmh": 3.0,
+        "band_floors.apex_m": 0.8,
+        "criteria.consistency_delta_ratio": 1.0
+      },
+      "looseness": 6.2,
+      "targets": [
+        {
+          "id": "typical_improver_traverses",
+          "met": false,
+          "measured": {
+            "share_traversing_2_of_3": 0.36,
+            "median_elements_removed": 1.0
+          }
+        },
+        {
+          "id": "non_improver_never_fades",
+          "met": true,
+          "measured": {
+            "share_with_any_fade": 0.0
+          }
+        },
+        {
+          "id": "regression_reverts_promptly",
+          "met": false,
+          "measured": {
+            "synchronised_median_excess_laps": 1.0,
+            "staggered_median_excess_laps": 0.0,
+            "synchronised_share_at_the_floor": 0.4894,
+            "staggered_share_at_the_floor": 0.8644,
+            "synchronised_median_lag_from_first_onset": 2.0,
+            "staggered_median_lag_from_first_onset": 3.0,
+            "n_synchronised_reversions": 94,
+            "n_staggered_reversions": 118,
+            "share_removed_despite_regression": 0.02
+          }
+        }
+      ],
+      "all_met": false
+    },
+    {
+      "params": {
+        "band_floors.braking_m": 8.0,
+        "band_floors.corner_speed_kmh": 3.0,
+        "band_floors.apex_m": 0.8,
+        "criteria.consistency_delta_ratio": 1.5
+      },
+      "looseness": 7.2,
+      "targets": [
+        {
+          "id": "typical_improver_traverses",
+          "met": true,
+          "measured": {
+            "share_traversing_2_of_3": 0.78,
+            "median_elements_removed": 2.0
+          }
+        },
+        {
+          "id": "non_improver_never_fades",
+          "met": true,
+          "measured": {
+            "share_with_any_fade": 0.0
+          }
+        },
+        {
+          "id": "regression_reverts_promptly",
+          "met": false,
+          "measured": {
+            "synchronised_median_excess_laps": 1.0,
+            "staggered_median_excess_laps": -1.0,
+            "synchronised_share_at_the_floor": 0.4298,
+            "staggered_share_at_the_floor": 0.9275,
+            "synchronised_median_lag_from_first_onset": 2.0,
+            "staggered_median_lag_from_first_onset": 2.0,
+            "n_synchronised_reversions": 114,
+            "n_staggered_reversions": 138,
+            "share_removed_despite_regression": 0.02
+          }
+        }
+      ],
+      "all_met": false
+    },
+    {
+      "params": {
+        "band_floors.braking_m": 8.0,
+        "band_floors.corner_speed_kmh": 3.0,
+        "band_floors.apex_m": 1.2,
+        "criteria.consistency_delta_ratio": 0.5
+      },
+      "looseness": 6.0,
+      "targets": [
+        {
+          "id": "typical_improver_traverses",
+          "met": false,
+          "measured": {
+            "share_traversing_2_of_3": 0.22,
+            "median_elements_removed": 1.0
+          }
+        },
+        {
+          "id": "non_improver_never_fades",
+          "met": false,
+          "measured": {
+            "share_with_any_fade": 0.22
+          }
+        },
+        {
+          "id": "regression_reverts_promptly",
+          "met": false,
+          "measured": {
+            "synchronised_median_excess_laps": 1.0,
+            "staggered_median_excess_laps": -1.0,
+            "synchronised_share_at_the_floor": 0.3171,
+            "staggered_share_at_the_floor": 0.9194,
+            "synchronised_median_lag_from_first_onset": 2.0,
+            "staggered_median_lag_from_first_onset": 2.0,
+            "n_synchronised_reversions": 82,
+            "n_staggered_reversions": 62,
+            "share_removed_despite_regression": 0.18
+          }
+        }
+      ],
+      "all_met": false
+    },
+    {
+      "params": {
+        "band_floors.braking_m": 8.0,
+        "band_floors.corner_speed_kmh": 3.0,
+        "band_floors.apex_m": 1.2,
+        "criteria.consistency_delta_ratio": 0.75
+      },
+      "looseness": 6.5,
+      "targets": [
+        {
+          "id": "typical_improver_traverses",
+          "met": false,
+          "measured": {
+            "share_traversing_2_of_3": 0.24,
+            "median_elements_removed": 1.0
+          }
+        },
+        {
+          "id": "non_improver_never_fades",
+          "met": false,
+          "measured": {
+            "share_with_any_fade": 0.22
+          }
+        },
+        {
+          "id": "regression_reverts_promptly",
+          "met": false,
+          "measured": {
+            "synchronised_median_excess_laps": 1.0,
+            "staggered_median_excess_laps": -1,
+            "synchronised_share_at_the_floor": 0.3095,
+            "staggered_share_at_the_floor": 0.8493,
+            "synchronised_median_lag_from_first_onset": 2.0,
+            "staggered_median_lag_from_first_onset": 2,
+            "n_synchronised_reversions": 84,
+            "n_staggered_reversions": 73,
+            "share_removed_despite_regression": 0.18
+          }
+        }
+      ],
+      "all_met": false
+    },
+    {
+      "params": {
+        "band_floors.braking_m": 8.0,
+        "band_floors.corner_speed_kmh": 3.0,
+        "band_floors.apex_m": 1.2,
+        "criteria.consistency_delta_ratio": 1.0
+      },
+      "looseness": 7.0,
+      "targets": [
+        {
+          "id": "typical_improver_traverses",
+          "met": false,
+          "measured": {
+            "share_traversing_2_of_3": 0.36,
+            "median_elements_removed": 1.0
+          }
+        },
+        {
+          "id": "non_improver_never_fades",
+          "met": false,
+          "measured": {
+            "share_with_any_fade": 0.22
+          }
+        },
+        {
+          "id": "regression_reverts_promptly",
+          "met": false,
+          "measured": {
+            "synchronised_median_excess_laps": 1.0,
+            "staggered_median_excess_laps": -1,
+            "synchronised_share_at_the_floor": 0.2955,
+            "staggered_share_at_the_floor": 0.8427,
+            "synchronised_median_lag_from_first_onset": 2.0,
+            "staggered_median_lag_from_first_onset": 2,
+            "n_synchronised_reversions": 88,
+            "n_staggered_reversions": 89,
+            "share_removed_despite_regression": 0.18
+          }
+        }
+      ],
+      "all_met": false
+    },
+    {
+      "params": {
+        "band_floors.braking_m": 8.0,
+        "band_floors.corner_speed_kmh": 3.0,
+        "band_floors.apex_m": 1.2,
+        "criteria.consistency_delta_ratio": 1.5
+      },
+      "looseness": 8.0,
+      "targets": [
+        {
+          "id": "typical_improver_traverses",
+          "met": true,
+          "measured": {
+            "share_traversing_2_of_3": 0.78,
+            "median_elements_removed": 2.0
+          }
+        },
+        {
+          "id": "non_improver_never_fades",
+          "met": false,
+          "measured": {
+            "share_with_any_fade": 0.22
+          }
+        },
+        {
+          "id": "regression_reverts_promptly",
+          "met": false,
+          "measured": {
+            "synchronised_median_excess_laps": 1.0,
+            "staggered_median_excess_laps": -1,
+            "synchronised_share_at_the_floor": 0.2685,
+            "staggered_share_at_the_floor": 0.9266,
+            "synchronised_median_lag_from_first_onset": 2.0,
+            "staggered_median_lag_from_first_onset": 2,
+            "n_synchronised_reversions": 108,
+            "n_staggered_reversions": 109,
+            "share_removed_despite_regression": 0.18
+          }
+        }
+      ],
+      "all_met": false
+    },
+    {
+      "params": {
+        "band_floors.braking_m": 8.0,
+        "band_floors.corner_speed_kmh": 4.0,
+        "band_floors.apex_m": 0.5,
+        "criteria.consistency_delta_ratio": 0.5
+      },
+      "looseness": 4.933333,
+      "targets": [
+        {
+          "id": "typical_improver_traverses",
+          "met": true,
+          "measured": {
+            "share_traversing_2_of_3": 0.5,
+            "median_elements_removed": 1.5
+          }
+        },
+        {
+          "id": "non_improver_never_fades",
+          "met": true,
+          "measured": {
+            "share_with_any_fade": 0.0
+          }
+        },
+        {
+          "id": "regression_reverts_promptly",
+          "met": true,
+          "measured": {
+            "synchronised_median_excess_laps": 0.0,
+            "staggered_median_excess_laps": 0.0,
+            "synchronised_share_at_the_floor": 0.7755,
+            "staggered_share_at_the_floor": 0.83,
+            "synchronised_median_lag_from_first_onset": 1.0,
+            "staggered_median_lag_from_first_onset": 3.0,
+            "n_synchronised_reversions": 98,
+            "n_staggered_reversions": 100,
+            "share_removed_despite_regression": 0.0
+          }
+        }
+      ],
+      "all_met": true
+    },
+    {
+      "params": {
+        "band_floors.braking_m": 8.0,
+        "band_floors.corner_speed_kmh": 4.0,
+        "band_floors.apex_m": 0.5,
+        "criteria.consistency_delta_ratio": 0.75
+      },
+      "looseness": 5.433333,
+      "targets": [
+        {
+          "id": "typical_improver_traverses",
+          "met": true,
+          "measured": {
+            "share_traversing_2_of_3": 0.5,
+            "median_elements_removed": 1.5
+          }
+        },
+        {
+          "id": "non_improver_never_fades",
+          "met": true,
+          "measured": {
+            "share_with_any_fade": 0.0
+          }
+        },
+        {
+          "id": "regression_reverts_promptly",
+          "met": true,
+          "measured": {
+            "synchronised_median_excess_laps": 0.0,
+            "staggered_median_excess_laps": 0,
+            "synchronised_share_at_the_floor": 0.76,
+            "staggered_share_at_the_floor": 0.7928,
+            "synchronised_median_lag_from_first_onset": 1.0,
+            "staggered_median_lag_from_first_onset": 3,
+            "n_synchronised_reversions": 100,
+            "n_staggered_reversions": 111,
+            "share_removed_despite_regression": 0.0
+          }
+        }
+      ],
+      "all_met": true
+    },
+    {
+      "params": {
+        "band_floors.braking_m": 8.0,
+        "band_floors.corner_speed_kmh": 4.0,
+        "band_floors.apex_m": 0.5,
+        "criteria.consistency_delta_ratio": 1.0
+      },
+      "looseness": 5.933333,
+      "targets": [
+        {
+          "id": "typical_improver_traverses",
+          "met": true,
+          "measured": {
+            "share_traversing_2_of_3": 0.6,
+            "median_elements_removed": 2.0
+          }
+        },
+        {
+          "id": "non_improver_never_fades",
+          "met": true,
+          "measured": {
+            "share_with_any_fade": 0.0
+          }
+        },
+        {
+          "id": "regression_reverts_promptly",
+          "met": true,
+          "measured": {
+            "synchronised_median_excess_laps": 0.0,
+            "staggered_median_excess_laps": 0,
+            "synchronised_share_at_the_floor": 0.7308,
+            "staggered_share_at_the_floor": 0.7953,
+            "synchronised_median_lag_from_first_onset": 1.0,
+            "staggered_median_lag_from_first_onset": 3,
+            "n_synchronised_reversions": 104,
+            "n_staggered_reversions": 127,
+            "share_removed_despite_regression": 0.0
+          }
+        }
+      ],
+      "all_met": true
+    },
+    {
+      "params": {
+        "band_floors.braking_m": 8.0,
+        "band_floors.corner_speed_kmh": 4.0,
+        "band_floors.apex_m": 0.5,
+        "criteria.consistency_delta_ratio": 1.5
+      },
+      "looseness": 6.933333,
+      "targets": [
+        {
+          "id": "typical_improver_traverses",
+          "met": true,
+          "measured": {
+            "share_traversing_2_of_3": 0.86,
+            "median_elements_removed": 2.0
+          }
+        },
+        {
+          "id": "non_improver_never_fades",
+          "met": true,
+          "measured": {
+            "share_with_any_fade": 0.0
+          }
+        },
+        {
+          "id": "regression_reverts_promptly",
+          "met": true,
+          "measured": {
+            "synchronised_median_excess_laps": 0.0,
+            "staggered_median_excess_laps": 0,
+            "synchronised_share_at_the_floor": 0.6371,
+            "staggered_share_at_the_floor": 0.8639,
+            "synchronised_median_lag_from_first_onset": 1.0,
+            "staggered_median_lag_from_first_onset": 3,
+            "n_synchronised_reversions": 124,
+            "n_staggered_reversions": 147,
+            "share_removed_despite_regression": 0.0
+          }
+        }
+      ],
+      "all_met": true
+    },
+    {
+      "params": {
+        "band_floors.braking_m": 8.0,
+        "band_floors.corner_speed_kmh": 4.0,
+        "band_floors.apex_m": 0.8,
+        "criteria.consistency_delta_ratio": 0.5
+      },
+      "looseness": 5.533333,
+      "targets": [
+        {
+          "id": "typical_improver_traverses",
+          "met": true,
+          "measured": {
+            "share_traversing_2_of_3": 0.74,
+            "median_elements_removed": 2.0
+          }
+        },
+        {
+          "id": "non_improver_never_fades",
+          "met": true,
+          "measured": {
+            "share_with_any_fade": 0.0
+          }
+        },
+        {
+          "id": "regression_reverts_promptly",
+          "met": false,
+          "measured": {
+            "synchronised_median_excess_laps": 0,
+            "staggered_median_excess_laps": 0,
+            "synchronised_share_at_the_floor": 0.6566,
+            "staggered_share_at_the_floor": 0.8925,
+            "synchronised_median_lag_from_first_onset": 1,
+            "staggered_median_lag_from_first_onset": 3,
+            "n_synchronised_reversions": 99,
+            "n_staggered_reversions": 93,
+            "share_removed_despite_regression": 0.02
+          }
+        }
+      ],
+      "all_met": false
+    },
+    {
+      "params": {
+        "band_floors.braking_m": 8.0,
+        "band_floors.corner_speed_kmh": 4.0,
+        "band_floors.apex_m": 0.8,
+        "criteria.consistency_delta_ratio": 0.75
+      },
+      "looseness": 6.033333,
+      "targets": [
+        {
+          "id": "typical_improver_traverses",
+          "met": true,
+          "measured": {
+            "share_traversing_2_of_3": 0.74,
+            "median_elements_removed": 2.0
+          }
+        },
+        {
+          "id": "non_improver_never_fades",
+          "met": true,
+          "measured": {
+            "share_with_any_fade": 0.0
+          }
+        },
+        {
+          "id": "regression_reverts_promptly",
+          "met": false,
+          "measured": {
+            "synchronised_median_excess_laps": 0,
+            "staggered_median_excess_laps": 0.0,
+            "synchronised_share_at_the_floor": 0.6436,
+            "staggered_share_at_the_floor": 0.8462,
+            "synchronised_median_lag_from_first_onset": 1,
+            "staggered_median_lag_from_first_onset": 3.0,
+            "n_synchronised_reversions": 101,
+            "n_staggered_reversions": 104,
+            "share_removed_despite_regression": 0.02
+          }
+        }
+      ],
+      "all_met": false
+    },
+    {
+      "params": {
+        "band_floors.braking_m": 8.0,
+        "band_floors.corner_speed_kmh": 4.0,
+        "band_floors.apex_m": 0.8,
+        "criteria.consistency_delta_ratio": 1.0
+      },
+      "looseness": 6.533333,
+      "targets": [
+        {
+          "id": "typical_improver_traverses",
+          "met": true,
+          "measured": {
+            "share_traversing_2_of_3": 0.78,
+            "median_elements_removed": 2.0
+          }
+        },
+        {
+          "id": "non_improver_never_fades",
+          "met": true,
+          "measured": {
+            "share_with_any_fade": 0.0
+          }
+        },
+        {
+          "id": "regression_reverts_promptly",
+          "met": false,
+          "measured": {
+            "synchronised_median_excess_laps": 0,
+            "staggered_median_excess_laps": 0.0,
+            "synchronised_share_at_the_floor": 0.619,
+            "staggered_share_at_the_floor": 0.8417,
+            "synchronised_median_lag_from_first_onset": 1,
+            "staggered_median_lag_from_first_onset": 3.0,
+            "n_synchronised_reversions": 105,
+            "n_staggered_reversions": 120,
+            "share_removed_despite_regression": 0.02
+          }
+        }
+      ],
+      "all_met": false
+    },
+    {
+      "params": {
+        "band_floors.braking_m": 8.0,
+        "band_floors.corner_speed_kmh": 4.0,
+        "band_floors.apex_m": 0.8,
+        "criteria.consistency_delta_ratio": 1.5
+      },
+      "looseness": 7.533333,
+      "targets": [
+        {
+          "id": "typical_improver_traverses",
+          "met": true,
+          "measured": {
+            "share_traversing_2_of_3": 0.92,
+            "median_elements_removed": 3.0
+          }
+        },
+        {
+          "id": "non_improver_never_fades",
+          "met": true,
+          "measured": {
+            "share_with_any_fade": 0.0
+          }
+        },
+        {
+          "id": "regression_reverts_promptly",
+          "met": false,
+          "measured": {
+            "synchronised_median_excess_laps": 0,
+            "staggered_median_excess_laps": 0.0,
+            "synchronised_share_at_the_floor": 0.544,
+            "staggered_share_at_the_floor": 0.9071,
+            "synchronised_median_lag_from_first_onset": 1,
+            "staggered_median_lag_from_first_onset": 3.0,
+            "n_synchronised_reversions": 125,
+            "n_staggered_reversions": 140,
+            "share_removed_despite_regression": 0.02
+          }
+        }
+      ],
+      "all_met": false
+    },
+    {
+      "params": {
+        "band_floors.braking_m": 8.0,
+        "band_floors.corner_speed_kmh": 4.0,
+        "band_floors.apex_m": 1.2,
+        "criteria.consistency_delta_ratio": 0.5
+      },
+      "looseness": 6.333333,
+      "targets": [
+        {
+          "id": "typical_improver_traverses",
+          "met": true,
+          "measured": {
+            "share_traversing_2_of_3": 0.74,
+            "median_elements_removed": 2.0
+          }
+        },
+        {
+          "id": "non_improver_never_fades",
+          "met": false,
+          "measured": {
+            "share_with_any_fade": 0.22
+          }
+        },
+        {
+          "id": "regression_reverts_promptly",
+          "met": false,
+          "measured": {
+            "synchronised_median_excess_laps": 1,
+            "staggered_median_excess_laps": 0.0,
+            "synchronised_share_at_the_floor": 0.4839,
+            "staggered_share_at_the_floor": 0.875,
+            "synchronised_median_lag_from_first_onset": 2,
+            "staggered_median_lag_from_first_onset": 3.0,
+            "n_synchronised_reversions": 93,
+            "n_staggered_reversions": 64,
+            "share_removed_despite_regression": 0.18
+          }
+        }
+      ],
+      "all_met": false
+    },
+    {
+      "params": {
+        "band_floors.braking_m": 8.0,
+        "band_floors.corner_speed_kmh": 4.0,
+        "band_floors.apex_m": 1.2,
+        "criteria.consistency_delta_ratio": 0.75
+      },
+      "looseness": 6.833333,
+      "targets": [
+        {
+          "id": "typical_improver_traverses",
+          "met": true,
+          "measured": {
+            "share_traversing_2_of_3": 0.74,
+            "median_elements_removed": 2.0
+          }
+        },
+        {
+          "id": "non_improver_never_fades",
+          "met": false,
+          "measured": {
+            "share_with_any_fade": 0.22
+          }
+        },
+        {
+          "id": "regression_reverts_promptly",
+          "met": false,
+          "measured": {
+            "synchronised_median_excess_laps": 1,
+            "staggered_median_excess_laps": 0,
+            "synchronised_share_at_the_floor": 0.4737,
+            "staggered_share_at_the_floor": 0.8133,
+            "synchronised_median_lag_from_first_onset": 2,
+            "staggered_median_lag_from_first_onset": 3,
+            "n_synchronised_reversions": 95,
+            "n_staggered_reversions": 75,
+            "share_removed_despite_regression": 0.18
+          }
+        }
+      ],
+      "all_met": false
+    },
+    {
+      "params": {
+        "band_floors.braking_m": 8.0,
+        "band_floors.corner_speed_kmh": 4.0,
+        "band_floors.apex_m": 1.2,
+        "criteria.consistency_delta_ratio": 1.0
+      },
+      "looseness": 7.333333,
+      "targets": [
+        {
+          "id": "typical_improver_traverses",
+          "met": true,
+          "measured": {
+            "share_traversing_2_of_3": 0.78,
+            "median_elements_removed": 2.0
+          }
+        },
+        {
+          "id": "non_improver_never_fades",
+          "met": false,
+          "measured": {
+            "share_with_any_fade": 0.22
+          }
+        },
+        {
+          "id": "regression_reverts_promptly",
+          "met": false,
+          "measured": {
+            "synchronised_median_excess_laps": 1,
+            "staggered_median_excess_laps": 0,
+            "synchronised_share_at_the_floor": 0.4545,
+            "staggered_share_at_the_floor": 0.8132,
+            "synchronised_median_lag_from_first_onset": 2,
+            "staggered_median_lag_from_first_onset": 3,
+            "n_synchronised_reversions": 99,
+            "n_staggered_reversions": 91,
+            "share_removed_despite_regression": 0.18
+          }
+        }
+      ],
+      "all_met": false
+    },
+    {
+      "params": {
+        "band_floors.braking_m": 8.0,
+        "band_floors.corner_speed_kmh": 4.0,
+        "band_floors.apex_m": 1.2,
+        "criteria.consistency_delta_ratio": 1.5
+      },
+      "looseness": 8.333333,
+      "targets": [
+        {
+          "id": "typical_improver_traverses",
+          "met": true,
+          "measured": {
+            "share_traversing_2_of_3": 0.92,
+            "median_elements_removed": 3.0
+          }
+        },
+        {
+          "id": "non_improver_never_fades",
+          "met": false,
+          "measured": {
+            "share_with_any_fade": 0.22
+          }
+        },
+        {
+          "id": "regression_reverts_promptly",
+          "met": false,
+          "measured": {
+            "synchronised_median_excess_laps": 1,
+            "staggered_median_excess_laps": 0,
+            "synchronised_share_at_the_floor": 0.4034,
+            "staggered_share_at_the_floor": 0.9009,
+            "synchronised_median_lag_from_first_onset": 2,
+            "staggered_median_lag_from_first_onset": 3,
+            "n_synchronised_reversions": 119,
+            "n_staggered_reversions": 111,
+            "share_removed_despite_regression": 0.18
+          }
+        }
+      ],
+      "all_met": false
+    },
+    {
+      "params": {
+        "band_floors.braking_m": 8.0,
+        "band_floors.corner_speed_kmh": 5.0,
+        "band_floors.apex_m": 0.5,
+        "criteria.consistency_delta_ratio": 0.5
+      },
+      "looseness": 5.266667,
+      "targets": [
+        {
+          "id": "typical_improver_traverses",
+          "met": true,
+          "measured": {
+            "share_traversing_2_of_3": 0.7,
+            "median_elements_removed": 2.0
+          }
+        },
+        {
+          "id": "non_improver_never_fades",
+          "met": true,
+          "measured": {
+            "share_with_any_fade": 0.0
+          }
+        },
+        {
+          "id": "regression_reverts_promptly",
+          "met": true,
+          "measured": {
+            "synchronised_median_excess_laps": 0.0,
+            "staggered_median_excess_laps": 0.0,
+            "synchronised_share_at_the_floor": 0.8265,
+            "staggered_share_at_the_floor": 0.78,
+            "synchronised_median_lag_from_first_onset": 1.0,
+            "staggered_median_lag_from_first_onset": 3.0,
+            "n_synchronised_reversions": 98,
+            "n_staggered_reversions": 100,
+            "share_removed_despite_regression": 0.0
+          }
+        }
+      ],
+      "all_met": true
+    },
+    {
+      "params": {
+        "band_floors.braking_m": 8.0,
+        "band_floors.corner_speed_kmh": 5.0,
+        "band_floors.apex_m": 0.5,
+        "criteria.consistency_delta_ratio": 0.75
+      },
+      "looseness": 5.766667,
+      "targets": [
+        {
+          "id": "typical_improver_traverses",
+          "met": true,
+          "measured": {
+            "share_traversing_2_of_3": 0.7,
+            "median_elements_removed": 2.0
+          }
+        },
+        {
+          "id": "non_improver_never_fades",
+          "met": true,
+          "measured": {
+            "share_with_any_fade": 0.0
+          }
+        },
+        {
+          "id": "regression_reverts_promptly",
+          "met": true,
+          "measured": {
+            "synchronised_median_excess_laps": 0.0,
+            "staggered_median_excess_laps": 0,
+            "synchronised_share_at_the_floor": 0.81,
+            "staggered_share_at_the_floor": 0.7477,
+            "synchronised_median_lag_from_first_onset": 1.0,
+            "staggered_median_lag_from_first_onset": 3,
+            "n_synchronised_reversions": 100,
+            "n_staggered_reversions": 111,
+            "share_removed_despite_regression": 0.0
+          }
+        }
+      ],
+      "all_met": true
+    },
+    {
+      "params": {
+        "band_floors.braking_m": 8.0,
+        "band_floors.corner_speed_kmh": 5.0,
+        "band_floors.apex_m": 0.5,
+        "criteria.consistency_delta_ratio": 1.0
+      },
+      "looseness": 6.266667,
+      "targets": [
+        {
+          "id": "typical_improver_traverses",
+          "met": true,
+          "measured": {
+            "share_traversing_2_of_3": 0.76,
+            "median_elements_removed": 2.0
+          }
+        },
+        {
+          "id": "non_improver_never_fades",
+          "met": true,
+          "measured": {
+            "share_with_any_fade": 0.0
+          }
+        },
+        {
+          "id": "regression_reverts_promptly",
+          "met": true,
+          "measured": {
+            "synchronised_median_excess_laps": 0.0,
+            "staggered_median_excess_laps": 0,
+            "synchronised_share_at_the_floor": 0.7788,
+            "staggered_share_at_the_floor": 0.7559,
+            "synchronised_median_lag_from_first_onset": 1.0,
+            "staggered_median_lag_from_first_onset": 3,
+            "n_synchronised_reversions": 104,
+            "n_staggered_reversions": 127,
+            "share_removed_despite_regression": 0.0
+          }
+        }
+      ],
+      "all_met": true
+    },
+    {
+      "params": {
+        "band_floors.braking_m": 8.0,
+        "band_floors.corner_speed_kmh": 5.0,
+        "band_floors.apex_m": 0.5,
+        "criteria.consistency_delta_ratio": 1.5
+      },
+      "looseness": 7.266667,
+      "targets": [
+        {
+          "id": "typical_improver_traverses",
+          "met": true,
+          "measured": {
+            "share_traversing_2_of_3": 0.94,
+            "median_elements_removed": 2.0
+          }
+        },
+        {
+          "id": "non_improver_never_fades",
+          "met": true,
+          "measured": {
+            "share_with_any_fade": 0.0
+          }
+        },
+        {
+          "id": "regression_reverts_promptly",
+          "met": true,
+          "measured": {
+            "synchronised_median_excess_laps": 0.0,
+            "staggered_median_excess_laps": 0,
+            "synchronised_share_at_the_floor": 0.6774,
+            "staggered_share_at_the_floor": 0.8299,
+            "synchronised_median_lag_from_first_onset": 1.0,
+            "staggered_median_lag_from_first_onset": 3,
+            "n_synchronised_reversions": 124,
+            "n_staggered_reversions": 147,
+            "share_removed_despite_regression": 0.0
+          }
+        }
+      ],
+      "all_met": true
+    },
+    {
+      "params": {
+        "band_floors.braking_m": 8.0,
+        "band_floors.corner_speed_kmh": 5.0,
+        "band_floors.apex_m": 0.8,
+        "criteria.consistency_delta_ratio": 0.5
+      },
+      "looseness": 5.866667,
+      "targets": [
+        {
+          "id": "typical_improver_traverses",
+          "met": true,
+          "measured": {
+            "share_traversing_2_of_3": 0.98,
+            "median_elements_removed": 2.0
+          }
+        },
+        {
+          "id": "non_improver_never_fades",
+          "met": true,
+          "measured": {
+            "share_with_any_fade": 0.0
+          }
+        },
+        {
+          "id": "regression_reverts_promptly",
+          "met": false,
+          "measured": {
+            "synchronised_median_excess_laps": 0,
+            "staggered_median_excess_laps": 0,
+            "synchronised_share_at_the_floor": 0.7071,
+            "staggered_share_at_the_floor": 0.8387,
+            "synchronised_median_lag_from_first_onset": 1,
+            "staggered_median_lag_from_first_onset": 3,
+            "n_synchronised_reversions": 99,
+            "n_staggered_reversions": 93,
+            "share_removed_despite_regression": 0.02
+          }
+        }
+      ],
+      "all_met": false
+    },
+    {
+      "params": {
+        "band_floors.braking_m": 8.0,
+        "band_floors.corner_speed_kmh": 5.0,
+        "band_floors.apex_m": 0.8,
+        "criteria.consistency_delta_ratio": 0.75
+      },
+      "looseness": 6.366667,
+      "targets": [
+        {
+          "id": "typical_improver_traverses",
+          "met": true,
+          "measured": {
+            "share_traversing_2_of_3": 0.98,
+            "median_elements_removed": 2.0
+          }
+        },
+        {
+          "id": "non_improver_never_fades",
+          "met": true,
+          "measured": {
+            "share_with_any_fade": 0.0
+          }
+        },
+        {
+          "id": "regression_reverts_promptly",
+          "met": false,
+          "measured": {
+            "synchronised_median_excess_laps": 0,
+            "staggered_median_excess_laps": 0.0,
+            "synchronised_share_at_the_floor": 0.6931,
+            "staggered_share_at_the_floor": 0.7981,
+            "synchronised_median_lag_from_first_onset": 1,
+            "staggered_median_lag_from_first_onset": 3.0,
+            "n_synchronised_reversions": 101,
+            "n_staggered_reversions": 104,
+            "share_removed_despite_regression": 0.02
+          }
+        }
+      ],
+      "all_met": false
+    },
+    {
+      "params": {
+        "band_floors.braking_m": 8.0,
+        "band_floors.corner_speed_kmh": 5.0,
+        "band_floors.apex_m": 0.8,
+        "criteria.consistency_delta_ratio": 1.0
+      },
+      "looseness": 6.866667,
+      "targets": [
+        {
+          "id": "typical_improver_traverses",
+          "met": true,
+          "measured": {
+            "share_traversing_2_of_3": 0.98,
+            "median_elements_removed": 2.0
+          }
+        },
+        {
+          "id": "non_improver_never_fades",
+          "met": true,
+          "measured": {
+            "share_with_any_fade": 0.0
+          }
+        },
+        {
+          "id": "regression_reverts_promptly",
+          "met": false,
+          "measured": {
+            "synchronised_median_excess_laps": 0,
+            "staggered_median_excess_laps": 0.0,
+            "synchronised_share_at_the_floor": 0.6667,
+            "staggered_share_at_the_floor": 0.8,
+            "synchronised_median_lag_from_first_onset": 1,
+            "staggered_median_lag_from_first_onset": 3.0,
+            "n_synchronised_reversions": 105,
+            "n_staggered_reversions": 120,
+            "share_removed_despite_regression": 0.02
+          }
+        }
+      ],
+      "all_met": false
+    },
+    {
+      "params": {
+        "band_floors.braking_m": 8.0,
+        "band_floors.corner_speed_kmh": 5.0,
+        "band_floors.apex_m": 0.8,
+        "criteria.consistency_delta_ratio": 1.5
+      },
+      "looseness": 7.866667,
+      "targets": [
+        {
+          "id": "typical_improver_traverses",
+          "met": true,
+          "measured": {
+            "share_traversing_2_of_3": 1.0,
+            "median_elements_removed": 3.0
+          }
+        },
+        {
+          "id": "non_improver_never_fades",
+          "met": true,
+          "measured": {
+            "share_with_any_fade": 0.0
+          }
+        },
+        {
+          "id": "regression_reverts_promptly",
+          "met": false,
+          "measured": {
+            "synchronised_median_excess_laps": 0,
+            "staggered_median_excess_laps": 0.0,
+            "synchronised_share_at_the_floor": 0.584,
+            "staggered_share_at_the_floor": 0.8714,
+            "synchronised_median_lag_from_first_onset": 1,
+            "staggered_median_lag_from_first_onset": 3.0,
+            "n_synchronised_reversions": 125,
+            "n_staggered_reversions": 140,
+            "share_removed_despite_regression": 0.02
+          }
+        }
+      ],
+      "all_met": false
+    },
+    {
+      "params": {
+        "band_floors.braking_m": 8.0,
+        "band_floors.corner_speed_kmh": 5.0,
+        "band_floors.apex_m": 1.2,
+        "criteria.consistency_delta_ratio": 0.5
+      },
+      "looseness": 6.666667,
+      "targets": [
+        {
+          "id": "typical_improver_traverses",
+          "met": true,
+          "measured": {
+            "share_traversing_2_of_3": 0.98,
+            "median_elements_removed": 2.0
+          }
+        },
+        {
+          "id": "non_improver_never_fades",
+          "met": false,
+          "measured": {
+            "share_with_any_fade": 0.22
+          }
+        },
+        {
+          "id": "regression_reverts_promptly",
+          "met": false,
+          "measured": {
+            "synchronised_median_excess_laps": 0,
+            "staggered_median_excess_laps": 0.0,
+            "synchronised_share_at_the_floor": 0.5376,
+            "staggered_share_at_the_floor": 0.7969,
+            "synchronised_median_lag_from_first_onset": 1,
+            "staggered_median_lag_from_first_onset": 3.0,
+            "n_synchronised_reversions": 93,
+            "n_staggered_reversions": 64,
+            "share_removed_despite_regression": 0.18
+          }
+        }
+      ],
+      "all_met": false
+    },
+    {
+      "params": {
+        "band_floors.braking_m": 8.0,
+        "band_floors.corner_speed_kmh": 5.0,
+        "band_floors.apex_m": 1.2,
+        "criteria.consistency_delta_ratio": 0.75
+      },
+      "looseness": 7.166667,
+      "targets": [
+        {
+          "id": "typical_improver_traverses",
+          "met": true,
+          "measured": {
+            "share_traversing_2_of_3": 0.98,
+            "median_elements_removed": 2.0
+          }
+        },
+        {
+          "id": "non_improver_never_fades",
+          "met": false,
+          "measured": {
+            "share_with_any_fade": 0.22
+          }
+        },
+        {
+          "id": "regression_reverts_promptly",
+          "met": false,
+          "measured": {
+            "synchronised_median_excess_laps": 0,
+            "staggered_median_excess_laps": 0,
+            "synchronised_share_at_the_floor": 0.5263,
+            "staggered_share_at_the_floor": 0.7467,
+            "synchronised_median_lag_from_first_onset": 1,
+            "staggered_median_lag_from_first_onset": 3,
+            "n_synchronised_reversions": 95,
+            "n_staggered_reversions": 75,
+            "share_removed_despite_regression": 0.18
+          }
+        }
+      ],
+      "all_met": false
+    },
+    {
+      "params": {
+        "band_floors.braking_m": 8.0,
+        "band_floors.corner_speed_kmh": 5.0,
+        "band_floors.apex_m": 1.2,
+        "criteria.consistency_delta_ratio": 1.0
+      },
+      "looseness": 7.666667,
+      "targets": [
+        {
+          "id": "typical_improver_traverses",
+          "met": true,
+          "measured": {
+            "share_traversing_2_of_3": 0.98,
+            "median_elements_removed": 2.0
+          }
+        },
+        {
+          "id": "non_improver_never_fades",
+          "met": false,
+          "measured": {
+            "share_with_any_fade": 0.22
+          }
+        },
+        {
+          "id": "regression_reverts_promptly",
+          "met": false,
+          "measured": {
+            "synchronised_median_excess_laps": 0,
+            "staggered_median_excess_laps": 0,
+            "synchronised_share_at_the_floor": 0.5051,
+            "staggered_share_at_the_floor": 0.7582,
+            "synchronised_median_lag_from_first_onset": 1,
+            "staggered_median_lag_from_first_onset": 3,
+            "n_synchronised_reversions": 99,
+            "n_staggered_reversions": 91,
+            "share_removed_despite_regression": 0.18
+          }
+        }
+      ],
+      "all_met": false
+    },
+    {
+      "params": {
+        "band_floors.braking_m": 8.0,
+        "band_floors.corner_speed_kmh": 5.0,
+        "band_floors.apex_m": 1.2,
+        "criteria.consistency_delta_ratio": 1.5
+      },
+      "looseness": 8.666667,
+      "targets": [
+        {
+          "id": "typical_improver_traverses",
+          "met": true,
+          "measured": {
+            "share_traversing_2_of_3": 1.0,
+            "median_elements_removed": 3.0
+          }
+        },
+        {
+          "id": "non_improver_never_fades",
+          "met": false,
+          "measured": {
+            "share_with_any_fade": 0.22
+          }
+        },
+        {
+          "id": "regression_reverts_promptly",
+          "met": false,
+          "measured": {
+            "synchronised_median_excess_laps": 1,
+            "staggered_median_excess_laps": 0,
+            "synchronised_share_at_the_floor": 0.4454,
+            "staggered_share_at_the_floor": 0.8559,
+            "synchronised_median_lag_from_first_onset": 2,
+            "staggered_median_lag_from_first_onset": 3,
+            "n_synchronised_reversions": 119,
+            "n_staggered_reversions": 111,
+            "share_removed_despite_regression": 0.18
+          }
+        }
+      ],
+      "all_met": false
+    },
+    {
+      "params": {
+        "band_floors.braking_m": 12.0,
+        "band_floors.corner_speed_kmh": 3.0,
+        "band_floors.apex_m": 0.5,
+        "criteria.consistency_delta_ratio": 0.5
+      },
+      "looseness": 5.4,
+      "targets": [
+        {
+          "id": "typical_improver_traverses",
+          "met": false,
+          "measured": {
+            "share_traversing_2_of_3": 0.28,
+            "median_elements_removed": 1.0
+          }
+        },
+        {
+          "id": "non_improver_never_fades",
+          "met": true,
+          "measured": {
+            "share_with_any_fade": 0.0
+          }
+        },
+        {
+          "id": "regression_reverts_promptly",
+          "met": true,
+          "measured": {
+            "synchronised_median_excess_laps": 0,
+            "staggered_median_excess_laps": 0.0,
+            "synchronised_share_at_the_floor": 0.6264,
+            "staggered_share_at_the_floor": 0.8182,
+            "synchronised_median_lag_from_first_onset": 1,
+            "staggered_median_lag_from_first_onset": 3.0,
+            "n_synchronised_reversions": 91,
+            "n_staggered_reversions": 110,
+            "share_removed_despite_regression": 0.0
+          }
+        }
+      ],
+      "all_met": false
+    },
+    {
+      "params": {
+        "band_floors.braking_m": 12.0,
+        "band_floors.corner_speed_kmh": 3.0,
+        "band_floors.apex_m": 0.5,
+        "criteria.consistency_delta_ratio": 0.75
+      },
+      "looseness": 5.9,
+      "targets": [
+        {
+          "id": "typical_improver_traverses",
+          "met": true,
+          "measured": {
+            "share_traversing_2_of_3": 0.62,
+            "median_elements_removed": 2.0
+          }
+        },
+        {
+          "id": "non_improver_never_fades",
+          "met": true,
+          "measured": {
+            "share_with_any_fade": 0.0
+          }
+        },
+        {
+          "id": "regression_reverts_promptly",
+          "met": true,
+          "measured": {
+            "synchronised_median_excess_laps": 0.0,
+            "staggered_median_excess_laps": 0,
+            "synchronised_share_at_the_floor": 0.537,
+            "staggered_share_at_the_floor": 0.8511,
+            "synchronised_median_lag_from_first_onset": 1.0,
+            "staggered_median_lag_from_first_onset": 3,
+            "n_synchronised_reversions": 108,
+            "n_staggered_reversions": 141,
+            "share_removed_despite_regression": 0.0
+          }
+        }
+      ],
+      "all_met": true
+    },
+    {
+      "params": {
+        "band_floors.braking_m": 12.0,
+        "band_floors.corner_speed_kmh": 3.0,
+        "band_floors.apex_m": 0.5,
+        "criteria.consistency_delta_ratio": 1.0
+      },
+      "looseness": 6.4,
+      "targets": [
+        {
+          "id": "typical_improver_traverses",
+          "met": true,
+          "measured": {
+            "share_traversing_2_of_3": 0.74,
+            "median_elements_removed": 2.0
+          }
+        },
+        {
+          "id": "non_improver_never_fades",
+          "met": true,
+          "measured": {
+            "share_with_any_fade": 0.0
+          }
+        },
+        {
+          "id": "regression_reverts_promptly",
+          "met": true,
+          "measured": {
+            "synchronised_median_excess_laps": 0.0,
+            "staggered_median_excess_laps": 0,
+            "synchronised_share_at_the_floor": 0.5154,
+            "staggered_share_at_the_floor": 0.8639,
+            "synchronised_median_lag_from_first_onset": 1.0,
+            "staggered_median_lag_from_first_onset": 3,
+            "n_synchronised_reversions": 130,
+            "n_staggered_reversions": 147,
+            "share_removed_despite_regression": 0.0
+          }
+        }
+      ],
+      "all_met": true
+    },
+    {
+      "params": {
+        "band_floors.braking_m": 12.0,
+        "band_floors.corner_speed_kmh": 3.0,
+        "band_floors.apex_m": 0.5,
+        "criteria.consistency_delta_ratio": 1.5
+      },
+      "looseness": 7.4,
+      "targets": [
+        {
+          "id": "typical_improver_traverses",
+          "met": true,
+          "measured": {
+            "share_traversing_2_of_3": 0.74,
+            "median_elements_removed": 2.0
+          }
+        },
+        {
+          "id": "non_improver_never_fades",
+          "met": true,
+          "measured": {
+            "share_with_any_fade": 0.0
+          }
+        },
+        {
+          "id": "regression_reverts_promptly",
+          "met": true,
+          "measured": {
+            "synchronised_median_excess_laps": 0,
+            "staggered_median_excess_laps": 0.0,
+            "synchronised_share_at_the_floor": 0.7007,
+            "staggered_share_at_the_floor": 0.7973,
+            "synchronised_median_lag_from_first_onset": 1,
+            "staggered_median_lag_from_first_onset": 3.0,
+            "n_synchronised_reversions": 137,
+            "n_staggered_reversions": 148,
+            "share_removed_despite_regression": 0.0
+          }
+        }
+      ],
+      "all_met": true
+    },
+    {
+      "params": {
+        "band_floors.braking_m": 12.0,
+        "band_floors.corner_speed_kmh": 3.0,
+        "band_floors.apex_m": 0.8,
+        "criteria.consistency_delta_ratio": 0.5
+      },
+      "looseness": 6.0,
+      "targets": [
+        {
+          "id": "typical_improver_traverses",
+          "met": false,
+          "measured": {
+            "share_traversing_2_of_3": 0.32,
+            "median_elements_removed": 1.0
+          }
+        },
+        {
+          "id": "non_improver_never_fades",
+          "met": true,
+          "measured": {
+            "share_with_any_fade": 0.0
+          }
+        },
+        {
+          "id": "regression_reverts_promptly",
+          "met": false,
+          "measured": {
+            "synchronised_median_excess_laps": 0.5,
+            "staggered_median_excess_laps": 0,
+            "synchronised_share_at_the_floor": 0.5,
+            "staggered_share_at_the_floor": 0.8738,
+            "synchronised_median_lag_from_first_onset": 1.5,
+            "staggered_median_lag_from_first_onset": 3,
+            "n_synchronised_reversions": 92,
+            "n_staggered_reversions": 103,
+            "share_removed_despite_regression": 0.02
+          }
+        }
+      ],
+      "all_met": false
+    },
+    {
+      "params": {
+        "band_floors.braking_m": 12.0,
+        "band_floors.corner_speed_kmh": 3.0,
+        "band_floors.apex_m": 0.8,
+        "criteria.consistency_delta_ratio": 0.75
+      },
+      "looseness": 6.5,
+      "targets": [
+        {
+          "id": "typical_improver_traverses",
+          "met": true,
+          "measured": {
+            "share_traversing_2_of_3": 0.84,
+            "median_elements_removed": 2.0
+          }
+        },
+        {
+          "id": "non_improver_never_fades",
+          "met": true,
+          "measured": {
+            "share_with_any_fade": 0.0
+          }
+        },
+        {
+          "id": "regression_reverts_promptly",
+          "met": false,
+          "measured": {
+            "synchronised_median_excess_laps": 1,
+            "staggered_median_excess_laps": 0.0,
+            "synchronised_share_at_the_floor": 0.4312,
+            "staggered_share_at_the_floor": 0.8955,
+            "synchronised_median_lag_from_first_onset": 2,
+            "staggered_median_lag_from_first_onset": 3.0,
+            "n_synchronised_reversions": 109,
+            "n_staggered_reversions": 134,
+            "share_removed_despite_regression": 0.02
+          }
+        }
+      ],
+      "all_met": false
+    },
+    {
+      "params": {
+        "band_floors.braking_m": 12.0,
+        "band_floors.corner_speed_kmh": 3.0,
+        "band_floors.apex_m": 0.8,
+        "criteria.consistency_delta_ratio": 1.0
+      },
+      "looseness": 7.0,
+      "targets": [
+        {
+          "id": "typical_improver_traverses",
+          "met": true,
+          "measured": {
+            "share_traversing_2_of_3": 1.0,
+            "median_elements_removed": 2.0
+          }
+        },
+        {
+          "id": "non_improver_never_fades",
+          "met": true,
+          "measured": {
+            "share_with_any_fade": 0.0
+          }
+        },
+        {
+          "id": "regression_reverts_promptly",
+          "met": false,
+          "measured": {
+            "synchronised_median_excess_laps": 1,
+            "staggered_median_excess_laps": 0.0,
+            "synchronised_share_at_the_floor": 0.4275,
+            "staggered_share_at_the_floor": 0.9071,
+            "synchronised_median_lag_from_first_onset": 2,
+            "staggered_median_lag_from_first_onset": 3.0,
+            "n_synchronised_reversions": 131,
+            "n_staggered_reversions": 140,
+            "share_removed_despite_regression": 0.02
+          }
+        }
+      ],
+      "all_met": false
+    },
+    {
+      "params": {
+        "band_floors.braking_m": 12.0,
+        "band_floors.corner_speed_kmh": 3.0,
+        "band_floors.apex_m": 0.8,
+        "criteria.consistency_delta_ratio": 1.5
+      },
+      "looseness": 8.0,
+      "targets": [
+        {
+          "id": "typical_improver_traverses",
+          "met": true,
+          "measured": {
+            "share_traversing_2_of_3": 1.0,
+            "median_elements_removed": 2.0
+          }
+        },
+        {
+          "id": "non_improver_never_fades",
+          "met": true,
+          "measured": {
+            "share_with_any_fade": 0.0
+          }
+        },
+        {
+          "id": "regression_reverts_promptly",
+          "met": false,
+          "measured": {
+            "synchronised_median_excess_laps": 0.0,
+            "staggered_median_excess_laps": 0,
+            "synchronised_share_at_the_floor": 0.6159,
+            "staggered_share_at_the_floor": 0.8369,
+            "synchronised_median_lag_from_first_onset": 1.0,
+            "staggered_median_lag_from_first_onset": 3,
+            "n_synchronised_reversions": 138,
+            "n_staggered_reversions": 141,
+            "share_removed_despite_regression": 0.02
+          }
+        }
+      ],
+      "all_met": false
+    },
+    {
+      "params": {
+        "band_floors.braking_m": 12.0,
+        "band_floors.corner_speed_kmh": 3.0,
+        "band_floors.apex_m": 1.2,
+        "criteria.consistency_delta_ratio": 0.5
+      },
+      "looseness": 6.8,
+      "targets": [
+        {
+          "id": "typical_improver_traverses",
+          "met": false,
+          "measured": {
+            "share_traversing_2_of_3": 0.32,
+            "median_elements_removed": 1.0
+          }
+        },
+        {
+          "id": "non_improver_never_fades",
+          "met": false,
+          "measured": {
+            "share_with_any_fade": 0.22
+          }
+        },
+        {
+          "id": "regression_reverts_promptly",
+          "met": false,
+          "measured": {
+            "synchronised_median_excess_laps": 1.0,
+            "staggered_median_excess_laps": -1.0,
+            "synchronised_share_at_the_floor": 0.3023,
+            "staggered_share_at_the_floor": 0.8514,
+            "synchronised_median_lag_from_first_onset": 2.0,
+            "staggered_median_lag_from_first_onset": 2.0,
+            "n_synchronised_reversions": 86,
+            "n_staggered_reversions": 74,
+            "share_removed_despite_regression": 0.18
+          }
+        }
+      ],
+      "all_met": false
+    },
+    {
+      "params": {
+        "band_floors.braking_m": 12.0,
+        "band_floors.corner_speed_kmh": 3.0,
+        "band_floors.apex_m": 1.2,
+        "criteria.consistency_delta_ratio": 0.75
+      },
+      "looseness": 7.3,
+      "targets": [
+        {
+          "id": "typical_improver_traverses",
+          "met": true,
+          "measured": {
+            "share_traversing_2_of_3": 0.84,
+            "median_elements_removed": 2.0
+          }
+        },
+        {
+          "id": "non_improver_never_fades",
+          "met": false,
+          "measured": {
+            "share_with_any_fade": 0.22
+          }
+        },
+        {
+          "id": "regression_reverts_promptly",
+          "met": false,
+          "measured": {
+            "synchronised_median_excess_laps": 1,
+            "staggered_median_excess_laps": 0,
+            "synchronised_share_at_the_floor": 0.2621,
+            "staggered_share_at_the_floor": 0.8857,
+            "synchronised_median_lag_from_first_onset": 2,
+            "staggered_median_lag_from_first_onset": 3,
+            "n_synchronised_reversions": 103,
+            "n_staggered_reversions": 105,
+            "share_removed_despite_regression": 0.18
+          }
+        }
+      ],
+      "all_met": false
+    },
+    {
+      "params": {
+        "band_floors.braking_m": 12.0,
+        "band_floors.corner_speed_kmh": 3.0,
+        "band_floors.apex_m": 1.2,
+        "criteria.consistency_delta_ratio": 1.0
+      },
+      "looseness": 7.8,
+      "targets": [
+        {
+          "id": "typical_improver_traverses",
+          "met": true,
+          "measured": {
+            "share_traversing_2_of_3": 1.0,
+            "median_elements_removed": 2.0
+          }
+        },
+        {
+          "id": "non_improver_never_fades",
+          "met": false,
+          "measured": {
+            "share_with_any_fade": 0.22
+          }
+        },
+        {
+          "id": "regression_reverts_promptly",
+          "met": false,
+          "measured": {
+            "synchronised_median_excess_laps": 1,
+            "staggered_median_excess_laps": -1,
+            "synchronised_share_at_the_floor": 0.288,
+            "staggered_share_at_the_floor": 0.9009,
+            "synchronised_median_lag_from_first_onset": 2,
+            "staggered_median_lag_from_first_onset": 2,
+            "n_synchronised_reversions": 125,
+            "n_staggered_reversions": 111,
+            "share_removed_despite_regression": 0.18
+          }
+        }
+      ],
+      "all_met": false
+    },
+    {
+      "params": {
+        "band_floors.braking_m": 12.0,
+        "band_floors.corner_speed_kmh": 3.0,
+        "band_floors.apex_m": 1.2,
+        "criteria.consistency_delta_ratio": 1.5
+      },
+      "looseness": 8.8,
+      "targets": [
+        {
+          "id": "typical_improver_traverses",
+          "met": true,
+          "measured": {
+            "share_traversing_2_of_3": 1.0,
+            "median_elements_removed": 2.0
+          }
+        },
+        {
+          "id": "non_improver_never_fades",
+          "met": false,
+          "measured": {
+            "share_with_any_fade": 0.22
+          }
+        },
+        {
+          "id": "regression_reverts_promptly",
+          "met": false,
+          "measured": {
+            "synchronised_median_excess_laps": 1.0,
+            "staggered_median_excess_laps": 0.0,
+            "synchronised_share_at_the_floor": 0.4924,
+            "staggered_share_at_the_floor": 0.8125,
+            "synchronised_median_lag_from_first_onset": 2.0,
+            "staggered_median_lag_from_first_onset": 3.0,
+            "n_synchronised_reversions": 132,
+            "n_staggered_reversions": 112,
+            "share_removed_despite_regression": 0.18
+          }
+        }
+      ],
+      "all_met": false
+    },
+    {
+      "params": {
+        "band_floors.braking_m": 12.0,
+        "band_floors.corner_speed_kmh": 4.0,
+        "band_floors.apex_m": 0.5,
+        "criteria.consistency_delta_ratio": 0.5
+      },
+      "looseness": 5.733333,
+      "targets": [
+        {
+          "id": "typical_improver_traverses",
+          "met": true,
+          "measured": {
+            "share_traversing_2_of_3": 0.54,
+            "median_elements_removed": 2.0
+          }
+        },
+        {
+          "id": "non_improver_never_fades",
+          "met": true,
+          "measured": {
+            "share_with_any_fade": 0.0
+          }
+        },
+        {
+          "id": "regression_reverts_promptly",
+          "met": true,
+          "measured": {
+            "synchronised_median_excess_laps": 0.0,
+            "staggered_median_excess_laps": 0.0,
+            "synchronised_share_at_the_floor": 0.7451,
+            "staggered_share_at_the_floor": 0.7946,
+            "synchronised_median_lag_from_first_onset": 1.0,
+            "staggered_median_lag_from_first_onset": 3.0,
+            "n_synchronised_reversions": 102,
+            "n_staggered_reversions": 112,
+            "share_removed_despite_regression": 0.0
+          }
+        }
+      ],
+      "all_met": true
+    },
+    {
+      "params": {
+        "band_floors.braking_m": 12.0,
+        "band_floors.corner_speed_kmh": 4.0,
+        "band_floors.apex_m": 0.5,
+        "criteria.consistency_delta_ratio": 0.75
+      },
+      "looseness": 6.233333,
+      "targets": [
+        {
+          "id": "typical_improver_traverses",
+          "met": true,
+          "measured": {
+            "share_traversing_2_of_3": 0.88,
+            "median_elements_removed": 2.0
+          }
+        },
+        {
+          "id": "non_improver_never_fades",
+          "met": true,
+          "measured": {
+            "share_with_any_fade": 0.0
+          }
+        },
+        {
+          "id": "regression_reverts_promptly",
+          "met": true,
+          "measured": {
+            "synchronised_median_excess_laps": 0,
+            "staggered_median_excess_laps": 0,
+            "synchronised_share_at_the_floor": 0.6471,
+            "staggered_share_at_the_floor": 0.8322,
+            "synchronised_median_lag_from_first_onset": 1,
+            "staggered_median_lag_from_first_onset": 3,
+            "n_synchronised_reversions": 119,
+            "n_staggered_reversions": 143,
+            "share_removed_despite_regression": 0.0
+          }
+        }
+      ],
+      "all_met": true
+    },
+    {
+      "params": {
+        "band_floors.braking_m": 12.0,
+        "band_floors.corner_speed_kmh": 4.0,
+        "band_floors.apex_m": 0.5,
+        "criteria.consistency_delta_ratio": 1.0
+      },
+      "looseness": 6.733333,
+      "targets": [
+        {
+          "id": "typical_improver_traverses",
+          "met": true,
+          "measured": {
+            "share_traversing_2_of_3": 0.96,
+            "median_elements_removed": 2.5
+          }
+        },
+        {
+          "id": "non_improver_never_fades",
+          "met": true,
+          "measured": {
+            "share_with_any_fade": 0.0
+          }
+        },
+        {
+          "id": "regression_reverts_promptly",
+          "met": true,
+          "measured": {
+            "synchronised_median_excess_laps": 0,
+            "staggered_median_excess_laps": 0,
+            "synchronised_share_at_the_floor": 0.6099,
+            "staggered_share_at_the_floor": 0.8456,
+            "synchronised_median_lag_from_first_onset": 1,
+            "staggered_median_lag_from_first_onset": 3,
+            "n_synchronised_reversions": 141,
+            "n_staggered_reversions": 149,
+            "share_removed_despite_regression": 0.0
+          }
+        }
+      ],
+      "all_met": true
+    },
+    {
+      "params": {
+        "band_floors.braking_m": 12.0,
+        "band_floors.corner_speed_kmh": 4.0,
+        "band_floors.apex_m": 0.5,
+        "criteria.consistency_delta_ratio": 1.5
+      },
+      "looseness": 7.733333,
+      "targets": [
+        {
+          "id": "typical_improver_traverses",
+          "met": true,
+          "measured": {
+            "share_traversing_2_of_3": 0.96,
+            "median_elements_removed": 2.5
+          }
+        },
+        {
+          "id": "non_improver_never_fades",
+          "met": true,
+          "measured": {
+            "share_with_any_fade": 0.0
+          }
+        },
+        {
+          "id": "regression_reverts_promptly",
+          "met": true,
+          "measured": {
+            "synchronised_median_excess_laps": 0.0,
+            "staggered_median_excess_laps": 0.0,
+            "synchronised_share_at_the_floor": 0.777,
+            "staggered_share_at_the_floor": 0.78,
+            "synchronised_median_lag_from_first_onset": 1.0,
+            "staggered_median_lag_from_first_onset": 3.0,
+            "n_synchronised_reversions": 148,
+            "n_staggered_reversions": 150,
+            "share_removed_despite_regression": 0.0
+          }
+        }
+      ],
+      "all_met": true
+    },
+    {
+      "params": {
+        "band_floors.braking_m": 12.0,
+        "band_floors.corner_speed_kmh": 4.0,
+        "band_floors.apex_m": 0.8,
+        "criteria.consistency_delta_ratio": 0.5
+      },
+      "looseness": 6.333333,
+      "targets": [
+        {
+          "id": "typical_improver_traverses",
+          "met": true,
+          "measured": {
+            "share_traversing_2_of_3": 0.76,
+            "median_elements_removed": 2.0
+          }
+        },
+        {
+          "id": "non_improver_never_fades",
+          "met": true,
+          "measured": {
+            "share_with_any_fade": 0.0
+          }
+        },
+        {
+          "id": "regression_reverts_promptly",
+          "met": false,
+          "measured": {
+            "synchronised_median_excess_laps": 0,
+            "staggered_median_excess_laps": 0,
+            "synchronised_share_at_the_floor": 0.6311,
+            "staggered_share_at_the_floor": 0.8476,
+            "synchronised_median_lag_from_first_onset": 1,
+            "staggered_median_lag_from_first_onset": 3,
+            "n_synchronised_reversions": 103,
+            "n_staggered_reversions": 105,
+            "share_removed_despite_regression": 0.02
+          }
+        }
+      ],
+      "all_met": false
+    },
+    {
+      "params": {
+        "band_floors.braking_m": 12.0,
+        "band_floors.corner_speed_kmh": 4.0,
+        "band_floors.apex_m": 0.8,
+        "criteria.consistency_delta_ratio": 0.75
+      },
+      "looseness": 6.833333,
+      "targets": [
+        {
+          "id": "typical_improver_traverses",
+          "met": true,
+          "measured": {
+            "share_traversing_2_of_3": 0.92,
+            "median_elements_removed": 3.0
+          }
+        },
+        {
+          "id": "non_improver_never_fades",
+          "met": true,
+          "measured": {
+            "share_with_any_fade": 0.0
+          }
+        },
+        {
+          "id": "regression_reverts_promptly",
+          "met": false,
+          "measured": {
+            "synchronised_median_excess_laps": 0.0,
+            "staggered_median_excess_laps": 0.0,
+            "synchronised_share_at_the_floor": 0.55,
+            "staggered_share_at_the_floor": 0.875,
+            "synchronised_median_lag_from_first_onset": 1.0,
+            "staggered_median_lag_from_first_onset": 3.0,
+            "n_synchronised_reversions": 120,
+            "n_staggered_reversions": 136,
+            "share_removed_despite_regression": 0.02
+          }
+        }
+      ],
+      "all_met": false
+    },
+    {
+      "params": {
+        "band_floors.braking_m": 12.0,
+        "band_floors.corner_speed_kmh": 4.0,
+        "band_floors.apex_m": 0.8,
+        "criteria.consistency_delta_ratio": 1.0
+      },
+      "looseness": 7.333333,
+      "targets": [
+        {
+          "id": "typical_improver_traverses",
+          "met": true,
+          "measured": {
+            "share_traversing_2_of_3": 1.0,
+            "median_elements_removed": 3.0
+          }
+        },
+        {
+          "id": "non_improver_never_fades",
+          "met": true,
+          "measured": {
+            "share_with_any_fade": 0.0
+          }
+        },
+        {
+          "id": "regression_reverts_promptly",
+          "met": false,
+          "measured": {
+            "synchronised_median_excess_laps": 0.0,
+            "staggered_median_excess_laps": 0.0,
+            "synchronised_share_at_the_floor": 0.5282,
+            "staggered_share_at_the_floor": 0.8873,
+            "synchronised_median_lag_from_first_onset": 1.0,
+            "staggered_median_lag_from_first_onset": 3.0,
+            "n_synchronised_reversions": 142,
+            "n_staggered_reversions": 142,
+            "share_removed_despite_regression": 0.02
+          }
+        }
+      ],
+      "all_met": false
+    },
+    {
+      "params": {
+        "band_floors.braking_m": 12.0,
+        "band_floors.corner_speed_kmh": 4.0,
+        "band_floors.apex_m": 0.8,
+        "criteria.consistency_delta_ratio": 1.5
+      },
+      "looseness": 8.333333,
+      "targets": [
+        {
+          "id": "typical_improver_traverses",
+          "met": true,
+          "measured": {
+            "share_traversing_2_of_3": 1.0,
+            "median_elements_removed": 3.0
+          }
+        },
+        {
+          "id": "non_improver_never_fades",
+          "met": true,
+          "measured": {
+            "share_with_any_fade": 0.0
+          }
+        },
+        {
+          "id": "regression_reverts_promptly",
+          "met": false,
+          "measured": {
+            "synchronised_median_excess_laps": 0,
+            "staggered_median_excess_laps": 0,
+            "synchronised_share_at_the_floor": 0.698,
+            "staggered_share_at_the_floor": 0.8182,
+            "synchronised_median_lag_from_first_onset": 1,
+            "staggered_median_lag_from_first_onset": 3,
+            "n_synchronised_reversions": 149,
+            "n_staggered_reversions": 143,
+            "share_removed_despite_regression": 0.02
+          }
+        }
+      ],
+      "all_met": false
+    },
+    {
+      "params": {
+        "band_floors.braking_m": 12.0,
+        "band_floors.corner_speed_kmh": 4.0,
+        "band_floors.apex_m": 1.2,
+        "criteria.consistency_delta_ratio": 0.5
+      },
+      "looseness": 7.133333,
+      "targets": [
+        {
+          "id": "typical_improver_traverses",
+          "met": true,
+          "measured": {
+            "share_traversing_2_of_3": 0.76,
+            "median_elements_removed": 2.0
+          }
+        },
+        {
+          "id": "non_improver_never_fades",
+          "met": false,
+          "measured": {
+            "share_with_any_fade": 0.22
+          }
+        },
+        {
+          "id": "regression_reverts_promptly",
+          "met": false,
+          "measured": {
+            "synchronised_median_excess_laps": 1,
+            "staggered_median_excess_laps": 0.0,
+            "synchronised_share_at_the_floor": 0.4639,
+            "staggered_share_at_the_floor": 0.8158,
+            "synchronised_median_lag_from_first_onset": 2,
+            "staggered_median_lag_from_first_onset": 3.0,
+            "n_synchronised_reversions": 97,
+            "n_staggered_reversions": 76,
+            "share_removed_despite_regression": 0.18
+          }
+        }
+      ],
+      "all_met": false
+    },
+    {
+      "params": {
+        "band_floors.braking_m": 12.0,
+        "band_floors.corner_speed_kmh": 4.0,
+        "band_floors.apex_m": 1.2,
+        "criteria.consistency_delta_ratio": 0.75
+      },
+      "looseness": 7.633333,
+      "targets": [
+        {
+          "id": "typical_improver_traverses",
+          "met": true,
+          "measured": {
+            "share_traversing_2_of_3": 0.92,
+            "median_elements_removed": 3.0
+          }
+        },
+        {
+          "id": "non_improver_never_fades",
+          "met": false,
+          "measured": {
+            "share_with_any_fade": 0.22
+          }
+        },
+        {
+          "id": "regression_reverts_promptly",
+          "met": false,
+          "measured": {
+            "synchronised_median_excess_laps": 1.0,
+            "staggered_median_excess_laps": 0,
+            "synchronised_share_at_the_floor": 0.4035,
+            "staggered_share_at_the_floor": 0.8598,
+            "synchronised_median_lag_from_first_onset": 2.0,
+            "staggered_median_lag_from_first_onset": 3,
+            "n_synchronised_reversions": 114,
+            "n_staggered_reversions": 107,
+            "share_removed_despite_regression": 0.18
+          }
+        }
+      ],
+      "all_met": false
+    },
+    {
+      "params": {
+        "band_floors.braking_m": 12.0,
+        "band_floors.corner_speed_kmh": 4.0,
+        "band_floors.apex_m": 1.2,
+        "criteria.consistency_delta_ratio": 1.0
+      },
+      "looseness": 8.133333,
+      "targets": [
+        {
+          "id": "typical_improver_traverses",
+          "met": true,
+          "measured": {
+            "share_traversing_2_of_3": 1.0,
+            "median_elements_removed": 3.0
+          }
+        },
+        {
+          "id": "non_improver_never_fades",
+          "met": false,
+          "measured": {
+            "share_with_any_fade": 0.22
+          }
+        },
+        {
+          "id": "regression_reverts_promptly",
+          "met": false,
+          "measured": {
+            "synchronised_median_excess_laps": 1.0,
+            "staggered_median_excess_laps": 0,
+            "synchronised_share_at_the_floor": 0.4044,
+            "staggered_share_at_the_floor": 0.8761,
+            "synchronised_median_lag_from_first_onset": 2.0,
+            "staggered_median_lag_from_first_onset": 3,
+            "n_synchronised_reversions": 136,
+            "n_staggered_reversions": 113,
+            "share_removed_despite_regression": 0.18
+          }
+        }
+      ],
+      "all_met": false
+    },
+    {
+      "params": {
+        "band_floors.braking_m": 12.0,
+        "band_floors.corner_speed_kmh": 4.0,
+        "band_floors.apex_m": 1.2,
+        "criteria.consistency_delta_ratio": 1.5
+      },
+      "looseness": 9.133333,
+      "targets": [
+        {
+          "id": "typical_improver_traverses",
+          "met": true,
+          "measured": {
+            "share_traversing_2_of_3": 1.0,
+            "median_elements_removed": 3.0
+          }
+        },
+        {
+          "id": "non_improver_never_fades",
+          "met": false,
+          "measured": {
+            "share_with_any_fade": 0.22
+          }
+        },
+        {
+          "id": "regression_reverts_promptly",
+          "met": false,
+          "measured": {
+            "synchronised_median_excess_laps": 0,
+            "staggered_median_excess_laps": 0.0,
+            "synchronised_share_at_the_floor": 0.5874,
+            "staggered_share_at_the_floor": 0.7895,
+            "synchronised_median_lag_from_first_onset": 1,
+            "staggered_median_lag_from_first_onset": 3.0,
+            "n_synchronised_reversions": 143,
+            "n_staggered_reversions": 114,
+            "share_removed_despite_regression": 0.18
+          }
+        }
+      ],
+      "all_met": false
+    },
+    {
+      "params": {
+        "band_floors.braking_m": 12.0,
+        "band_floors.corner_speed_kmh": 5.0,
+        "band_floors.apex_m": 0.5,
+        "criteria.consistency_delta_ratio": 0.5
+      },
+      "looseness": 6.066667,
+      "targets": [
+        {
+          "id": "typical_improver_traverses",
+          "met": true,
+          "measured": {
+            "share_traversing_2_of_3": 0.72,
+            "median_elements_removed": 2.0
+          }
+        },
+        {
+          "id": "non_improver_never_fades",
+          "met": true,
+          "measured": {
+            "share_with_any_fade": 0.0
+          }
+        },
+        {
+          "id": "regression_reverts_promptly",
+          "met": true,
+          "measured": {
+            "synchronised_median_excess_laps": 0.0,
+            "staggered_median_excess_laps": 0.0,
+            "synchronised_share_at_the_floor": 0.7941,
+            "staggered_share_at_the_floor": 0.75,
+            "synchronised_median_lag_from_first_onset": 1.0,
+            "staggered_median_lag_from_first_onset": 3.0,
+            "n_synchronised_reversions": 102,
+            "n_staggered_reversions": 112,
+            "share_removed_despite_regression": 0.0
+          }
+        }
+      ],
+      "all_met": true
+    },
+    {
+      "params": {
+        "band_floors.braking_m": 12.0,
+        "band_floors.corner_speed_kmh": 5.0,
+        "band_floors.apex_m": 0.5,
+        "criteria.consistency_delta_ratio": 0.75
+      },
+      "looseness": 6.566667,
+      "targets": [
+        {
+          "id": "typical_improver_traverses",
+          "met": true,
+          "measured": {
+            "share_traversing_2_of_3": 0.94,
+            "median_elements_removed": 3.0
+          }
+        },
+        {
+          "id": "non_improver_never_fades",
+          "met": true,
+          "measured": {
+            "share_with_any_fade": 0.0
+          }
+        },
+        {
+          "id": "regression_reverts_promptly",
+          "met": true,
+          "measured": {
+            "synchronised_median_excess_laps": 0,
+            "staggered_median_excess_laps": 0,
+            "synchronised_share_at_the_floor": 0.6891,
+            "staggered_share_at_the_floor": 0.7972,
+            "synchronised_median_lag_from_first_onset": 1,
+            "staggered_median_lag_from_first_onset": 3,
+            "n_synchronised_reversions": 119,
+            "n_staggered_reversions": 143,
+            "share_removed_despite_regression": 0.0
+          }
+        }
+      ],
+      "all_met": true
+    },
+    {
+      "params": {
+        "band_floors.braking_m": 12.0,
+        "band_floors.corner_speed_kmh": 5.0,
+        "band_floors.apex_m": 0.5,
+        "criteria.consistency_delta_ratio": 1.0
+      },
+      "looseness": 7.066667,
+      "targets": [
+        {
+          "id": "typical_improver_traverses",
+          "met": true,
+          "measured": {
+            "share_traversing_2_of_3": 1.0,
+            "median_elements_removed": 3.0
+          }
+        },
+        {
+          "id": "non_improver_never_fades",
+          "met": true,
+          "measured": {
+            "share_with_any_fade": 0.0
+          }
+        },
+        {
+          "id": "regression_reverts_promptly",
+          "met": true,
+          "measured": {
+            "synchronised_median_excess_laps": 0,
+            "staggered_median_excess_laps": 0,
+            "synchronised_share_at_the_floor": 0.6454,
+            "staggered_share_at_the_floor": 0.8121,
+            "synchronised_median_lag_from_first_onset": 1,
+            "staggered_median_lag_from_first_onset": 3,
+            "n_synchronised_reversions": 141,
+            "n_staggered_reversions": 149,
+            "share_removed_despite_regression": 0.0
+          }
+        }
+      ],
+      "all_met": true
+    },
+    {
+      "params": {
+        "band_floors.braking_m": 12.0,
+        "band_floors.corner_speed_kmh": 5.0,
+        "band_floors.apex_m": 0.5,
+        "criteria.consistency_delta_ratio": 1.5
+      },
+      "looseness": 8.066667,
+      "targets": [
+        {
+          "id": "typical_improver_traverses",
+          "met": true,
+          "measured": {
+            "share_traversing_2_of_3": 1.0,
+            "median_elements_removed": 3.0
+          }
+        },
+        {
+          "id": "non_improver_never_fades",
+          "met": true,
+          "measured": {
+            "share_with_any_fade": 0.0
+          }
+        },
+        {
+          "id": "regression_reverts_promptly",
+          "met": true,
+          "measured": {
+            "synchronised_median_excess_laps": 0.0,
+            "staggered_median_excess_laps": 0.0,
+            "synchronised_share_at_the_floor": 0.8108,
+            "staggered_share_at_the_floor": 0.7467,
+            "synchronised_median_lag_from_first_onset": 1.0,
+            "staggered_median_lag_from_first_onset": 3.0,
+            "n_synchronised_reversions": 148,
+            "n_staggered_reversions": 150,
+            "share_removed_despite_regression": 0.0
+          }
+        }
+      ],
+      "all_met": true
+    },
+    {
+      "params": {
+        "band_floors.braking_m": 12.0,
+        "band_floors.corner_speed_kmh": 5.0,
+        "band_floors.apex_m": 0.8,
+        "criteria.consistency_delta_ratio": 0.5
+      },
+      "looseness": 6.666667,
+      "targets": [
+        {
+          "id": "typical_improver_traverses",
+          "met": true,
+          "measured": {
+            "share_traversing_2_of_3": 0.98,
+            "median_elements_removed": 2.0
+          }
+        },
+        {
+          "id": "non_improver_never_fades",
+          "met": true,
+          "measured": {
+            "share_with_any_fade": 0.0
+          }
+        },
+        {
+          "id": "regression_reverts_promptly",
+          "met": false,
+          "measured": {
+            "synchronised_median_excess_laps": 0,
+            "staggered_median_excess_laps": 0,
+            "synchronised_share_at_the_floor": 0.6796,
+            "staggered_share_at_the_floor": 0.8,
+            "synchronised_median_lag_from_first_onset": 1,
+            "staggered_median_lag_from_first_onset": 3,
+            "n_synchronised_reversions": 103,
+            "n_staggered_reversions": 105,
+            "share_removed_despite_regression": 0.02
+          }
+        }
+      ],
+      "all_met": false
+    },
+    {
+      "params": {
+        "band_floors.braking_m": 12.0,
+        "band_floors.corner_speed_kmh": 5.0,
+        "band_floors.apex_m": 0.8,
+        "criteria.consistency_delta_ratio": 0.75
+      },
+      "looseness": 7.166667,
+      "targets": [
+        {
+          "id": "typical_improver_traverses",
+          "met": true,
+          "measured": {
+            "share_traversing_2_of_3": 0.98,
+            "median_elements_removed": 3.0
+          }
+        },
+        {
+          "id": "non_improver_never_fades",
+          "met": true,
+          "measured": {
+            "share_with_any_fade": 0.0
+          }
+        },
+        {
+          "id": "regression_reverts_promptly",
+          "met": false,
+          "measured": {
+            "synchronised_median_excess_laps": 0.0,
+            "staggered_median_excess_laps": 0.0,
+            "synchronised_share_at_the_floor": 0.5917,
+            "staggered_share_at_the_floor": 0.8382,
+            "synchronised_median_lag_from_first_onset": 1.0,
+            "staggered_median_lag_from_first_onset": 3.0,
+            "n_synchronised_reversions": 120,
+            "n_staggered_reversions": 136,
+            "share_removed_despite_regression": 0.02
+          }
+        }
+      ],
+      "all_met": false
+    },
+    {
+      "params": {
+        "band_floors.braking_m": 12.0,
+        "band_floors.corner_speed_kmh": 5.0,
+        "band_floors.apex_m": 0.8,
+        "criteria.consistency_delta_ratio": 1.0
+      },
+      "looseness": 7.666667,
+      "targets": [
+        {
+          "id": "typical_improver_traverses",
+          "met": true,
+          "measured": {
+            "share_traversing_2_of_3": 1.0,
+            "median_elements_removed": 3.0
+          }
+        },
+        {
+          "id": "non_improver_never_fades",
+          "met": true,
+          "measured": {
+            "share_with_any_fade": 0.0
+          }
+        },
+        {
+          "id": "regression_reverts_promptly",
+          "met": false,
+          "measured": {
+            "synchronised_median_excess_laps": 0.0,
+            "staggered_median_excess_laps": 0.0,
+            "synchronised_share_at_the_floor": 0.5634,
+            "staggered_share_at_the_floor": 0.8521,
+            "synchronised_median_lag_from_first_onset": 1.0,
+            "staggered_median_lag_from_first_onset": 3.0,
+            "n_synchronised_reversions": 142,
+            "n_staggered_reversions": 142,
+            "share_removed_despite_regression": 0.02
+          }
+        }
+      ],
+      "all_met": false
+    },
+    {
+      "params": {
+        "band_floors.braking_m": 12.0,
+        "band_floors.corner_speed_kmh": 5.0,
+        "band_floors.apex_m": 0.8,
+        "criteria.consistency_delta_ratio": 1.5
+      },
+      "looseness": 8.666667,
+      "targets": [
+        {
+          "id": "typical_improver_traverses",
+          "met": true,
+          "measured": {
+            "share_traversing_2_of_3": 1.0,
+            "median_elements_removed": 3.0
+          }
+        },
+        {
+          "id": "non_improver_never_fades",
+          "met": true,
+          "measured": {
+            "share_with_any_fade": 0.0
+          }
+        },
+        {
+          "id": "regression_reverts_promptly",
+          "met": false,
+          "measured": {
+            "synchronised_median_excess_laps": 0,
+            "staggered_median_excess_laps": 0,
+            "synchronised_share_at_the_floor": 0.7315,
+            "staggered_share_at_the_floor": 0.7832,
+            "synchronised_median_lag_from_first_onset": 1,
+            "staggered_median_lag_from_first_onset": 3,
+            "n_synchronised_reversions": 149,
+            "n_staggered_reversions": 143,
+            "share_removed_despite_regression": 0.02
+          }
+        }
+      ],
+      "all_met": false
+    },
+    {
+      "params": {
+        "band_floors.braking_m": 12.0,
+        "band_floors.corner_speed_kmh": 5.0,
+        "band_floors.apex_m": 1.2,
+        "criteria.consistency_delta_ratio": 0.5
+      },
+      "looseness": 7.466667,
+      "targets": [
+        {
+          "id": "typical_improver_traverses",
+          "met": true,
+          "measured": {
+            "share_traversing_2_of_3": 0.98,
+            "median_elements_removed": 2.0
+          }
+        },
+        {
+          "id": "non_improver_never_fades",
+          "met": false,
+          "measured": {
+            "share_with_any_fade": 0.22
+          }
+        },
+        {
+          "id": "regression_reverts_promptly",
+          "met": false,
+          "measured": {
+            "synchronised_median_excess_laps": 0,
+            "staggered_median_excess_laps": 0.0,
+            "synchronised_share_at_the_floor": 0.5155,
+            "staggered_share_at_the_floor": 0.75,
+            "synchronised_median_lag_from_first_onset": 1,
+            "staggered_median_lag_from_first_onset": 3.0,
+            "n_synchronised_reversions": 97,
+            "n_staggered_reversions": 76,
+            "share_removed_despite_regression": 0.18
+          }
+        }
+      ],
+      "all_met": false
+    },
+    {
+      "params": {
+        "band_floors.braking_m": 12.0,
+        "band_floors.corner_speed_kmh": 5.0,
+        "band_floors.apex_m": 1.2,
+        "criteria.consistency_delta_ratio": 0.75
+      },
+      "looseness": 7.966667,
+      "targets": [
+        {
+          "id": "typical_improver_traverses",
+          "met": true,
+          "measured": {
+            "share_traversing_2_of_3": 0.98,
+            "median_elements_removed": 3.0
+          }
+        },
+        {
+          "id": "non_improver_never_fades",
+          "met": false,
+          "measured": {
+            "share_with_any_fade": 0.22
+          }
+        },
+        {
+          "id": "regression_reverts_promptly",
+          "met": false,
+          "measured": {
+            "synchronised_median_excess_laps": 1.0,
+            "staggered_median_excess_laps": 0,
+            "synchronised_share_at_the_floor": 0.4474,
+            "staggered_share_at_the_floor": 0.8131,
+            "synchronised_median_lag_from_first_onset": 2.0,
+            "staggered_median_lag_from_first_onset": 3,
+            "n_synchronised_reversions": 114,
+            "n_staggered_reversions": 107,
+            "share_removed_despite_regression": 0.18
+          }
+        }
+      ],
+      "all_met": false
+    },
+    {
+      "params": {
+        "band_floors.braking_m": 12.0,
+        "band_floors.corner_speed_kmh": 5.0,
+        "band_floors.apex_m": 1.2,
+        "criteria.consistency_delta_ratio": 1.0
+      },
+      "looseness": 8.466667,
+      "targets": [
+        {
+          "id": "typical_improver_traverses",
+          "met": true,
+          "measured": {
+            "share_traversing_2_of_3": 1.0,
+            "median_elements_removed": 3.0
+          }
+        },
+        {
+          "id": "non_improver_never_fades",
+          "met": false,
+          "measured": {
+            "share_with_any_fade": 0.22
+          }
+        },
+        {
+          "id": "regression_reverts_promptly",
+          "met": false,
+          "measured": {
+            "synchronised_median_excess_laps": 1.0,
+            "staggered_median_excess_laps": 0,
+            "synchronised_share_at_the_floor": 0.4412,
+            "staggered_share_at_the_floor": 0.8319,
+            "synchronised_median_lag_from_first_onset": 2.0,
+            "staggered_median_lag_from_first_onset": 3,
+            "n_synchronised_reversions": 136,
+            "n_staggered_reversions": 113,
+            "share_removed_despite_regression": 0.18
+          }
+        }
+      ],
+      "all_met": false
+    },
+    {
+      "params": {
+        "band_floors.braking_m": 12.0,
+        "band_floors.corner_speed_kmh": 5.0,
+        "band_floors.apex_m": 1.2,
+        "criteria.consistency_delta_ratio": 1.5
+      },
+      "looseness": 9.466667,
+      "targets": [
+        {
+          "id": "typical_improver_traverses",
+          "met": true,
+          "measured": {
+            "share_traversing_2_of_3": 1.0,
+            "median_elements_removed": 3.0
+          }
+        },
+        {
+          "id": "non_improver_never_fades",
+          "met": false,
+          "measured": {
+            "share_with_any_fade": 0.22
+          }
+        },
+        {
+          "id": "regression_reverts_promptly",
+          "met": false,
+          "measured": {
+            "synchronised_median_excess_laps": 0,
+            "staggered_median_excess_laps": 0.0,
+            "synchronised_share_at_the_floor": 0.6224,
+            "staggered_share_at_the_floor": 0.7456,
+            "synchronised_median_lag_from_first_onset": 1,
+            "staggered_median_lag_from_first_onset": 3.0,
+            "n_synchronised_reversions": 143,
+            "n_staggered_reversions": 114,
+            "share_removed_despite_regression": 0.18
+          }
+        }
+      ],
+      "all_met": false
+    },
+    {
+      "params": {
+        "band_floors.braking_m": 16.0,
+        "band_floors.corner_speed_kmh": 3.0,
+        "band_floors.apex_m": 0.5,
+        "criteria.consistency_delta_ratio": 0.5
+      },
+      "looseness": 6.2,
+      "targets": [
+        {
+          "id": "typical_improver_traverses",
+          "met": true,
+          "measured": {
+            "share_traversing_2_of_3": 0.56,
+            "median_elements_removed": 2.0
+          }
+        },
+        {
+          "id": "non_improver_never_fades",
+          "met": true,
+          "measured": {
+            "share_with_any_fade": 0.0
+          }
+        },
+        {
+          "id": "regression_reverts_promptly",
+          "met": true,
+          "measured": {
+            "synchronised_median_excess_laps": 0,
+            "staggered_median_excess_laps": 0.0,
+            "synchronised_share_at_the_floor": 0.5534,
+            "staggered_share_at_the_floor": 0.8134,
+            "synchronised_median_lag_from_first_onset": 1,
+            "staggered_median_lag_from_first_onset": 3.0,
+            "n_synchronised_reversions": 103,
+            "n_staggered_reversions": 134,
+            "share_removed_despite_regression": 0.0
+          }
+        }
+      ],
+      "all_met": true
+    },
+    {
+      "params": {
+        "band_floors.braking_m": 16.0,
+        "band_floors.corner_speed_kmh": 3.0,
+        "band_floors.apex_m": 0.5,
+        "criteria.consistency_delta_ratio": 0.75
+      },
+      "looseness": 6.7,
+      "targets": [
+        {
+          "id": "typical_improver_traverses",
+          "met": true,
+          "measured": {
+            "share_traversing_2_of_3": 0.74,
+            "median_elements_removed": 2.0
+          }
+        },
+        {
+          "id": "non_improver_never_fades",
+          "met": true,
+          "measured": {
+            "share_with_any_fade": 0.0
+          }
+        },
+        {
+          "id": "regression_reverts_promptly",
+          "met": true,
+          "measured": {
+            "synchronised_median_excess_laps": 0,
+            "staggered_median_excess_laps": 0,
+            "synchronised_share_at_the_floor": 0.5414,
+            "staggered_share_at_the_floor": 0.8231,
+            "synchronised_median_lag_from_first_onset": 1,
+            "staggered_median_lag_from_first_onset": 3,
+            "n_synchronised_reversions": 133,
+            "n_staggered_reversions": 147,
+            "share_removed_despite_regression": 0.0
+          }
+        }
+      ],
+      "all_met": true
+    },
+    {
+      "params": {
+        "band_floors.braking_m": 16.0,
+        "band_floors.corner_speed_kmh": 3.0,
+        "band_floors.apex_m": 0.5,
+        "criteria.consistency_delta_ratio": 1.0
+      },
+      "looseness": 7.2,
+      "targets": [
+        {
+          "id": "typical_improver_traverses",
+          "met": true,
+          "measured": {
+            "share_traversing_2_of_3": 0.74,
+            "median_elements_removed": 2.0
+          }
+        },
+        {
+          "id": "non_improver_never_fades",
+          "met": true,
+          "measured": {
+            "share_with_any_fade": 0.0
+          }
+        },
+        {
+          "id": "regression_reverts_promptly",
+          "met": true,
+          "measured": {
+            "synchronised_median_excess_laps": 0,
+            "staggered_median_excess_laps": 0,
+            "synchronised_share_at_the_floor": 0.6934,
+            "staggered_share_at_the_floor": 0.8231,
+            "synchronised_median_lag_from_first_onset": 1,
+            "staggered_median_lag_from_first_onset": 3,
+            "n_synchronised_reversions": 137,
+            "n_staggered_reversions": 147,
+            "share_removed_despite_regression": 0.0
+          }
+        }
+      ],
+      "all_met": true
+    },
+    {
+      "params": {
+        "band_floors.braking_m": 16.0,
+        "band_floors.corner_speed_kmh": 3.0,
+        "band_floors.apex_m": 0.5,
+        "criteria.consistency_delta_ratio": 1.5
+      },
+      "looseness": 8.2,
+      "targets": [
+        {
+          "id": "typical_improver_traverses",
+          "met": true,
+          "measured": {
+            "share_traversing_2_of_3": 0.74,
+            "median_elements_removed": 2.0
+          }
+        },
+        {
+          "id": "non_improver_never_fades",
+          "met": true,
+          "measured": {
+            "share_with_any_fade": 0.0
+          }
+        },
+        {
+          "id": "regression_reverts_promptly",
+          "met": false,
+          "measured": {
+            "synchronised_median_excess_laps": 0,
+            "staggered_median_excess_laps": 0.0,
+            "synchronised_share_at_the_floor": 0.6277,
+            "staggered_share_at_the_floor": 0.8873,
+            "synchronised_median_lag_from_first_onset": 1,
+            "staggered_median_lag_from_first_onset": 3.0,
+            "n_synchronised_reversions": 137,
+            "n_staggered_reversions": 142,
+            "share_removed_despite_regression": 0.04
+          }
+        }
+      ],
+      "all_met": false
+    },
+    {
+      "params": {
+        "band_floors.braking_m": 16.0,
+        "band_floors.corner_speed_kmh": 3.0,
+        "band_floors.apex_m": 0.8,
+        "criteria.consistency_delta_ratio": 0.5
+      },
+      "looseness": 6.8,
+      "targets": [
+        {
+          "id": "typical_improver_traverses",
+          "met": true,
+          "measured": {
+            "share_traversing_2_of_3": 0.76,
+            "median_elements_removed": 2.0
+          }
+        },
+        {
+          "id": "non_improver_never_fades",
+          "met": true,
+          "measured": {
+            "share_with_any_fade": 0.0
+          }
+        },
+        {
+          "id": "regression_reverts_promptly",
+          "met": false,
+          "measured": {
+            "synchronised_median_excess_laps": 1.0,
+            "staggered_median_excess_laps": 0,
+            "synchronised_share_at_the_floor": 0.4423,
+            "staggered_share_at_the_floor": 0.8583,
+            "synchronised_median_lag_from_first_onset": 2.0,
+            "staggered_median_lag_from_first_onset": 3,
+            "n_synchronised_reversions": 104,
+            "n_staggered_reversions": 127,
+            "share_removed_despite_regression": 0.02
+          }
+        }
+      ],
+      "all_met": false
+    },
+    {
+      "params": {
+        "band_floors.braking_m": 16.0,
+        "band_floors.corner_speed_kmh": 3.0,
+        "band_floors.apex_m": 0.8,
+        "criteria.consistency_delta_ratio": 0.75
+      },
+      "looseness": 7.3,
+      "targets": [
+        {
+          "id": "typical_improver_traverses",
+          "met": true,
+          "measured": {
+            "share_traversing_2_of_3": 1.0,
+            "median_elements_removed": 2.0
+          }
+        },
+        {
+          "id": "non_improver_never_fades",
+          "met": true,
+          "measured": {
+            "share_with_any_fade": 0.0
+          }
+        },
+        {
+          "id": "regression_reverts_promptly",
+          "met": false,
+          "measured": {
+            "synchronised_median_excess_laps": 1.0,
+            "staggered_median_excess_laps": 0.0,
+            "synchronised_share_at_the_floor": 0.4552,
+            "staggered_share_at_the_floor": 0.8643,
+            "synchronised_median_lag_from_first_onset": 2.0,
+            "staggered_median_lag_from_first_onset": 3.0,
+            "n_synchronised_reversions": 134,
+            "n_staggered_reversions": 140,
+            "share_removed_despite_regression": 0.02
+          }
+        }
+      ],
+      "all_met": false
+    },
+    {
+      "params": {
+        "band_floors.braking_m": 16.0,
+        "band_floors.corner_speed_kmh": 3.0,
+        "band_floors.apex_m": 0.8,
+        "criteria.consistency_delta_ratio": 1.0
+      },
+      "looseness": 7.8,
+      "targets": [
+        {
+          "id": "typical_improver_traverses",
+          "met": true,
+          "measured": {
+            "share_traversing_2_of_3": 1.0,
+            "median_elements_removed": 2.0
+          }
+        },
+        {
+          "id": "non_improver_never_fades",
+          "met": true,
+          "measured": {
+            "share_with_any_fade": 0.0
+          }
+        },
+        {
+          "id": "regression_reverts_promptly",
+          "met": false,
+          "measured": {
+            "synchronised_median_excess_laps": 0.0,
+            "staggered_median_excess_laps": 0.0,
+            "synchronised_share_at_the_floor": 0.6087,
+            "staggered_share_at_the_floor": 0.8643,
+            "synchronised_median_lag_from_first_onset": 1.0,
+            "staggered_median_lag_from_first_onset": 3.0,
+            "n_synchronised_reversions": 138,
+            "n_staggered_reversions": 140,
+            "share_removed_despite_regression": 0.02
+          }
+        }
+      ],
+      "all_met": false
+    },
+    {
+      "params": {
+        "band_floors.braking_m": 16.0,
+        "band_floors.corner_speed_kmh": 3.0,
+        "band_floors.apex_m": 0.8,
+        "criteria.consistency_delta_ratio": 1.5
+      },
+      "looseness": 8.8,
+      "targets": [
+        {
+          "id": "typical_improver_traverses",
+          "met": true,
+          "measured": {
+            "share_traversing_2_of_3": 1.0,
+            "median_elements_removed": 2.0
+          }
+        },
+        {
+          "id": "non_improver_never_fades",
+          "met": true,
+          "measured": {
+            "share_with_any_fade": 0.0
+          }
+        },
+        {
+          "id": "regression_reverts_promptly",
+          "met": false,
+          "measured": {
+            "synchronised_median_excess_laps": 0.0,
+            "staggered_median_excess_laps": 0,
+            "synchronised_share_at_the_floor": 0.5435,
+            "staggered_share_at_the_floor": 0.9333,
+            "synchronised_median_lag_from_first_onset": 1.0,
+            "staggered_median_lag_from_first_onset": 3,
+            "n_synchronised_reversions": 138,
+            "n_staggered_reversions": 135,
+            "share_removed_despite_regression": 0.06
+          }
+        }
+      ],
+      "all_met": false
+    },
+    {
+      "params": {
+        "band_floors.braking_m": 16.0,
+        "band_floors.corner_speed_kmh": 3.0,
+        "band_floors.apex_m": 1.2,
+        "criteria.consistency_delta_ratio": 0.5
+      },
+      "looseness": 7.6,
+      "targets": [
+        {
+          "id": "typical_improver_traverses",
+          "met": true,
+          "measured": {
+            "share_traversing_2_of_3": 0.76,
+            "median_elements_removed": 2.0
+          }
+        },
+        {
+          "id": "non_improver_never_fades",
+          "met": false,
+          "measured": {
+            "share_with_any_fade": 0.22
+          }
+        },
+        {
+          "id": "regression_reverts_promptly",
+          "met": false,
+          "measured": {
+            "synchronised_median_excess_laps": 1.0,
+            "staggered_median_excess_laps": -1.0,
+            "synchronised_share_at_the_floor": 0.2653,
+            "staggered_share_at_the_floor": 0.8367,
+            "synchronised_median_lag_from_first_onset": 2.0,
+            "staggered_median_lag_from_first_onset": 2.0,
+            "n_synchronised_reversions": 98,
+            "n_staggered_reversions": 98,
+            "share_removed_despite_regression": 0.18
+          }
+        }
+      ],
+      "all_met": false
+    },
+    {
+      "params": {
+        "band_floors.braking_m": 16.0,
+        "band_floors.corner_speed_kmh": 3.0,
+        "band_floors.apex_m": 1.2,
+        "criteria.consistency_delta_ratio": 0.75
+      },
+      "looseness": 8.1,
+      "targets": [
+        {
+          "id": "typical_improver_traverses",
+          "met": true,
+          "measured": {
+            "share_traversing_2_of_3": 1.0,
+            "median_elements_removed": 2.0
+          }
+        },
+        {
+          "id": "non_improver_never_fades",
+          "met": false,
+          "measured": {
+            "share_with_any_fade": 0.22
+          }
+        },
+        {
+          "id": "regression_reverts_promptly",
+          "met": false,
+          "measured": {
+            "synchronised_median_excess_laps": 1.0,
+            "staggered_median_excess_laps": -1,
+            "synchronised_share_at_the_floor": 0.3203,
+            "staggered_share_at_the_floor": 0.8468,
+            "synchronised_median_lag_from_first_onset": 2.0,
+            "staggered_median_lag_from_first_onset": 2,
+            "n_synchronised_reversions": 128,
+            "n_staggered_reversions": 111,
+            "share_removed_despite_regression": 0.18
+          }
+        }
+      ],
+      "all_met": false
+    },
+    {
+      "params": {
+        "band_floors.braking_m": 16.0,
+        "band_floors.corner_speed_kmh": 3.0,
+        "band_floors.apex_m": 1.2,
+        "criteria.consistency_delta_ratio": 1.0
+      },
+      "looseness": 8.6,
+      "targets": [
+        {
+          "id": "typical_improver_traverses",
+          "met": true,
+          "measured": {
+            "share_traversing_2_of_3": 1.0,
+            "median_elements_removed": 2.0
+          }
+        },
+        {
+          "id": "non_improver_never_fades",
+          "met": false,
+          "measured": {
+            "share_with_any_fade": 0.22
+          }
+        },
+        {
+          "id": "regression_reverts_promptly",
+          "met": false,
+          "measured": {
+            "synchronised_median_excess_laps": 1.0,
+            "staggered_median_excess_laps": 0,
+            "synchronised_share_at_the_floor": 0.4848,
+            "staggered_share_at_the_floor": 0.8468,
+            "synchronised_median_lag_from_first_onset": 2.0,
+            "staggered_median_lag_from_first_onset": 3,
+            "n_synchronised_reversions": 132,
+            "n_staggered_reversions": 111,
+            "share_removed_despite_regression": 0.18
+          }
+        }
+      ],
+      "all_met": false
+    },
+    {
+      "params": {
+        "band_floors.braking_m": 16.0,
+        "band_floors.corner_speed_kmh": 3.0,
+        "band_floors.apex_m": 1.2,
+        "criteria.consistency_delta_ratio": 1.5
+      },
+      "looseness": 9.6,
+      "targets": [
+        {
+          "id": "typical_improver_traverses",
+          "met": true,
+          "measured": {
+            "share_traversing_2_of_3": 1.0,
+            "median_elements_removed": 2.0
+          }
+        },
+        {
+          "id": "non_improver_never_fades",
+          "met": false,
+          "measured": {
+            "share_with_any_fade": 0.22
+          }
+        },
+        {
+          "id": "regression_reverts_promptly",
+          "met": false,
+          "measured": {
+            "synchronised_median_excess_laps": 1.0,
+            "staggered_median_excess_laps": 0.0,
+            "synchronised_share_at_the_floor": 0.4167,
+            "staggered_share_at_the_floor": 0.934,
+            "synchronised_median_lag_from_first_onset": 2.0,
+            "staggered_median_lag_from_first_onset": 3.0,
+            "n_synchronised_reversions": 132,
+            "n_staggered_reversions": 106,
+            "share_removed_despite_regression": 0.18
+          }
+        }
+      ],
+      "all_met": false
+    },
+    {
+      "params": {
+        "band_floors.braking_m": 16.0,
+        "band_floors.corner_speed_kmh": 4.0,
+        "band_floors.apex_m": 0.5,
+        "criteria.consistency_delta_ratio": 0.5
+      },
+      "looseness": 6.533333,
+      "targets": [
+        {
+          "id": "typical_improver_traverses",
+          "met": true,
+          "measured": {
+            "share_traversing_2_of_3": 0.82,
+            "median_elements_removed": 2.0
+          }
+        },
+        {
+          "id": "non_improver_never_fades",
+          "met": true,
+          "measured": {
+            "share_with_any_fade": 0.0
+          }
+        },
+        {
+          "id": "regression_reverts_promptly",
+          "met": true,
+          "measured": {
+            "synchronised_median_excess_laps": 0.0,
+            "staggered_median_excess_laps": 0.0,
+            "synchronised_share_at_the_floor": 0.6667,
+            "staggered_share_at_the_floor": 0.7941,
+            "synchronised_median_lag_from_first_onset": 1.0,
+            "staggered_median_lag_from_first_onset": 3.0,
+            "n_synchronised_reversions": 114,
+            "n_staggered_reversions": 136,
+            "share_removed_despite_regression": 0.0
+          }
+        }
+      ],
+      "all_met": true
+    },
+    {
+      "params": {
+        "band_floors.braking_m": 16.0,
+        "band_floors.corner_speed_kmh": 4.0,
+        "band_floors.apex_m": 0.5,
+        "criteria.consistency_delta_ratio": 0.75
+      },
+      "looseness": 7.033333,
+      "targets": [
+        {
+          "id": "typical_improver_traverses",
+          "met": true,
+          "measured": {
+            "share_traversing_2_of_3": 0.96,
+            "median_elements_removed": 2.5
+          }
+        },
+        {
+          "id": "non_improver_never_fades",
+          "met": true,
+          "measured": {
+            "share_with_any_fade": 0.0
+          }
+        },
+        {
+          "id": "regression_reverts_promptly",
+          "met": true,
+          "measured": {
+            "synchronised_median_excess_laps": 0.0,
+            "staggered_median_excess_laps": 0,
+            "synchronised_share_at_the_floor": 0.6319,
+            "staggered_share_at_the_floor": 0.8054,
+            "synchronised_median_lag_from_first_onset": 1.0,
+            "staggered_median_lag_from_first_onset": 3,
+            "n_synchronised_reversions": 144,
+            "n_staggered_reversions": 149,
+            "share_removed_despite_regression": 0.0
+          }
+        }
+      ],
+      "all_met": true
+    },
+    {
+      "params": {
+        "band_floors.braking_m": 16.0,
+        "band_floors.corner_speed_kmh": 4.0,
+        "band_floors.apex_m": 0.5,
+        "criteria.consistency_delta_ratio": 1.0
+      },
+      "looseness": 7.533333,
+      "targets": [
+        {
+          "id": "typical_improver_traverses",
+          "met": true,
+          "measured": {
+            "share_traversing_2_of_3": 0.96,
+            "median_elements_removed": 2.5
+          }
+        },
+        {
+          "id": "non_improver_never_fades",
+          "met": true,
+          "measured": {
+            "share_with_any_fade": 0.0
+          }
+        },
+        {
+          "id": "regression_reverts_promptly",
+          "met": true,
+          "measured": {
+            "synchronised_median_excess_laps": 0.0,
+            "staggered_median_excess_laps": 0,
+            "synchronised_share_at_the_floor": 0.7703,
+            "staggered_share_at_the_floor": 0.8054,
+            "synchronised_median_lag_from_first_onset": 1.0,
+            "staggered_median_lag_from_first_onset": 3,
+            "n_synchronised_reversions": 148,
+            "n_staggered_reversions": 149,
+            "share_removed_despite_regression": 0.0
+          }
+        }
+      ],
+      "all_met": true
+    },
+    {
+      "params": {
+        "band_floors.braking_m": 16.0,
+        "band_floors.corner_speed_kmh": 4.0,
+        "band_floors.apex_m": 0.5,
+        "criteria.consistency_delta_ratio": 1.5
+      },
+      "looseness": 8.533333,
+      "targets": [
+        {
+          "id": "typical_improver_traverses",
+          "met": true,
+          "measured": {
+            "share_traversing_2_of_3": 0.96,
+            "median_elements_removed": 2.5
+          }
+        },
+        {
+          "id": "non_improver_never_fades",
+          "met": true,
+          "measured": {
+            "share_with_any_fade": 0.0
+          }
+        },
+        {
+          "id": "regression_reverts_promptly",
+          "met": false,
+          "measured": {
+            "synchronised_median_excess_laps": 0.0,
+            "staggered_median_excess_laps": 0.0,
+            "synchronised_share_at_the_floor": 0.7095,
+            "staggered_share_at_the_floor": 0.8681,
+            "synchronised_median_lag_from_first_onset": 1.0,
+            "staggered_median_lag_from_first_onset": 3.0,
+            "n_synchronised_reversions": 148,
+            "n_staggered_reversions": 144,
+            "share_removed_despite_regression": 0.04
+          }
+        }
+      ],
+      "all_met": false
+    },
+    {
+      "params": {
+        "band_floors.braking_m": 16.0,
+        "band_floors.corner_speed_kmh": 4.0,
+        "band_floors.apex_m": 0.8,
+        "criteria.consistency_delta_ratio": 0.5
+      },
+      "looseness": 7.133333,
+      "targets": [
+        {
+          "id": "typical_improver_traverses",
+          "met": true,
+          "measured": {
+            "share_traversing_2_of_3": 0.92,
+            "median_elements_removed": 3.0
+          }
+        },
+        {
+          "id": "non_improver_never_fades",
+          "met": true,
+          "measured": {
+            "share_with_any_fade": 0.0
+          }
+        },
+        {
+          "id": "regression_reverts_promptly",
+          "met": false,
+          "measured": {
+            "synchronised_median_excess_laps": 0,
+            "staggered_median_excess_laps": 0,
+            "synchronised_share_at_the_floor": 0.5652,
+            "staggered_share_at_the_floor": 0.8372,
+            "synchronised_median_lag_from_first_onset": 1,
+            "staggered_median_lag_from_first_onset": 3,
+            "n_synchronised_reversions": 115,
+            "n_staggered_reversions": 129,
+            "share_removed_despite_regression": 0.02
+          }
+        }
+      ],
+      "all_met": false
+    },
+    {
+      "params": {
+        "band_floors.braking_m": 16.0,
+        "band_floors.corner_speed_kmh": 4.0,
+        "band_floors.apex_m": 0.8,
+        "criteria.consistency_delta_ratio": 0.75
+      },
+      "looseness": 7.633333,
+      "targets": [
+        {
+          "id": "typical_improver_traverses",
+          "met": true,
+          "measured": {
+            "share_traversing_2_of_3": 1.0,
+            "median_elements_removed": 3.0
+          }
+        },
+        {
+          "id": "non_improver_never_fades",
+          "met": true,
+          "measured": {
+            "share_with_any_fade": 0.0
+          }
+        },
+        {
+          "id": "regression_reverts_promptly",
+          "met": false,
+          "measured": {
+            "synchronised_median_excess_laps": 0,
+            "staggered_median_excess_laps": 0.0,
+            "synchronised_share_at_the_floor": 0.5517,
+            "staggered_share_at_the_floor": 0.8451,
+            "synchronised_median_lag_from_first_onset": 1,
+            "staggered_median_lag_from_first_onset": 3.0,
+            "n_synchronised_reversions": 145,
+            "n_staggered_reversions": 142,
+            "share_removed_despite_regression": 0.02
+          }
+        }
+      ],
+      "all_met": false
+    },
+    {
+      "params": {
+        "band_floors.braking_m": 16.0,
+        "band_floors.corner_speed_kmh": 4.0,
+        "band_floors.apex_m": 0.8,
+        "criteria.consistency_delta_ratio": 1.0
+      },
+      "looseness": 8.133333,
+      "targets": [
+        {
+          "id": "typical_improver_traverses",
+          "met": true,
+          "measured": {
+            "share_traversing_2_of_3": 1.0,
+            "median_elements_removed": 3.0
+          }
+        },
+        {
+          "id": "non_improver_never_fades",
+          "met": true,
+          "measured": {
+            "share_with_any_fade": 0.0
+          }
+        },
+        {
+          "id": "regression_reverts_promptly",
+          "met": false,
+          "measured": {
+            "synchronised_median_excess_laps": 0,
+            "staggered_median_excess_laps": 0.0,
+            "synchronised_share_at_the_floor": 0.6913,
+            "staggered_share_at_the_floor": 0.8451,
+            "synchronised_median_lag_from_first_onset": 1,
+            "staggered_median_lag_from_first_onset": 3.0,
+            "n_synchronised_reversions": 149,
+            "n_staggered_reversions": 142,
+            "share_removed_despite_regression": 0.02
+          }
+        }
+      ],
+      "all_met": false
+    },
+    {
+      "params": {
+        "band_floors.braking_m": 16.0,
+        "band_floors.corner_speed_kmh": 4.0,
+        "band_floors.apex_m": 0.8,
+        "criteria.consistency_delta_ratio": 1.5
+      },
+      "looseness": 9.133333,
+      "targets": [
+        {
+          "id": "typical_improver_traverses",
+          "met": true,
+          "measured": {
+            "share_traversing_2_of_3": 1.0,
+            "median_elements_removed": 3.0
+          }
+        },
+        {
+          "id": "non_improver_never_fades",
+          "met": true,
+          "measured": {
+            "share_with_any_fade": 0.0
+          }
+        },
+        {
+          "id": "regression_reverts_promptly",
+          "met": false,
+          "measured": {
+            "synchronised_median_excess_laps": 0,
+            "staggered_median_excess_laps": 0,
+            "synchronised_share_at_the_floor": 0.6309,
+            "staggered_share_at_the_floor": 0.9124,
+            "synchronised_median_lag_from_first_onset": 1,
+            "staggered_median_lag_from_first_onset": 3,
+            "n_synchronised_reversions": 149,
+            "n_staggered_reversions": 137,
+            "share_removed_despite_regression": 0.06
+          }
+        }
+      ],
+      "all_met": false
+    },
+    {
+      "params": {
+        "band_floors.braking_m": 16.0,
+        "band_floors.corner_speed_kmh": 4.0,
+        "band_floors.apex_m": 1.2,
+        "criteria.consistency_delta_ratio": 0.5
+      },
+      "looseness": 7.933333,
+      "targets": [
+        {
+          "id": "typical_improver_traverses",
+          "met": true,
+          "measured": {
+            "share_traversing_2_of_3": 0.92,
+            "median_elements_removed": 3.0
+          }
+        },
+        {
+          "id": "non_improver_never_fades",
+          "met": false,
+          "measured": {
+            "share_with_any_fade": 0.22
+          }
+        },
+        {
+          "id": "regression_reverts_promptly",
+          "met": false,
+          "measured": {
+            "synchronised_median_excess_laps": 1,
+            "staggered_median_excess_laps": 0.0,
+            "synchronised_share_at_the_floor": 0.4128,
+            "staggered_share_at_the_floor": 0.81,
+            "synchronised_median_lag_from_first_onset": 2,
+            "staggered_median_lag_from_first_onset": 3.0,
+            "n_synchronised_reversions": 109,
+            "n_staggered_reversions": 100,
+            "share_removed_despite_regression": 0.18
+          }
+        }
+      ],
+      "all_met": false
+    },
+    {
+      "params": {
+        "band_floors.braking_m": 16.0,
+        "band_floors.corner_speed_kmh": 4.0,
+        "band_floors.apex_m": 1.2,
+        "criteria.consistency_delta_ratio": 0.75
+      },
+      "looseness": 8.433333,
+      "targets": [
+        {
+          "id": "typical_improver_traverses",
+          "met": true,
+          "measured": {
+            "share_traversing_2_of_3": 1.0,
+            "median_elements_removed": 3.0
+          }
+        },
+        {
+          "id": "non_improver_never_fades",
+          "met": false,
+          "measured": {
+            "share_with_any_fade": 0.22
+          }
+        },
+        {
+          "id": "regression_reverts_promptly",
+          "met": false,
+          "measured": {
+            "synchronised_median_excess_laps": 1,
+            "staggered_median_excess_laps": 0,
+            "synchronised_share_at_the_floor": 0.4317,
+            "staggered_share_at_the_floor": 0.823,
+            "synchronised_median_lag_from_first_onset": 2,
+            "staggered_median_lag_from_first_onset": 3,
+            "n_synchronised_reversions": 139,
+            "n_staggered_reversions": 113,
+            "share_removed_despite_regression": 0.18
+          }
+        }
+      ],
+      "all_met": false
+    },
+    {
+      "params": {
+        "band_floors.braking_m": 16.0,
+        "band_floors.corner_speed_kmh": 4.0,
+        "band_floors.apex_m": 1.2,
+        "criteria.consistency_delta_ratio": 1.0
+      },
+      "looseness": 8.933333,
+      "targets": [
+        {
+          "id": "typical_improver_traverses",
+          "met": true,
+          "measured": {
+            "share_traversing_2_of_3": 1.0,
+            "median_elements_removed": 3.0
+          }
+        },
+        {
+          "id": "non_improver_never_fades",
+          "met": false,
+          "measured": {
+            "share_with_any_fade": 0.22
+          }
+        },
+        {
+          "id": "regression_reverts_promptly",
+          "met": false,
+          "measured": {
+            "synchronised_median_excess_laps": 0,
+            "staggered_median_excess_laps": 0,
+            "synchronised_share_at_the_floor": 0.5804,
+            "staggered_share_at_the_floor": 0.823,
+            "synchronised_median_lag_from_first_onset": 1,
+            "staggered_median_lag_from_first_onset": 3,
+            "n_synchronised_reversions": 143,
+            "n_staggered_reversions": 113,
+            "share_removed_despite_regression": 0.18
+          }
+        }
+      ],
+      "all_met": false
+    },
+    {
+      "params": {
+        "band_floors.braking_m": 16.0,
+        "band_floors.corner_speed_kmh": 4.0,
+        "band_floors.apex_m": 1.2,
+        "criteria.consistency_delta_ratio": 1.5
+      },
+      "looseness": 9.933333,
+      "targets": [
+        {
+          "id": "typical_improver_traverses",
+          "met": true,
+          "measured": {
+            "share_traversing_2_of_3": 1.0,
+            "median_elements_removed": 3.0
+          }
+        },
+        {
+          "id": "non_improver_never_fades",
+          "met": false,
+          "measured": {
+            "share_with_any_fade": 0.22
+          }
+        },
+        {
+          "id": "regression_reverts_promptly",
+          "met": false,
+          "measured": {
+            "synchronised_median_excess_laps": 0,
+            "staggered_median_excess_laps": 0.0,
+            "synchronised_share_at_the_floor": 0.5175,
+            "staggered_share_at_the_floor": 0.9074,
+            "synchronised_median_lag_from_first_onset": 1,
+            "staggered_median_lag_from_first_onset": 3.0,
+            "n_synchronised_reversions": 143,
+            "n_staggered_reversions": 108,
+            "share_removed_despite_regression": 0.18
+          }
+        }
+      ],
+      "all_met": false
+    },
+    {
+      "params": {
+        "band_floors.braking_m": 16.0,
+        "band_floors.corner_speed_kmh": 5.0,
+        "band_floors.apex_m": 0.5,
+        "criteria.consistency_delta_ratio": 0.5
+      },
+      "looseness": 6.866667,
+      "targets": [
+        {
+          "id": "typical_improver_traverses",
+          "met": true,
+          "measured": {
+            "share_traversing_2_of_3": 0.92,
+            "median_elements_removed": 3.0
+          }
+        },
+        {
+          "id": "non_improver_never_fades",
+          "met": true,
+          "measured": {
+            "share_with_any_fade": 0.0
+          }
+        },
+        {
+          "id": "regression_reverts_promptly",
+          "met": true,
+          "measured": {
+            "synchronised_median_excess_laps": 0.0,
+            "staggered_median_excess_laps": 0.0,
+            "synchronised_share_at_the_floor": 0.7105,
+            "staggered_share_at_the_floor": 0.7574,
+            "synchronised_median_lag_from_first_onset": 1.0,
+            "staggered_median_lag_from_first_onset": 3.0,
+            "n_synchronised_reversions": 114,
+            "n_staggered_reversions": 136,
+            "share_removed_despite_regression": 0.0
+          }
+        }
+      ],
+      "all_met": true
+    },
+    {
+      "params": {
+        "band_floors.braking_m": 16.0,
+        "band_floors.corner_speed_kmh": 5.0,
+        "band_floors.apex_m": 0.5,
+        "criteria.consistency_delta_ratio": 0.75
+      },
+      "looseness": 7.366667,
+      "targets": [
+        {
+          "id": "typical_improver_traverses",
+          "met": true,
+          "measured": {
+            "share_traversing_2_of_3": 1.0,
+            "median_elements_removed": 3.0
+          }
+        },
+        {
+          "id": "non_improver_never_fades",
+          "met": true,
+          "measured": {
+            "share_with_any_fade": 0.0
+          }
+        },
+        {
+          "id": "regression_reverts_promptly",
+          "met": true,
+          "measured": {
+            "synchronised_median_excess_laps": 0.0,
+            "staggered_median_excess_laps": 0,
+            "synchronised_share_at_the_floor": 0.6667,
+            "staggered_share_at_the_floor": 0.7718,
+            "synchronised_median_lag_from_first_onset": 1.0,
+            "staggered_median_lag_from_first_onset": 3,
+            "n_synchronised_reversions": 144,
+            "n_staggered_reversions": 149,
+            "share_removed_despite_regression": 0.0
+          }
+        }
+      ],
+      "all_met": true
+    },
+    {
+      "params": {
+        "band_floors.braking_m": 16.0,
+        "band_floors.corner_speed_kmh": 5.0,
+        "band_floors.apex_m": 0.5,
+        "criteria.consistency_delta_ratio": 1.0
+      },
+      "looseness": 7.866667,
+      "targets": [
+        {
+          "id": "typical_improver_traverses",
+          "met": true,
+          "measured": {
+            "share_traversing_2_of_3": 1.0,
+            "median_elements_removed": 3.0
+          }
+        },
+        {
+          "id": "non_improver_never_fades",
+          "met": true,
+          "measured": {
+            "share_with_any_fade": 0.0
+          }
+        },
+        {
+          "id": "regression_reverts_promptly",
+          "met": true,
+          "measured": {
+            "synchronised_median_excess_laps": 0.0,
+            "staggered_median_excess_laps": 0,
+            "synchronised_share_at_the_floor": 0.8041,
+            "staggered_share_at_the_floor": 0.7718,
+            "synchronised_median_lag_from_first_onset": 1.0,
+            "staggered_median_lag_from_first_onset": 3,
+            "n_synchronised_reversions": 148,
+            "n_staggered_reversions": 149,
+            "share_removed_despite_regression": 0.0
+          }
+        }
+      ],
+      "all_met": true
+    },
+    {
+      "params": {
+        "band_floors.braking_m": 16.0,
+        "band_floors.corner_speed_kmh": 5.0,
+        "band_floors.apex_m": 0.5,
+        "criteria.consistency_delta_ratio": 1.5
+      },
+      "looseness": 8.866667,
+      "targets": [
+        {
+          "id": "typical_improver_traverses",
+          "met": true,
+          "measured": {
+            "share_traversing_2_of_3": 1.0,
+            "median_elements_removed": 3.0
+          }
+        },
+        {
+          "id": "non_improver_never_fades",
+          "met": true,
+          "measured": {
+            "share_with_any_fade": 0.0
+          }
+        },
+        {
+          "id": "regression_reverts_promptly",
+          "met": false,
+          "measured": {
+            "synchronised_median_excess_laps": 0.0,
+            "staggered_median_excess_laps": 0.0,
+            "synchronised_share_at_the_floor": 0.7432,
+            "staggered_share_at_the_floor": 0.8333,
+            "synchronised_median_lag_from_first_onset": 1.0,
+            "staggered_median_lag_from_first_onset": 3.0,
+            "n_synchronised_reversions": 148,
+            "n_staggered_reversions": 144,
+            "share_removed_despite_regression": 0.04
+          }
+        }
+      ],
+      "all_met": false
+    },
+    {
+      "params": {
+        "band_floors.braking_m": 16.0,
+        "band_floors.corner_speed_kmh": 5.0,
+        "band_floors.apex_m": 0.8,
+        "criteria.consistency_delta_ratio": 0.5
+      },
+      "looseness": 7.466667,
+      "targets": [
+        {
+          "id": "typical_improver_traverses",
+          "met": true,
+          "measured": {
+            "share_traversing_2_of_3": 0.98,
+            "median_elements_removed": 3.0
+          }
+        },
+        {
+          "id": "non_improver_never_fades",
+          "met": true,
+          "measured": {
+            "share_with_any_fade": 0.0
+          }
+        },
+        {
+          "id": "regression_reverts_promptly",
+          "met": false,
+          "measured": {
+            "synchronised_median_excess_laps": 0,
+            "staggered_median_excess_laps": 0,
+            "synchronised_share_at_the_floor": 0.6087,
+            "staggered_share_at_the_floor": 0.7984,
+            "synchronised_median_lag_from_first_onset": 1,
+            "staggered_median_lag_from_first_onset": 3,
+            "n_synchronised_reversions": 115,
+            "n_staggered_reversions": 129,
+            "share_removed_despite_regression": 0.02
+          }
+        }
+      ],
+      "all_met": false
+    },
+    {
+      "params": {
+        "band_floors.braking_m": 16.0,
+        "band_floors.corner_speed_kmh": 5.0,
+        "band_floors.apex_m": 0.8,
+        "criteria.consistency_delta_ratio": 0.75
+      },
+      "looseness": 7.966667,
+      "targets": [
+        {
+          "id": "typical_improver_traverses",
+          "met": true,
+          "measured": {
+            "share_traversing_2_of_3": 1.0,
+            "median_elements_removed": 3.0
+          }
+        },
+        {
+          "id": "non_improver_never_fades",
+          "met": true,
+          "measured": {
+            "share_with_any_fade": 0.0
+          }
+        },
+        {
+          "id": "regression_reverts_promptly",
+          "met": false,
+          "measured": {
+            "synchronised_median_excess_laps": 0,
+            "staggered_median_excess_laps": 0.0,
+            "synchronised_share_at_the_floor": 0.5862,
+            "staggered_share_at_the_floor": 0.8099,
+            "synchronised_median_lag_from_first_onset": 1,
+            "staggered_median_lag_from_first_onset": 3.0,
+            "n_synchronised_reversions": 145,
+            "n_staggered_reversions": 142,
+            "share_removed_despite_regression": 0.02
+          }
+        }
+      ],
+      "all_met": false
+    },
+    {
+      "params": {
+        "band_floors.braking_m": 16.0,
+        "band_floors.corner_speed_kmh": 5.0,
+        "band_floors.apex_m": 0.8,
+        "criteria.consistency_delta_ratio": 1.0
+      },
+      "looseness": 8.466667,
+      "targets": [
+        {
+          "id": "typical_improver_traverses",
+          "met": true,
+          "measured": {
+            "share_traversing_2_of_3": 1.0,
+            "median_elements_removed": 3.0
+          }
+        },
+        {
+          "id": "non_improver_never_fades",
+          "met": true,
+          "measured": {
+            "share_with_any_fade": 0.0
+          }
+        },
+        {
+          "id": "regression_reverts_promptly",
+          "met": false,
+          "measured": {
+            "synchronised_median_excess_laps": 0,
+            "staggered_median_excess_laps": 0.0,
+            "synchronised_share_at_the_floor": 0.7248,
+            "staggered_share_at_the_floor": 0.8099,
+            "synchronised_median_lag_from_first_onset": 1,
+            "staggered_median_lag_from_first_onset": 3.0,
+            "n_synchronised_reversions": 149,
+            "n_staggered_reversions": 142,
+            "share_removed_despite_regression": 0.02
+          }
+        }
+      ],
+      "all_met": false
+    },
+    {
+      "params": {
+        "band_floors.braking_m": 16.0,
+        "band_floors.corner_speed_kmh": 5.0,
+        "band_floors.apex_m": 0.8,
+        "criteria.consistency_delta_ratio": 1.5
+      },
+      "looseness": 9.466667,
+      "targets": [
+        {
+          "id": "typical_improver_traverses",
+          "met": true,
+          "measured": {
+            "share_traversing_2_of_3": 1.0,
+            "median_elements_removed": 3.0
+          }
+        },
+        {
+          "id": "non_improver_never_fades",
+          "met": true,
+          "measured": {
+            "share_with_any_fade": 0.0
+          }
+        },
+        {
+          "id": "regression_reverts_promptly",
+          "met": false,
+          "measured": {
+            "synchronised_median_excess_laps": 0,
+            "staggered_median_excess_laps": 0,
+            "synchronised_share_at_the_floor": 0.6644,
+            "staggered_share_at_the_floor": 0.8759,
+            "synchronised_median_lag_from_first_onset": 1,
+            "staggered_median_lag_from_first_onset": 3,
+            "n_synchronised_reversions": 149,
+            "n_staggered_reversions": 137,
+            "share_removed_despite_regression": 0.06
+          }
+        }
+      ],
+      "all_met": false
+    },
+    {
+      "params": {
+        "band_floors.braking_m": 16.0,
+        "band_floors.corner_speed_kmh": 5.0,
+        "band_floors.apex_m": 1.2,
+        "criteria.consistency_delta_ratio": 0.5
+      },
+      "looseness": 8.266667,
+      "targets": [
+        {
+          "id": "typical_improver_traverses",
+          "met": true,
+          "measured": {
+            "share_traversing_2_of_3": 0.98,
+            "median_elements_removed": 3.0
+          }
+        },
+        {
+          "id": "non_improver_never_fades",
+          "met": false,
+          "measured": {
+            "share_with_any_fade": 0.22
+          }
+        },
+        {
+          "id": "regression_reverts_promptly",
+          "met": false,
+          "measured": {
+            "synchronised_median_excess_laps": 1,
+            "staggered_median_excess_laps": 0.0,
+            "synchronised_share_at_the_floor": 0.4587,
+            "staggered_share_at_the_floor": 0.76,
+            "synchronised_median_lag_from_first_onset": 2,
+            "staggered_median_lag_from_first_onset": 3.0,
+            "n_synchronised_reversions": 109,
+            "n_staggered_reversions": 100,
+            "share_removed_despite_regression": 0.18
+          }
+        }
+      ],
+      "all_met": false
+    },
+    {
+      "params": {
+        "band_floors.braking_m": 16.0,
+        "band_floors.corner_speed_kmh": 5.0,
+        "band_floors.apex_m": 1.2,
+        "criteria.consistency_delta_ratio": 0.75
+      },
+      "looseness": 8.766667,
+      "targets": [
+        {
+          "id": "typical_improver_traverses",
+          "met": true,
+          "measured": {
+            "share_traversing_2_of_3": 1.0,
+            "median_elements_removed": 3.0
+          }
+        },
+        {
+          "id": "non_improver_never_fades",
+          "met": false,
+          "measured": {
+            "share_with_any_fade": 0.22
+          }
+        },
+        {
+          "id": "regression_reverts_promptly",
+          "met": false,
+          "measured": {
+            "synchronised_median_excess_laps": 1,
+            "staggered_median_excess_laps": 0,
+            "synchronised_share_at_the_floor": 0.4676,
+            "staggered_share_at_the_floor": 0.7788,
+            "synchronised_median_lag_from_first_onset": 2,
+            "staggered_median_lag_from_first_onset": 3,
+            "n_synchronised_reversions": 139,
+            "n_staggered_reversions": 113,
+            "share_removed_despite_regression": 0.18
+          }
+        }
+      ],
+      "all_met": false
+    },
+    {
+      "params": {
+        "band_floors.braking_m": 16.0,
+        "band_floors.corner_speed_kmh": 5.0,
+        "band_floors.apex_m": 1.2,
+        "criteria.consistency_delta_ratio": 1.0
+      },
+      "looseness": 9.266667,
+      "targets": [
+        {
+          "id": "typical_improver_traverses",
+          "met": true,
+          "measured": {
+            "share_traversing_2_of_3": 1.0,
+            "median_elements_removed": 3.0
+          }
+        },
+        {
+          "id": "non_improver_never_fades",
+          "met": false,
+          "measured": {
+            "share_with_any_fade": 0.22
+          }
+        },
+        {
+          "id": "regression_reverts_promptly",
+          "met": false,
+          "measured": {
+            "synchronised_median_excess_laps": 0,
+            "staggered_median_excess_laps": 0,
+            "synchronised_share_at_the_floor": 0.6154,
+            "staggered_share_at_the_floor": 0.7788,
+            "synchronised_median_lag_from_first_onset": 1,
+            "staggered_median_lag_from_first_onset": 3,
+            "n_synchronised_reversions": 143,
+            "n_staggered_reversions": 113,
+            "share_removed_despite_regression": 0.18
+          }
+        }
+      ],
+      "all_met": false
+    },
+    {
+      "params": {
+        "band_floors.braking_m": 16.0,
+        "band_floors.corner_speed_kmh": 5.0,
+        "band_floors.apex_m": 1.2,
+        "criteria.consistency_delta_ratio": 1.5
+      },
+      "looseness": 10.266667,
+      "targets": [
+        {
+          "id": "typical_improver_traverses",
+          "met": true,
+          "measured": {
+            "share_traversing_2_of_3": 1.0,
+            "median_elements_removed": 3.0
+          }
+        },
+        {
+          "id": "non_improver_never_fades",
+          "met": false,
+          "measured": {
+            "share_with_any_fade": 0.22
+          }
+        },
+        {
+          "id": "regression_reverts_promptly",
+          "met": false,
+          "measured": {
+            "synchronised_median_excess_laps": 0,
+            "staggered_median_excess_laps": 0.0,
+            "synchronised_share_at_the_floor": 0.5524,
+            "staggered_share_at_the_floor": 0.8611,
+            "synchronised_median_lag_from_first_onset": 1,
+            "staggered_median_lag_from_first_onset": 3.0,
+            "n_synchronised_reversions": 143,
+            "n_staggered_reversions": 108,
+            "share_removed_despite_regression": 0.18
+          }
+        }
+      ],
+      "all_met": false
+    }
+  ]
+}

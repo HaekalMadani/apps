@@ -10,7 +10,7 @@
     { "name": "speed_kmh", "type": "float", "unit": "km/h", "description": "Car speed." },
     { "name": "brake", "type": "float", "description": "Brake input [0, 1]." },
     { "name": "throttle", "type": "float", "description": "Throttle input [0, 1]." },
-    { "name": "steer", "type": "float", "description": "Steering input, normalized [-1, 1]." },
+    { "name": "steer", "type": "float", "unit": "deg", "description": "Steering wheel angle in degrees (CarState.steer; AC exposes the normalized value only on a physics-controls struct, so the descriptive log carries degrees)." },
     { "name": "gear", "type": "int", "description": "Gear index as reported by CSP (-1 reverse, 0 neutral, 1+ forward)." },
     { "name": "wheels_outside", "type": "int", "description": "Number of wheels off the track surface (0-4)." },
     { "name": "in_pit", "type": "bool", "description": "Car is in pit lane / pit transition." }

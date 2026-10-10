@@ -1,12 +1,24 @@
 {
   "schema_version": 1,
-  "config_id": "draft-m0",
+  "config_id": "frozen-g1",
   "mode": "adaptive",
-  "evm": 3.0,
+  "evm": {
+    "ai": 3.0,
+    "human": 1.25
+  },
+  "band_floors": {
+    "braking_m": 5.0,
+    "corner_speed_kmh": 4.0,
+    "apex_m": 0.5
+  },
   "qualification": {
     "window_passes": 4,
     "required_passes": 3,
-    "dequalify_consecutive_failures": 2
+    "dequalify_consecutive_failures": 2,
+    "requalify_on_advance": true
+  },
+  "criteria": {
+    "consistency_delta_ratio": 0.5
   },
   "quorum": {
     "advance_threshold": 0.75,
@@ -22,7 +34,8 @@
   },
   "salience": {
     "full_alpha": 1.0,
-    "reduced_alpha": 0.4
+    "reduced_alpha": 0.4,
+    "reduced_form": "minimal"
   },
   "logging": {
     "tick_rate_hz": 20

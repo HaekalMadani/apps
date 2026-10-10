@@ -1,0 +1,172 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "trace/golden_trace.schema.json",
+  "title": "Golden controller trace (golden_traces/<trace_id>.json)",
+  "description": "One shared parity case for the fading state machine. The controller exists twice — lua/trace_rt/lib/controller.lua for the runtime and kit/trace_kit/controller.py for the Phase 1 simulator — and a divergence between them silently invalidates Gate G1, because the simulation would certify a controller participants never drive (impl plan section 6). A golden trace is a sequence of per-pass criterion booleans plus the exact event sequence and final state both implementations must produce. The corpus is version-controlled and runs in CI on every change to either side. Impl plan section 3's rule applies: runtime and simulator share no state except controller_config.json and these traces.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "trace_id",
+    "description",
+    "applicable",
+    "passes",
+    "expected_events",
+    "expected_disabled_elements",
+    "expected_final_state"
+  ],
+  "properties": {
+    "schema_version": { "const": 1 },
+    "trace_id": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Matches the filename stem."
+    },
+    "description": {
+      "type": "string",
+      "minLength": 1,
+      "description": "What behaviour this case pins, and why it is in the corpus. Required, not optional: a golden trace whose purpose is not written down becomes unmaintainable the first time it fails."
+    },
+    "config_overrides": {
+      "type": "object",
+      "description": "Sections of configs/controller_config.json to shallow-merge before running. Absent for every trace that pins the study configuration; present only where the case IS the deviation (e.g. running with the re-qualification rule off to demonstrate the degenerate machine it prevents)."
+    },
+    "applicable": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["braking", "corner_speed", "apex"],
+      "properties": {
+        "braking": { "$ref": "#/definitions/cornerIds" },
+        "corner_speed": { "$ref": "#/definitions/cornerIds" },
+        "apex": { "$ref": "#/definitions/cornerIds" }
+      },
+      "description": "Corners each element applies to, in a fixed order. An EMPTY list is legal and meaningful: it is the zero-applicable-corners case the impl plan (section 7) requires a defined answer for, where the element is disabled rather than dividing by zero."
+    },
+    "passes": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["corner_id", "lap", "t", "criteria"],
+        "properties": {
+          "corner_id": { "type": "string", "minLength": 1 },
+          "lap": { "type": "integer", "minimum": 0 },
+          "t": { "type": "number", "minimum": 0 },
+          "criteria": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["braking", "corner_speed", "apex"],
+            "properties": {
+              "braking": { "type": ["boolean", "null"] },
+              "corner_speed": { "type": ["boolean", "null"] },
+              "apex": { "type": ["boolean", "null"] }
+            },
+            "description": "The per-pass criterion booleans the controller consumes. null is NO EVIDENCE (the metric was not measurable), not a failure: the pass does not enter that element's evidence window at all."
+          }
+        }
+      },
+      "description": "The input stream, in the order passes close."
+    },
+    "finish": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["lap", "t"],
+      "properties": {
+        "lap": { "type": "integer", "minimum": 0 },
+        "t": { "type": "number", "minimum": 0 }
+      },
+      "description": "Close the block after the last pass, so elements mid-probe emit their censoring events. Absent when the trace does not exercise block end."
+    },
+    "expected_events": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["element", "transition", "t", "lap", "quorum"],
+        "properties": {
+          "element": { "type": "string", "enum": ["braking", "corner_speed", "apex"] },
+          "transition": {
+            "type": "string",
+            "enum": [
+              "full_to_reduced",
+              "reduced_to_probe",
+              "probe_to_removed",
+              "probe_to_revert",
+              "reduced_to_full",
+              "censored",
+              "cap_reached"
+            ]
+          },
+          "t": { "type": "number", "minimum": 0 },
+          "lap": { "type": "integer", "minimum": 0 },
+          "quorum": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["qualified_share", "qualified_corners", "applicable_corners", "flipped_corners"],
+            "properties": {
+              "qualified_share": { "type": "number", "minimum": 0, "maximum": 1 },
+              "qualified_corners": { "$ref": "#/definitions/cornerIds" },
+              "applicable_corners": { "type": "integer", "minimum": 1 },
+              "flipped_corners": { "$ref": "#/definitions/cornerIds" }
+            }
+          },
+          "reversion_count": { "type": "integer", "minimum": 0 }
+        }
+      },
+      "description": "The exact event sequence, in order. These are fades.schema.json records minus schema_version and block_id, which the runtime stamps and the controller does not know."
+    },
+    "expected_disabled_elements": {
+      "type": "array",
+      "items": { "type": "string", "enum": ["braking", "corner_speed", "apex"] },
+      "description": "Elements with zero applicable corners, in element order."
+    },
+    "expected_final_state": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["braking", "corner_speed", "apex"],
+      "properties": {
+        "braking": { "$ref": "#/definitions/elementState" },
+        "corner_speed": { "$ref": "#/definitions/elementState" },
+        "apex": { "$ref": "#/definitions/elementState" }
+      },
+      "description": "The controller's full inspectable state after the last pass (and the finish, if any). Compared field for field, so a divergence that happens to emit the same events is still caught."
+    }
+  },
+  "definitions": {
+    "cornerIds": {
+      "type": "array",
+      "items": { "type": "string", "minLength": 1 }
+    },
+    "elementState": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["stage", "disabled", "pinned", "revert_armed", "reversions",
+                   "applicable_corners", "qualified_corners", "qualified_share", "corners"],
+      "properties": {
+        "stage": { "type": "string", "enum": ["full", "reduced", "probe", "removed"] },
+        "disabled": { "type": "boolean" },
+        "pinned": { "type": "boolean", "description": "Reversion cap reached: no further transitions in either direction." },
+        "revert_armed": { "type": "boolean", "description": "False between a reversion and the share's recovery to the revert threshold (one regression, one stage)." },
+        "reversions": { "type": "integer", "minimum": 0 },
+        "applicable_corners": { "type": "integer", "minimum": 0 },
+        "qualified_corners": { "$ref": "#/definitions/cornerIds" },
+        "qualified_share": { "type": "number", "minimum": 0, "maximum": 1 },
+        "corners": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["corner_id", "window", "consec_fail"],
+            "properties": {
+              "corner_id": { "type": "string", "minLength": 1 },
+              "window": { "type": "array", "items": { "type": "boolean" } },
+              "consec_fail": { "type": "integer", "minimum": 0 }
+            }
+          },
+          "description": "Each applicable corner's evidence window and consecutive-failure count, in applicable order."
+        }
+      }
+    }
+  }
+}

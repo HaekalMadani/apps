@@ -3,19 +3,64 @@
   "pair_id": "example_pair",
   "track": "example_track",
   "car": "example_car",
+  "track_length_m": 3200.0,
   "corners": [
     {
       "corner_id": "T1",
       "source": "internet_hotlap",
+      "contributing_laps": {
+        "clean_passes": 12,
+        "braking": 12,
+        "apex": 12,
+        "corner_speed": 12
+      },
       "braking": {
-        "world_pos": [120.5, 2.1, -340.2],
+        "world_pos": [
+          120.5,
+          2.1,
+          -340.2
+        ],
         "spline_pos": 0.072,
         "sigma_ref_m": 2.4
       },
       "apex": {
         "gates": [
-          { "world_pos": [98.3, 2.0, -310.7], "spline_pos": 0.11 }
+          {
+            "world_pos": [
+              98.3,
+              2.0,
+              -310.7
+            ],
+            "spline_pos": 0.11,
+            "line": [
+              {
+                "spline_pos": 0.10375,
+                "world_pos": [
+                  86.3,
+                  2.0,
+                  -326.7
+                ]
+              },
+              {
+                "spline_pos": 0.11,
+                "world_pos": [
+                  98.3,
+                  2.0,
+                  -310.7
+                ]
+              },
+              {
+                "spline_pos": 0.11625,
+                "world_pos": [
+                  110.3,
+                  2.0,
+                  -294.7
+                ]
+              }
+            ]
+          }
         ],
+        "mean_rms_m": 0.315,
         "sigma_ref_m": 0.35
       },
       "corner_speed": {

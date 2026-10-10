@@ -35,6 +35,13 @@ VALID_FIXTURES = [
     (CONFIGS / "examples" / "reference_example_pair.json", "reference"),
 ]
 
+# The committed study configs are regression fixtures too: they are the files
+# the game actually loads, and they are hand-edited between recordings, so they
+# must round-trip through BOTH validators exactly like the examples do.
+VALID_FIXTURES += [(p, "annotation") for p in sorted((CONFIGS / "annotations").glob("annotation_*.json"))]
+VALID_FIXTURES += [(p, "reference")
+                   for p in sorted((CONFIGS / "references").glob("reference_*.json"))]
+
 # Invalid corpus: format inferred from "<format>__bad_<reason>.json".
 INVALID_FIXTURES = sorted(INVALID_DIR.glob("*__bad_*.json"))
 

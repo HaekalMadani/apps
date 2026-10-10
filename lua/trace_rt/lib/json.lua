@@ -24,6 +24,12 @@
 
 local json = { _version = "0.1.2" }
 
+-- Explicit JSON null. Lua tables cannot hold a `nil` value (the key just
+-- vanishes), so a record that must serialise a *present* null field — e.g. the
+-- M2 pass record's not-yet-computed metrics — stores this sentinel instead.
+-- `encode` maps it to the literal `null`. (TRACE addition to vendored rxi json.)
+json.null = setmetatable({}, { __tostring = function() return "null" end })
+
 -------------------------------------------------------------------------------
 -- Encode
 -------------------------------------------------------------------------------
@@ -122,6 +128,7 @@ local type_func_map = {
 
 
 encode = function(val, stack)
+  if val == json.null then return "null" end
   local t = type(val)
   local f = type_func_map[t]
   if f then

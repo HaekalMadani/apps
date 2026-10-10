@@ -18,8 +18,12 @@ jobs:
       - name: Install trace-kit dependencies
         run: pip install -r kit/requirements.txt
 
-      # M0 exit test: schema validation + Lua/Python validation parity
-      # (Lua side runs headlessly through lupa's LuaJIT 2.1, matching CSP).
+      # M0 exit test (schema validation + Lua/Python validation parity) and,
+      # from M4, the GOLDEN-TRACE CONTROLLER PARITY SUITE, which impl plan
+      # section 6 requires to run on every change to either implementation: a
+      # divergence between the runtime controller and the simulator's silently
+      # invalidates Gate G1. Both Lua sides run headlessly through lupa's
+      # LuaJIT 2.1, matching CSP.
       - name: trace-kit tests
         working-directory: kit
         run: pytest -q

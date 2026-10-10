@@ -1,0 +1,687 @@
+{
+  "schema_version": 1,
+  "trace_id": "no_requalify_degenerate",
+  "description": "The degenerate machine the re-qualification rule prevents, run deliberately with `qualification.requalify_on_advance` false. The quorum that triggered full -> reduced still holds immediately afterwards, so the element advances again on the very next pass and the reduced stage is a cosmetic waypoint rather than a test. Committed as a golden trace so the rule's justification is a runnable demonstration rather than a claim in a document; the frozen study config sets the flag true.",
+  "applicable": {
+    "braking": [
+      "1",
+      "2",
+      "3",
+      "4"
+    ],
+    "corner_speed": [
+      "1",
+      "2",
+      "3",
+      "4"
+    ],
+    "apex": [
+      "1",
+      "2",
+      "3",
+      "4"
+    ]
+  },
+  "config_overrides": {
+    "qualification": {
+      "requalify_on_advance": false
+    }
+  },
+  "passes": [
+    {
+      "corner_id": "1",
+      "lap": 0,
+      "t": 12.0,
+      "criteria": {
+        "braking": true,
+        "corner_speed": true,
+        "apex": true
+      }
+    },
+    {
+      "corner_id": "2",
+      "lap": 0,
+      "t": 24.0,
+      "criteria": {
+        "braking": true,
+        "corner_speed": true,
+        "apex": true
+      }
+    },
+    {
+      "corner_id": "3",
+      "lap": 0,
+      "t": 36.0,
+      "criteria": {
+        "braking": true,
+        "corner_speed": true,
+        "apex": true
+      }
+    },
+    {
+      "corner_id": "4",
+      "lap": 0,
+      "t": 48.0,
+      "criteria": {
+        "braking": true,
+        "corner_speed": true,
+        "apex": true
+      }
+    },
+    {
+      "corner_id": "1",
+      "lap": 1,
+      "t": 72.0,
+      "criteria": {
+        "braking": true,
+        "corner_speed": true,
+        "apex": true
+      }
+    },
+    {
+      "corner_id": "2",
+      "lap": 1,
+      "t": 84.0,
+      "criteria": {
+        "braking": true,
+        "corner_speed": true,
+        "apex": true
+      }
+    },
+    {
+      "corner_id": "3",
+      "lap": 1,
+      "t": 96.0,
+      "criteria": {
+        "braking": true,
+        "corner_speed": true,
+        "apex": true
+      }
+    },
+    {
+      "corner_id": "4",
+      "lap": 1,
+      "t": 108.0,
+      "criteria": {
+        "braking": true,
+        "corner_speed": true,
+        "apex": true
+      }
+    },
+    {
+      "corner_id": "1",
+      "lap": 2,
+      "t": 132.0,
+      "criteria": {
+        "braking": true,
+        "corner_speed": true,
+        "apex": true
+      }
+    },
+    {
+      "corner_id": "2",
+      "lap": 2,
+      "t": 144.0,
+      "criteria": {
+        "braking": true,
+        "corner_speed": true,
+        "apex": true
+      }
+    },
+    {
+      "corner_id": "3",
+      "lap": 2,
+      "t": 156.0,
+      "criteria": {
+        "braking": true,
+        "corner_speed": true,
+        "apex": true
+      }
+    },
+    {
+      "corner_id": "4",
+      "lap": 2,
+      "t": 168.0,
+      "criteria": {
+        "braking": true,
+        "corner_speed": true,
+        "apex": true
+      }
+    },
+    {
+      "corner_id": "1",
+      "lap": 3,
+      "t": 192.0,
+      "criteria": {
+        "braking": true,
+        "corner_speed": true,
+        "apex": true
+      }
+    },
+    {
+      "corner_id": "2",
+      "lap": 3,
+      "t": 204.0,
+      "criteria": {
+        "braking": true,
+        "corner_speed": true,
+        "apex": true
+      }
+    },
+    {
+      "corner_id": "3",
+      "lap": 3,
+      "t": 216.0,
+      "criteria": {
+        "braking": true,
+        "corner_speed": true,
+        "apex": true
+      }
+    },
+    {
+      "corner_id": "4",
+      "lap": 3,
+      "t": 228.0,
+      "criteria": {
+        "braking": true,
+        "corner_speed": true,
+        "apex": true
+      }
+    },
+    {
+      "corner_id": "1",
+      "lap": 4,
+      "t": 252.0,
+      "criteria": {
+        "braking": true,
+        "corner_speed": true,
+        "apex": true
+      }
+    },
+    {
+      "corner_id": "2",
+      "lap": 4,
+      "t": 264.0,
+      "criteria": {
+        "braking": true,
+        "corner_speed": true,
+        "apex": true
+      }
+    },
+    {
+      "corner_id": "3",
+      "lap": 4,
+      "t": 276.0,
+      "criteria": {
+        "braking": true,
+        "corner_speed": true,
+        "apex": true
+      }
+    },
+    {
+      "corner_id": "4",
+      "lap": 4,
+      "t": 288.0,
+      "criteria": {
+        "braking": true,
+        "corner_speed": true,
+        "apex": true
+      }
+    },
+    {
+      "corner_id": "1",
+      "lap": 5,
+      "t": 312.0,
+      "criteria": {
+        "braking": true,
+        "corner_speed": true,
+        "apex": true
+      }
+    },
+    {
+      "corner_id": "2",
+      "lap": 5,
+      "t": 324.0,
+      "criteria": {
+        "braking": true,
+        "corner_speed": true,
+        "apex": true
+      }
+    },
+    {
+      "corner_id": "3",
+      "lap": 5,
+      "t": 336.0,
+      "criteria": {
+        "braking": true,
+        "corner_speed": true,
+        "apex": true
+      }
+    },
+    {
+      "corner_id": "4",
+      "lap": 5,
+      "t": 348.0,
+      "criteria": {
+        "braking": true,
+        "corner_speed": true,
+        "apex": true
+      }
+    },
+    {
+      "corner_id": "1",
+      "lap": 6,
+      "t": 372.0,
+      "criteria": {
+        "braking": true,
+        "corner_speed": true,
+        "apex": true
+      }
+    },
+    {
+      "corner_id": "2",
+      "lap": 6,
+      "t": 384.0,
+      "criteria": {
+        "braking": true,
+        "corner_speed": true,
+        "apex": true
+      }
+    },
+    {
+      "corner_id": "3",
+      "lap": 6,
+      "t": 396.0,
+      "criteria": {
+        "braking": true,
+        "corner_speed": true,
+        "apex": true
+      }
+    },
+    {
+      "corner_id": "4",
+      "lap": 6,
+      "t": 408.0,
+      "criteria": {
+        "braking": true,
+        "corner_speed": true,
+        "apex": true
+      }
+    },
+    {
+      "corner_id": "1",
+      "lap": 7,
+      "t": 432.0,
+      "criteria": {
+        "braking": true,
+        "corner_speed": true,
+        "apex": true
+      }
+    },
+    {
+      "corner_id": "2",
+      "lap": 7,
+      "t": 444.0,
+      "criteria": {
+        "braking": true,
+        "corner_speed": true,
+        "apex": true
+      }
+    },
+    {
+      "corner_id": "3",
+      "lap": 7,
+      "t": 456.0,
+      "criteria": {
+        "braking": true,
+        "corner_speed": true,
+        "apex": true
+      }
+    },
+    {
+      "corner_id": "4",
+      "lap": 7,
+      "t": 468.0,
+      "criteria": {
+        "braking": true,
+        "corner_speed": true,
+        "apex": true
+      }
+    }
+  ],
+  "expected_events": [
+    {
+      "element": "braking",
+      "transition": "full_to_reduced",
+      "t": 168.0,
+      "lap": 2,
+      "quorum": {
+        "qualified_share": 1.0,
+        "qualified_corners": [
+          "1",
+          "2",
+          "3",
+          "4"
+        ],
+        "applicable_corners": 4,
+        "flipped_corners": [
+          "4"
+        ]
+      }
+    },
+    {
+      "element": "corner_speed",
+      "transition": "full_to_reduced",
+      "t": 168.0,
+      "lap": 2,
+      "quorum": {
+        "qualified_share": 1.0,
+        "qualified_corners": [
+          "1",
+          "2",
+          "3",
+          "4"
+        ],
+        "applicable_corners": 4,
+        "flipped_corners": [
+          "4"
+        ]
+      }
+    },
+    {
+      "element": "apex",
+      "transition": "full_to_reduced",
+      "t": 168.0,
+      "lap": 2,
+      "quorum": {
+        "qualified_share": 1.0,
+        "qualified_corners": [
+          "1",
+          "2",
+          "3",
+          "4"
+        ],
+        "applicable_corners": 4,
+        "flipped_corners": [
+          "4"
+        ]
+      }
+    },
+    {
+      "element": "braking",
+      "transition": "reduced_to_probe",
+      "t": 192.0,
+      "lap": 3,
+      "quorum": {
+        "qualified_share": 1.0,
+        "qualified_corners": [
+          "1",
+          "2",
+          "3",
+          "4"
+        ],
+        "applicable_corners": 4,
+        "flipped_corners": []
+      }
+    },
+    {
+      "element": "corner_speed",
+      "transition": "reduced_to_probe",
+      "t": 192.0,
+      "lap": 3,
+      "quorum": {
+        "qualified_share": 1.0,
+        "qualified_corners": [
+          "1",
+          "2",
+          "3",
+          "4"
+        ],
+        "applicable_corners": 4,
+        "flipped_corners": []
+      }
+    },
+    {
+      "element": "apex",
+      "transition": "reduced_to_probe",
+      "t": 192.0,
+      "lap": 3,
+      "quorum": {
+        "qualified_share": 1.0,
+        "qualified_corners": [
+          "1",
+          "2",
+          "3",
+          "4"
+        ],
+        "applicable_corners": 4,
+        "flipped_corners": []
+      }
+    },
+    {
+      "element": "braking",
+      "transition": "probe_to_removed",
+      "t": 372.0,
+      "lap": 6,
+      "quorum": {
+        "qualified_share": 1.0,
+        "qualified_corners": [
+          "1",
+          "2",
+          "3",
+          "4"
+        ],
+        "applicable_corners": 4,
+        "flipped_corners": []
+      }
+    },
+    {
+      "element": "corner_speed",
+      "transition": "probe_to_removed",
+      "t": 372.0,
+      "lap": 6,
+      "quorum": {
+        "qualified_share": 1.0,
+        "qualified_corners": [
+          "1",
+          "2",
+          "3",
+          "4"
+        ],
+        "applicable_corners": 4,
+        "flipped_corners": []
+      }
+    },
+    {
+      "element": "apex",
+      "transition": "probe_to_removed",
+      "t": 372.0,
+      "lap": 6,
+      "quorum": {
+        "qualified_share": 1.0,
+        "qualified_corners": [
+          "1",
+          "2",
+          "3",
+          "4"
+        ],
+        "applicable_corners": 4,
+        "flipped_corners": []
+      }
+    }
+  ],
+  "expected_disabled_elements": [],
+  "expected_final_state": {
+    "braking": {
+      "stage": "removed",
+      "disabled": false,
+      "pinned": false,
+      "revert_armed": true,
+      "reversions": 0,
+      "applicable_corners": 4,
+      "qualified_corners": [
+        "1",
+        "2",
+        "3",
+        "4"
+      ],
+      "qualified_share": 1.0,
+      "corners": [
+        {
+          "corner_id": "1",
+          "window": [
+            true,
+            true,
+            true,
+            true
+          ],
+          "consec_fail": 0
+        },
+        {
+          "corner_id": "2",
+          "window": [
+            true,
+            true,
+            true,
+            true
+          ],
+          "consec_fail": 0
+        },
+        {
+          "corner_id": "3",
+          "window": [
+            true,
+            true,
+            true,
+            true
+          ],
+          "consec_fail": 0
+        },
+        {
+          "corner_id": "4",
+          "window": [
+            true,
+            true,
+            true,
+            true
+          ],
+          "consec_fail": 0
+        }
+      ]
+    },
+    "corner_speed": {
+      "stage": "removed",
+      "disabled": false,
+      "pinned": false,
+      "revert_armed": true,
+      "reversions": 0,
+      "applicable_corners": 4,
+      "qualified_corners": [
+        "1",
+        "2",
+        "3",
+        "4"
+      ],
+      "qualified_share": 1.0,
+      "corners": [
+        {
+          "corner_id": "1",
+          "window": [
+            true,
+            true,
+            true,
+            true
+          ],
+          "consec_fail": 0
+        },
+        {
+          "corner_id": "2",
+          "window": [
+            true,
+            true,
+            true,
+            true
+          ],
+          "consec_fail": 0
+        },
+        {
+          "corner_id": "3",
+          "window": [
+            true,
+            true,
+            true,
+            true
+          ],
+          "consec_fail": 0
+        },
+        {
+          "corner_id": "4",
+          "window": [
+            true,
+            true,
+            true,
+            true
+          ],
+          "consec_fail": 0
+        }
+      ]
+    },
+    "apex": {
+      "stage": "removed",
+      "disabled": false,
+      "pinned": false,
+      "revert_armed": true,
+      "reversions": 0,
+      "applicable_corners": 4,
+      "qualified_corners": [
+        "1",
+        "2",
+        "3",
+        "4"
+      ],
+      "qualified_share": 1.0,
+      "corners": [
+        {
+          "corner_id": "1",
+          "window": [
+            true,
+            true,
+            true,
+            true
+          ],
+          "consec_fail": 0
+        },
+        {
+          "corner_id": "2",
+          "window": [
+            true,
+            true,
+            true,
+            true
+          ],
+          "consec_fail": 0
+        },
+        {
+          "corner_id": "3",
+          "window": [
+            true,
+            true,
+            true,
+            true
+          ],
+          "consec_fail": 0
+        },
+        {
+          "corner_id": "4",
+          "window": [
+            true,
+            true,
+            true,
+            true
+          ],
+          "consec_fail": 0
+        }
+      ]
+    }
+  }
+}

@@ -2,7 +2,7 @@
   "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "trace/controller_config.schema.json",
   "title": "Controller configuration (controller_config.json)",
-  "description": "Single source of every controller constant — no threshold may appear as a literal in Lua or Python code (impl plan section 6.3). Defaults here are the evaluation plan Phase 1 starting values; the file is tuned by the simulator in M4 and frozen (hash recorded) at Gate G1, with EVM finalised at Gate G2.",
+  "description": "Single source of every controller constant — no threshold may appear as a literal in Lua or Python code (impl plan section 6.3). Defaults here are the evaluation plan Phase 1 starting values; the file is tuned by the simulator in M4 and frozen (hash recorded) at Gate G1, with EVM finalised at Gate G2. M4 added `criteria.consistency_delta_ratio` and `qualification.requalify_on_advance` without bumping schema_version: no study data existed yet (M1-M3 blocks are dev and reference recordings), and a config revision is identified by its `config_id` plus the SHA-256 stamped into every manifest, which is the provenance mechanism that actually binds a block to its constants.",
   "type": "object",
   "additionalProperties": false,
   "required": [
@@ -10,7 +10,9 @@
     "config_id",
     "mode",
     "evm",
+    "band_floors",
     "qualification",
+    "criteria",
     "quorum",
     "probe",
     "brake_initiation",
@@ -30,20 +32,65 @@
       "description": "Condition switch (impl plan section 5). static: full pipeline runs, salience pinned to full. off: no elements, logging on (sessions 1 and 3)."
     },
     "evm": {
-      "type": "number",
-      "exclusiveMinimum": 0,
-      "description": "Expertise Variance Multiplier: tolerance band per metric = sigma_ref x EVM. Provisional default 3.0; finalised in Phase 2 (pilot)."
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["ai", "human"],
+      "properties": {
+        "ai": {
+          "type": "number",
+          "exclusiveMinimum": 0,
+          "description": "EVM for AI-sourced corners. The AC AI lacks the motor noise that persists even in expert human performance (Cohen & Sternad, 2009), so bands taken from its raw variance would be impossibly narrow. Provisional default 3.0."
+        },
+        "human": {
+          "type": "number",
+          "exclusiveMinimum": 0,
+          "description": "EVM for human-substituted corners, whose sigma_ref ALREADY contains human motor variability and would otherwise be inflated twice. Provisional default 1.25."
+        }
+      },
+      "description": "Expertise Variance Multiplier, source-dependent (eval plan v2): band_m = max(sigma_ref,m x EVM_source, floor_m). Which multiplier applies is decided per corner by the reference table's `source` field. Both values are finalised at Gate G2 (pilot)."
+    },
+    "band_floors": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["braking_m", "corner_speed_kmh", "apex_m"],
+      "properties": {
+        "braking_m": { "type": "number", "exclusiveMinimum": 0 },
+        "corner_speed_kmh": { "type": "number", "exclusiveMinimum": 0 },
+        "apex_m": { "type": "number", "exclusiveMinimum": 0 }
+      },
+      "description": "Absolute per-metric floor on the tolerance band, so a band is never hostage to a near-zero reference variance (the AI is consistent by construction, so sigma_ref can be arbitrarily small at some corners). Provisional defaults, finalised at Gate G2 alongside the EVMs."
     },
     "qualification": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["window_passes", "required_passes", "dequalify_consecutive_failures"],
+      "required": ["window_passes", "required_passes", "dequalify_consecutive_failures", "requalify_on_advance"],
       "properties": {
         "window_passes": { "type": "integer", "minimum": 1 },
-        "required_passes": { "type": "integer", "minimum": 1 },
-        "dequalify_consecutive_failures": { "type": "integer", "minimum": 1 }
+        "required_passes": {
+          "type": "integer",
+          "minimum": 1,
+          "description": "Passes within the window that must meet the criterion for a corner to qualify. A partly-filled window counts (3 of 3 satisfies \"3 of the last 4\"). This value also sets the controller's QUORUM READINESS rule: an element's quorum is not evaluated at all until every applicable corner holds at least this many passes in its current evidence window (M4 decision, see lua/trace_rt/lib/controller.lua)."
+        },
+        "dequalify_consecutive_failures": { "type": "integer", "minimum": 1 },
+        "requalify_on_advance": {
+          "type": "boolean",
+          "description": "The re-qualification-on-advance rule (framing v6): on every stage ADVANCE, all corner qualification states and evidence windows for that element reset, so quorum must be rebuilt from passes driven under the new salience level. Reversions do not reset. This is a STRUCTURAL rule, not a tuned parameter — the frozen study config must set it true; the flag exists so the simulator can demonstrate the degenerate machine it prevents (without it, the quorum that triggered full->reduced still holds and the element advances again immediately)."
+        }
       },
       "description": "Per-corner qualification: criterion met in required_passes of the last window_passes passes; de-qualify on N consecutive failures."
+    },
+    "criteria": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["consistency_delta_ratio"],
+      "properties": {
+        "consistency_delta_ratio": {
+          "type": "number",
+          "exclusiveMinimum": 0,
+          "description": "The braking criterion's CONSISTENCY delta, as a fraction of that corner's accuracy band: delta_m = consistency_delta_ratio x band_m. A pass meets the braking criterion only when brake-initiation distance is inside the accuracy band AND within delta_m of the rolling mean of that corner's recent brake-initiation distances (framing v6's two-gate, per-pass criterion). Consistency alone is insufficient by design: a learner braking reliably 30 m early sits tight to their own mean but outside the accuracy band. Default 0.5, tuned in Phase 1 (impl plan section 7)."
+        }
+      },
+      "description": "Per-pass criterion parameters that are not bands or floors."
     },
     "quorum": {
       "type": "object",
@@ -89,12 +136,17 @@
     "salience": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["full_alpha", "reduced_alpha"],
+      "required": ["full_alpha", "reduced_alpha", "reduced_form"],
       "properties": {
         "full_alpha": { "type": "number", "exclusiveMinimum": 0, "maximum": 1 },
-        "reduced_alpha": { "type": "number", "exclusiveMinimum": 0, "maximum": 1 }
+        "reduced_alpha": { "type": "number", "exclusiveMinimum": 0, "maximum": 1 },
+        "reduced_form": {
+          "type": "string",
+          "enum": ["minimal", "intermediate", "dimmed"],
+          "description": "How much of a cue survives at REDUCED salience — the open decision impl plan section 7 left for M5, settled at `minimal` and recorded here rather than in code because it is an RQ3 interview topic and must be frozen and hashed before the pilot. `minimal`: braking/apex markers draw the disc alone, the corner-speed readout keeps the target number alone (label, stalk, cross and the live/achieved speed are dropped). `intermediate`: disc + cross, and the readout keeps its corner label. `dimmed`: the full cue at reduced alpha, which is what \"reduced salience\" would mean if it meant brightness alone — kept as the control case for the argument that reducing salience should reduce what the cue TELLS you, not just how bright it is."
+        }
       },
-      "description": "Marker alpha per stage. Reduced-salience visual form is an open M5 decision; the alpha constant lives here either way."
+      "description": "How each UI element is drawn per salience stage. Alpha is the fading seam itself (framing v6: fading is implemented by modulating a marker's rgbm alpha), and the form decides which parts of the cue survive the reduction."
     },
     "logging": {
       "type": "object",
