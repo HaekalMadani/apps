@@ -52,6 +52,15 @@ def bands(cfg, corner_ref):
     band = max(sigma_ref x EVM_source, floor). The EVM is chosen by the CORNER's
     own ``source``, never globally: a human-substituted corner's sigma already
     contains motor variability and must not be inflated twice.
+
+    In practice the FLOOR wins every time: the AI's sigma_ref is ~0.02 m, so
+    sigma_ref x 3.0 is ~0.06 m and all 27 bands are floors (asserted as an exact
+    count in test_m4_evaluator.py). The EVM term has therefore never decided
+    anything in any reported run, and no precedent for inflating an artificial
+    reference's variance was found in the literature - see the 2026-10-14 answer
+    in BAND_CALIBRATION_BRIEF.md. The term stays because the human-substitution
+    path is where a measured sigma would exist, but it must not be written up as
+    a mechanism doing work.
     """
     evm = cfg["evm"]["human"] if corner_ref["source"] == "human" else cfg["evm"]["ai"]
     floors = cfg["band_floors"]
@@ -83,6 +92,25 @@ def push_history(history, distance_m, window_passes):
 
 
 # --- the evaluation ---------------------------------------------------------
+
+
+def corner_speed_ok(deviation_kmh, band_kmh, gate=None):
+    """Does this deviation from the expert minimum meet the corner-speed criterion?
+
+    The Lua side's twin (``lib/evaluator.corner_speed_ok``), which exists
+    because it has two callers there -- the pass evaluation and the live HUD
+    readout -- and they must never be two rules about one number. Kept here so
+    the shape of the gate is in the same place in both languages.
+
+    ``slow_only`` (the default, decided 2026-10-14): only the slow side fails,
+    because carrying more speed than the reference is not an error. There is no
+    ceiling, which is the whole decision. ``two_sided`` is the comparison case;
+    see ``criteria.corner_speed_gate`` in the schema for the evidence.
+    """
+    if gate == "two_sided":
+        return abs(deviation_kmh) <= band_kmh
+    return deviation_kmh >= -band_kmh
+
 
 def evaluate(cfg, corner_ref, metrics, history=None):
     """Judge one closed pass. See lua/trace_rt/lib/evaluator.lua for the rules.
@@ -118,7 +146,8 @@ def evaluate(cfg, corner_ref, metrics, history=None):
     if v is not None:
         dev = v - corner_ref["corner_speed"]["mean_kmh"]
         out["speed_envelope_deviation_kmh"] = dev
-        criteria["corner_speed"] = abs(dev) <= b["corner_speed_kmh"]
+        criteria["corner_speed"] = corner_speed_ok(
+            dev, b["corner_speed_kmh"], cfg["criteria"].get("corner_speed_gate"))
 
     # --- apex: one-sided, against the reference's own mean RMS ---
     rms = metrics.get("apex_rms_m")

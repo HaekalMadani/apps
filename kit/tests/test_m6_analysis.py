@@ -372,3 +372,230 @@ def test_the_figure_survives_an_empty_dataset(tmp_path):
     """A figure call on a directory with nothing in it must not crash the run."""
     report = analysis.rq1(analysis.load_dataset(tmp_path))
     ET.fromstring(analysis.trajectory_svg(report))
+
+
+# --- autopilot blocks are never participant data (regression 2026-10-10) ----
+
+def test_an_autopilot_block_is_never_study_data():
+    """A reference recording is not a participant, whatever else is stamped.
+
+    The 85%-strength reference block was recorded with the dev toggle off. Before
+    this, `load_dataset` would have ingested the AC AI as participant P-"85AI1".
+    """
+    assert analysis.block_kind(manifest("85AI1_x", autopilot=True)) == "ai"
+    # And it wins over every other marker, including none at all.
+    assert analysis.block_kind(manifest("x", autopilot=True, dev_block=True)) == "ai"
+    assert analysis.block_kind(manifest("x", autopilot=True, dry_run=True)) == "ai"
+
+
+def test_autopilot_blocks_are_excluded_from_ingestion(tmp_path):
+    write_block(tmp_path, "85AI1_a", ticks=three_laps(), autopilot=True, ai_level_pct=85)
+    write_block(tmp_path, "P01_a", ticks=three_laps())
+    dataset = analysis.load_dataset(tmp_path)
+    assert [b["block_id"] for b in dataset["blocks"]] == ["P01_a"]
+    assert [r["kind"] for r in dataset["excluded"]] == ["ai"]
+
+
+# --- the section 0A KR diagnostic (CE/VE) -----------------------------------
+#
+# Added with bandwidth KR (2026-10-10). The literature review's step 2 is a
+# diagnostic, not a study: drive with the error signal on, and read whether the
+# BIAS moves. So the thing that has to be right here is the CE/VE decomposition
+# — the measured novice problem is a CE problem (89% of brake points on the same
+# side of the reference), which a composite absolute error cannot show.
+
+
+def kr_metric_pass(corner_id, lap, brake=None, speed=None, apex=None,
+                   kr=None, block_id="P01_a", t_exit=None, stage=None,
+                   brake_clamped=False):
+    stages = stage or {"braking": "full", "corner_speed": "full", "apex": "full"}
+    return {"schema_version": 1, "block_id": block_id, "corner_id": corner_id, "lap": lap,
+            "t_entry": 1.0 + lap, "t_exit": t_exit if t_exit is not None else 2.0 + lap,
+            "valid": True,
+            "metrics": {"brake_initiation_distance_m": brake,
+                        "min_corner_speed_kmh": None,
+                        "speed_envelope_deviation_kmh": speed,
+                        "apex_rms_m": apex,
+                        **({"brake_initiation_clamped": True} if brake_clamped else {})},
+            "criteria": {"braking": None, "corner_speed": None, "apex": None},
+            "qualified": {"braking": False, "corner_speed": False, "apex": False},
+            "stage": stages,
+            **({"kr": kr} if kr else {})}
+
+
+def test_ce_and_ve_separate_bias_from_scatter():
+    """The whole reason this exists. Two learners with the same mean ABSOLUTE
+    error, one all bias and one all scatter, must not look the same."""
+    biased = analysis.ce_ve([15.0, 15.0, 15.0, 15.0])
+    scattered = analysis.ce_ve([15.0, -15.0, 15.0, -15.0])
+    assert biased["ae"] == scattered["ae"] == 15.0
+    assert biased["ce"] == 15.0 and biased["ve"] == 0.0
+    assert scattered["ce"] == 0.0 and scattered["ve"] > 15.0
+
+
+def test_ce_ve_handles_short_and_empty_series():
+    """An SD needs two samples. The review's own note is that an SD from 3-4
+    passes is very noisy, which is why this is a report and not a criterion."""
+    assert analysis.ce_ve([]) == {"n": 0, "ce": None, "ve": None, "ae": None}
+    one = analysis.ce_ve([7.0])
+    assert one["n"] == 1 and one["ce"] == 7.0 and one["ve"] is None
+    # Nulls are no evidence and drop out rather than counting as zero error.
+    assert analysis.ce_ve([7.0, None, 9.0])["n"] == 2
+
+
+def test_the_diagnostic_reports_ce_per_corner_and_the_half_split(tmp_path):
+    """The diagnostic's actual output: is the bias moving within the block?"""
+    passes = [kr_metric_pass("1", lap, brake=b, t_exit=float(lap))
+              for lap, b in enumerate([16.0, 15.0, 14.0, 5.0, 4.0, 3.0])]
+    write_block(tmp_path, "P01_a", ticks=three_laps(), passes=passes,
+                fades=[{"schema_version": 1, "block_id": "P01_a", "t": 1.0, "lap": 1,
+                        "element": "apex", "transition": "full_to_reduced",
+                        "quorum": {"qualified_share": 1.0, "qualified_corners": ["1"],
+                                   "applicable_corners": 1, "flipped_corners": []}}])
+    report = analysis.kr_diagnostic(analysis.load_dataset(tmp_path))
+    corner = report["blocks"][0]["elements"]["braking"]["corners"]["1"]
+    assert corner["overall"]["ce"] == pytest.approx(9.5)
+    assert corner["first_half"]["ce"] == pytest.approx(15.0)
+    assert corner["second_half"]["ce"] == pytest.approx(4.0)
+    # The series is kept in pass order, so the trajectory can be plotted rather
+    # than only summarised — a half-split cannot detect learning in a plateaued
+    # driver by construction (the review's flag on Finding 3).
+    assert corner["series"] == [16.0, 15.0, 14.0, 5.0, 4.0, 3.0]
+
+
+def test_the_series_is_ordered_by_pass_close_not_file_order(tmp_path):
+    """t_exit is the order the driver drove them in; file order is whatever the
+    flushes happened to produce."""
+    passes = [kr_metric_pass("1", 2, brake=3.0, t_exit=30.0),
+              kr_metric_pass("1", 0, brake=1.0, t_exit=10.0),
+              kr_metric_pass("1", 1, brake=2.0, t_exit=20.0)]
+    write_block(tmp_path, "P01_a", ticks=three_laps(), passes=passes)
+    report = analysis.kr_diagnostic(analysis.load_dataset(tmp_path))
+    assert report["blocks"][0]["elements"]["braking"]["corners"]["1"]["series"] == \
+        [1.0, 2.0, 3.0]
+
+
+def test_the_diagnostic_counts_what_kr_actually_did(tmp_path):
+    """A diagnostic in which the messages never fired measures nothing, so the
+    outcome counts are part of the report rather than something to infer."""
+    def entry(outcome):
+        doc = {"outcome": outcome}
+        if outcome == "delivered":
+            doc.update({"text": "14 m early", "error_value": 14.0, "band": 5.0})
+        return doc
+
+    passes = [
+        kr_metric_pass("1", 0, brake=14.0, kr={"braking": entry("delivered"),
+                                               "corner_speed": entry("capped"),
+                                               "apex": entry("capped")}),
+        kr_metric_pass("1", 1, brake=2.0, kr={"braking": entry("inside_band"),
+                                              "corner_speed": entry("inside_band"),
+                                              "apex": entry("inside_band")}),
+        kr_metric_pass("1", 2, brake=14.0,
+                       stage={"braking": "probe", "corner_speed": "full", "apex": "full"},
+                       kr={"braking": entry("withdrawn"),
+                           "corner_speed": entry("inside_band"),
+                           "apex": entry("inside_band")}),
+    ]
+    write_block(tmp_path, "P01_a", ticks=three_laps(), passes=passes)
+    report = analysis.kr_diagnostic(analysis.load_dataset(tmp_path))
+    counts = report["blocks"][0]["elements"]["braking"]["kr_outcomes"]
+    assert counts == {"delivered": 1, "inside_band": 1, "withdrawn": 1}
+
+
+def test_a_block_with_no_kr_field_counts_as_absent_not_off(tmp_path):
+    """`absent` (never reached the evaluator) and `off` (KR configured off) are
+    different facts, and the diagnostic turns on telling the silences apart."""
+    passes = [kr_metric_pass("1", lap, brake=10.0) for lap in range(3)]
+    write_block(tmp_path, "P01_a", ticks=three_laps(), passes=passes)
+    report = analysis.kr_diagnostic(analysis.load_dataset(tmp_path))
+    assert report["blocks"][0]["elements"]["braking"]["kr_outcomes"] == {"absent": 3}
+
+
+def test_the_diagnostic_pools_corners_and_keeps_them_separate(tmp_path):
+    """Pooled CE is the headline number; per-corner CE is what says whether the
+    bias is the same corner everywhere or one corner dragging the mean."""
+    passes = ([kr_metric_pass("1", lap, brake=20.0, t_exit=float(lap)) for lap in range(3)]
+              + [kr_metric_pass("2", lap, brake=0.0, t_exit=float(lap) + 0.5)
+                 for lap in range(3)])
+    write_block(tmp_path, "P01_a", ticks=three_laps(), passes=passes)
+    element = analysis.kr_diagnostic(analysis.load_dataset(tmp_path))["blocks"][0] \
+        ["elements"]["braking"]
+    assert element["pooled"]["ce"] == pytest.approx(10.0)
+    assert element["corners"]["1"]["overall"]["ce"] == pytest.approx(20.0)
+    assert element["corners"]["2"]["overall"]["ce"] == pytest.approx(0.0)
+    assert element["unit"] == "m"
+
+
+# --- clamped passes stay out of the averages (2026-10-14) --------------------
+
+def test_a_clamped_pass_is_excluded_from_ce_but_kept_in_the_series(tmp_path):
+    """A floor averaged into a bias is an annotation constant posing as learning.
+
+    The three real passes sit at a steady +15 m. The fourth is a brake point
+    clamped to its zone's opening at +80 m: a lower bound, not a measurement.
+    Averaging it would report CE +31.25 m and make the bias look worse; a
+    clamped pass on the NARROW side would make it look better. Either way the
+    number would be about the braking zone's geometry, not the driver.
+    """
+    passes = [kr_metric_pass("1", 0, brake=15.0, t_exit=1.0),
+              kr_metric_pass("1", 1, brake=15.0, t_exit=2.0),
+              kr_metric_pass("1", 2, brake=15.0, t_exit=3.0),
+              kr_metric_pass("1", 3, brake=80.0, t_exit=4.0, brake_clamped=True)]
+    write_block(tmp_path, "P01_a", ticks=three_laps(), passes=passes)
+    element = analysis.kr_diagnostic(analysis.load_dataset(tmp_path))["blocks"][0] \
+        ["elements"]["braking"]
+    corner = element["corners"]["1"]
+    assert corner["overall"]["ce"] == pytest.approx(15.0)
+    assert corner["overall"]["n"] == 3
+    assert corner["clamped_excluded"] == 1
+    assert element["pooled"]["ce"] == pytest.approx(15.0)
+    assert element["clamped_excluded"] == 1
+    # The audit trail keeps what the apparatus recorded, averages or not.
+    assert corner["series"] == [15.0, 15.0, 15.0, 80.0]
+
+
+def test_a_clamped_pass_does_not_shift_the_half_split(tmp_path):
+    """The half-split is the "did the bias move?" reading, so it is exactly where
+    a clamped floor would do the most damage."""
+    passes = [kr_metric_pass("1", 0, brake=16.0, t_exit=1.0),
+              kr_metric_pass("1", 1, brake=90.0, t_exit=2.0, brake_clamped=True),
+              kr_metric_pass("1", 2, brake=14.0, t_exit=3.0),
+              kr_metric_pass("1", 3, brake=4.0, t_exit=4.0),
+              kr_metric_pass("1", 4, brake=2.0, t_exit=5.0)]
+    write_block(tmp_path, "P01_a", ticks=three_laps(), passes=passes)
+    corner = analysis.kr_diagnostic(analysis.load_dataset(tmp_path))["blocks"][0] \
+        ["elements"]["braking"]["corners"]["1"]
+    # Usable series is [16, 14, 4, 2]: halves are [16, 14] and [4, 2].
+    assert corner["first_half"]["ce"] == pytest.approx(15.0)
+    assert corner["second_half"]["ce"] == pytest.approx(3.0)
+    assert corner["clamped_excluded"] == 1
+
+
+def test_only_the_braking_metric_is_ever_treated_as_clamped(tmp_path):
+    """The flag is about the brake-initiation search bracket. A corner-speed or
+    apex window a pass did not cover yields a null, which is a different case
+    and already handled."""
+    passes = [kr_metric_pass("1", 0, brake=80.0, speed=-9.0, apex=1.2,
+                             t_exit=1.0, brake_clamped=True)]
+    write_block(tmp_path, "P01_a", ticks=three_laps(), passes=passes)
+    elements = analysis.kr_diagnostic(analysis.load_dataset(tmp_path))["blocks"][0]["elements"]
+    assert elements["braking"]["corners"]["1"]["overall"]["n"] == 0
+    assert elements["corner_speed"]["corners"]["1"]["overall"]["ce"] == pytest.approx(-9.0)
+    assert elements["corner_speed"]["clamped_excluded"] == 0
+    assert elements["apex"]["corners"]["1"]["overall"]["ce"] == pytest.approx(1.2)
+
+
+def test_the_kr_outcome_counts_show_the_clamped_silences(tmp_path):
+    """`clamped` is one of the silences the diagnostic has to tell apart, so a
+    block where messages were withheld as floors is visible rather than
+    inferred from a suspiciously small n."""
+    passes = [kr_metric_pass("1", 0, brake=80.0, t_exit=1.0, brake_clamped=True,
+                             kr={"braking": {"outcome": "clamped", "error_value": 80.0,
+                                             "band": 5.0},
+                                 "corner_speed": {"outcome": "not_measured"},
+                                 "apex": {"outcome": "not_measured"}})]
+    write_block(tmp_path, "P01_a", ticks=three_laps(), passes=passes)
+    element = analysis.kr_diagnostic(analysis.load_dataset(tmp_path))["blocks"][0] \
+        ["elements"]["braking"]
+    assert element["kr_outcomes"] == {"clamped": 1}

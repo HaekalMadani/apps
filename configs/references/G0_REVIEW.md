@@ -1,5 +1,47 @@
 # Gate G0 — reference quality review
 
+> ## G0 IS RE-OPENED FOR PAIR 1 (2026-10-10)
+>
+> Pair 1's reference was replaced: `reference_pair1.json` is now the **85%**-strength
+> AI table extracted from `85AI1_s2_pair1_adaptive_20261010_125726`, superseding the
+> 100% table signed off below (kept in `superseded/reference_pair1_ai100_20260908.json`).
+> Pair 2 is untouched and its sign-off below still stands.
+>
+> **Why.** No UI element ever faded in any human block, and the braking criterion was
+> the worst of the three — one pass in ten clearing accuracy. The deviations were
+> **systematic bias, not scatter**: against the 100% reference the researcher braked a
+> median 14.9 m early and ran 9.4 km/h slow, 89% and 83% of passes on the same side.
+> That is the design working as specified (a learner who brakes reliably 30 m early is
+> consistent but inaccurate, so the marker stays) — which means **the target was wrong,
+> not the tolerance**. Re-scored against the 85% table the same 162 passes come out at
+> a corner-speed bias of **+0.31 km/h** and a brake bias of +8.1 m: centred, with the
+> residual now variance rather than offset. The 80% table was recorded too and is kept
+> in `superseded/` for the write-up; it over-corrects the speed bias and scores worse.
+>
+> **What it costs, stated plainly.**
+>
+> | | status |
+> |---|---|
+> | Clause 2, lap-time CoV < 1% | **met** — 0.062% |
+> | Clause 4, contributing laps ≥ 5 | **met** — 8, 8, 9, 9 |
+> | The protocol's **12 laps per pair** | **NOT met — 8 clean laps.** The AI boxed for fuel on lap 9. Re-record with enough fuel for 12+. |
+> | Clauses 1 and 3, on-track review | **outstanding for the new zones and the new marker positions.** |
+> | Pair 2 at 85% | **not recorded.** Pair 2 still holds its 100% table, so the two pairs currently differ in reference strength — an apparatus inconsistency that must be closed before any participant drives. |
+>
+> **Also not re-checkable, and worth recording as a provenance hole:** the tick logs
+> for *both* original 100% reference blocks have been deleted, so neither 100% table
+> can ever be re-extracted. That is the operative reason pair 1's table was swapped
+> rather than re-extracted against the new braking zones — a committed reference that
+> cannot be rebuilt from its own recording cannot be kept in step with an annotation
+> that changes. **Keep reference tick logs.**
+>
+> Framing v6 §177 and evaluation plan Phase 0 both still say "95–100% strength" and
+> must be changed to *strong but sub-maximal, strength stamped per block*, with this
+> reachability evidence as the stated reason.
+
+---
+
+
 Gate G0 (evaluation plan v2, Phase 0) is the gate M3 closes. It has five clauses;
 three are checkable from the repository and are checked automatically, two can
 only be done by looking at the track and are signed off at the bottom of this

@@ -181,7 +181,33 @@ Added for the corner-speed cue window (M5):
 
     physics.allowed()                          -> boolean  (false => only raycastTrack works)
     physics.setCarAutopilot(active, chooseTyres)          (AI drives the USER car; invalidates the lap)
-    physics.setAILevel(carIndex, level)                   (level 0..1; read back via car.aiLevel)
+    physics.setAILevel(carIndex, level)                   (SDK says level 0..2; car.aiLevel reads 0..1)
+    physics.setAIAggression(carIndex, aggression)         (0..1; launcher value is x0.95. UNUSED by TRACE)
+
+  **setAILevel on the USER car silently does nothing if applied before autopilot
+  is engaged (confirmed 2026-10-10).** A full 12-minute reference block was
+  recorded with the panel set to 85%: `pcall` succeeded, the panel said "AI level
+  set to 85%", and the resulting reference table was identical to the 100% one --
+  every brake point within 0.25 m, well inside the reference's own 0.5-1.1 m
+  lap-to-lap sigma -- with `car.aiLevel` reading 1.0 for the whole block.
+  `setCarAutopilot` appears to (re)establish the user car's AI at the session
+  default, discarding a level set beforehand. TRACE now applies the level
+  immediately AFTER engaging autopilot, re-applies it once a second while
+  autopilot runs, and -- the part that matters -- reports `car.aiLevel` READ BACK
+  rather than the value it asked for. The two scales also disagree in the SDK's
+  own docs, which is reason enough never to trust the write.
+
+  **If the readback still will not move**, the user-car autopilot ignores aiLevel
+  entirely and a sub-maximal reference must come from an AI OPPONENT car with the
+  launcher's strength slider, sampled via `ac.getCar(n)`. That costs the property
+  M3 deliberately bought (reference and participant sharing one car, setup and
+  sampling path), so it is the fallback, not the first choice.
+
+  **General lesson: a physics.* call that returns cleanly has not necessarily
+  done anything.** Read the state back and compare before trusting it -- the same
+  discipline the manifest already applies by stamping `ai_level_pct` from
+  `car.aiLevel` instead of from the UI selection. That stamp is the only reason
+  this was caught before the table was committed.
     .isAIControlled  boolean on ac.StateCar
 
 - Autopilot on the **player car** is deliberate: the reference laps then share
@@ -235,3 +261,41 @@ Calls TRACE uses (all confirmed against the SDK and proven by the spike):
 - Same caveat as the window: a raise inside the render callback abandons the rest
   of that frame's drawing, so `draw3d` is `pcall`-wrapped and surfaces the error
   on the window instead.
+
+### Track-spline queries (M6, 2026-10-10) — the braking band trapezoid
+
+The braking cue spans a *range* of track (the accuracy band), so unlike a point
+marker it needs to know where the road goes and how wide it is. Three SDK calls
+supply that, all verified in `ac_apps/lib.lua` + `README.md`:
+
+    ac.trackProgressToWorldCoordinate(v, linear)  -> vec3
+    ac.getTrackAISplineSides(v)                   -> vec2  (x = left, y = right)
+    ac.hasTrackSpline()                           -> boolean
+    ac.worldCoordinateToTrackProgress(v)          -> number, or -1 with no spline
+
+- Both of the first two take a **lap progress 0..1**, the same spline coordinate
+  the reference tables and the pass tracker use, and both follow the **AI spline
+  (`fast_lane`)** — which is also the line the reference brake points were
+  measured along, so the trapezoid lies on the line its criterion references.
+  That is the reason to use these rather than reconstructing a tangent from
+  logged car positions.
+- `getTrackAISplineSides` returns the AI spline's **distance to each track
+  boundary**, so clamping a shape's half-width to `min(x, y)` keeps it on tarmac
+  without anything in TRACE knowing the circuit. `trace_rt.lua`'s
+  `BAND_EDGE_MARGIN_M` is the slack left over.
+- `ac.hasTrackSpline()` exists, and a track without one makes
+  `worldCoordinateToTrackProgress` return -1. TRACE does not currently check it:
+  both study layouts have a spline (the AC AI drives them), and `band_quad_for`
+  already falls back to the disc on any nil result. **If a third track is ever
+  added, check it.**
+- Tangents are taken from **three samples** (band start, reference point, band
+  end) rather than from one chord, so the quad bends with a braking zone that is
+  already turning in. A single chord cuts the corner and puts part of the shape
+  off the road.
+
+    render.quad(p1, p2, p3, p4, color, texture)   -- four vec3, confirmed
+
+- **Lesson carried over from the disc:** the same vertical-lift problem applies.
+  The quad is lifted by `MARKER_DISC_LIFT_M` at each corner, using each sample's
+  own `y` from the spline rather than one height for the whole shape — a braking
+  zone on a gradient would otherwise sink into the road at one end.

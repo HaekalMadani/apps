@@ -1,0 +1,55 @@
+SEED 2017 | Experimental Analysis of Mastery Learning Criteria | cited_by=28
+  2023 | Simulated Learners in Educational Technology: A Systematic Literature Review and a Turing-like Test | https://doi.org/10.1007/s40593-023-00337-2
+  2020 | Mastery Learning Heuristics and Their Hidden Models | https://doi.org/10.1007/978-3-030-52240-7_16
+  2018 | Conceptual Issues in Mastery Criteria: Differentiating Uncertainty and Degrees of Knowledge | https://doi.org/10.1007/978-3-319-93843-1_33
+  2023 | Adaptive Test Recommendation for Mastery Learning | https://doi.org/10.1145/3596673.3596977
+  2018 | Teaching Sciences in Virtual Worlds with Mastery Learning: A Case of Study in Elementary School | https://doi.org/10.22161/ijaers.5.7.27
+  2021 | Personalized Stopping Rules in Bayesian Adaptive Mastery Assessment | https://doi.org/10.48550/arxiv.2103.03766
+  2024 | Automatically assessing student mastery and designing optimal stopping policies | https://doi.org/10.5463/thesis.650
+  scanned=28 kept=7
+SEED 2018 | Analysis and design of mastery learning criteria | cited_by=18
+  2023 | Simulated Learners in Educational Technology: A Systematic Literature Review and a Turing-like Test | https://doi.org/10.1007/s40593-023-00337-2
+  2024 | Automatically assessing student mastery and designing optimal stopping policies | https://doi.org/10.5463/thesis.650
+  scanned=18 kept=2
+SEED 2008 | Quantitative and individualized assessment of the learning curve using LC-CUSUM | cited_by=216
+  2010 | Systematic Review on Mentoring and Simulation in Laparoscopic Colorectal Surgery | https://doi.org/10.1097/sla.0b013e3181f662e5
+  2015 | Effectiveness of Labor Cervical Examination Simulation in Medical Student Education | https://doi.org/10.1097/aog.0000000000001027
+  2019 | Failure affects subjective estimates of cognitive load through a negative carry-over effect in virtual reality simulatio | https://doi.org/10.1186/s41077-019-0114-9
+  2020 | HipSim — hip fracture surgery simulation utilizing the Learning Curve–Cumulative Summation test (LC-CUSUM) | https://doi.org/10.1080/17453674.2020.1777511
+  2025 | Navigating the learning curve of robotic pancreatoduodenectomy: Competency, proficiency, and mastery in a first-generati | https://doi.org/10.1016/j.surg.2025.109347
+  2024 | Learning curve analyses in spine surgery: a systematic simulation-based critique of methodologies | https://doi.org/10.1016/j.spinee.2024.05.014
+  2019 | Using Simulation to Define the Learning Curve for the Digital Cervical Examination | https://doi.org/10.1097/aog.0000000000003433
+  2019 | A Pilot Study on Oocyte Retrieval Simulator: A New Tool for Training? | https://doi.org/10.1007/s10916-019-1340-3
+  2021 | Fetal biometry in ultrasound: A new approach to assess the long-term impact of simulation on learning patterns | https://doi.org/10.1016/j.jogoh.2021.102135
+  2015 | Use of the Learning Curve–Cumulative Summation Test for Leopold Maneuvers Assessment in a Simulator | https://doi.org/10.1097/sih.0000000000000109
+  2020 | Amniocentesis learning curve using a low‐cost simulation model to teach maternal–fetal medicine fellows | https://doi.org/10.1002/ijgo.13416
+  2018 | Self-Formation Assessed by Cumulative Summation Test Does Not Reach Recommended Thresholds for Optical Diagnosis of Colo | https://doi.org/10.1007/s10620-018-5008-5
+  2023 | Simulation and Learning Curve of the Traditional and Sonographic Pelvimetry | https://doi.org/10.1007/978-3-031-10067-3_16
+  2023 | Point-of-Care Ultrasound (POCUS) Assessment, Including Learning Curve: Developing a Dynamic Simulation Model | https://doi.org/10.20944/preprints202305.1821.v1
+  2011 | WITHDRAWN: A comment on the application of statistical process control in the surgical arena | https://doi.org/10.1016/j.ejso.2011.02.013
+  2019 | Developing an independently executable simulation training for ERCP | None
+  2024 | Cumulative sum learning curve for cordocentesis among maternal‐fetal medicine fellows in a low‐cost simulation model | https://doi.org/10.1002/ijgo.15611
+  2025 | Letter to the editor on "Navigating the learning curve of robotic pancreatoduodenectomy: Competency, proficiency, and ma | https://doi.org/10.1016/j.surg.2025.109464
+  2025 | Developing a Dynamic Simulation Model for Point-of-Care Ultrasound Assessment and Learning Curve Analysis | https://doi.org/10.3390/systems13070591
+Traceback (most recent call last):
+  File "D:\SteamLibrary\steamapps\common\assettocorsa\apps\novelty_audit\cites.py", line 10, in <module>
+    d = json.load(urllib.request.urlopen("https://api.openalex.org/works?" + urllib.parse.urlencode(p), timeout=60))
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\haeka\anaconda3\envs\ac_dev\Lib\urllib\request.py", line 215, in urlopen
+    return opener.open(url, data, timeout)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\haeka\anaconda3\envs\ac_dev\Lib\urllib\request.py", line 521, in open
+    response = meth(req, response)
+               ^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\haeka\anaconda3\envs\ac_dev\Lib\urllib\request.py", line 630, in http_response
+    response = self.parent.error(
+               ^^^^^^^^^^^^^^^^^^
+  File "C:\Users\haeka\anaconda3\envs\ac_dev\Lib\urllib\request.py", line 559, in error
+    return self._call_chain(*args)
+           ^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\haeka\anaconda3\envs\ac_dev\Lib\urllib\request.py", line 492, in _call_chain
+    result = func(*args)
+             ^^^^^^^^^^^
+  File "C:\Users\haeka\anaconda3\envs\ac_dev\Lib\urllib\request.py", line 639, in http_error_default
+    raise HTTPError(req.full_url, code, msg, hdrs, fp)
+urllib.error.HTTPError: HTTP Error 401: Unauthorized

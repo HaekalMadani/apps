@@ -82,8 +82,8 @@ def lua_eval():
         """
     )
 
-    def run(ref, metrics, history=None):
-        out = json.loads(fn(json.dumps(CFG), json.dumps(ref), json.dumps(metrics),
+    def run(ref, metrics, history=None, cfg=None):
+        out = json.loads(fn(json.dumps(cfg or CFG), json.dumps(ref), json.dumps(metrics),
                             json.dumps(history or [])))
         for k in ("braking", "corner_speed", "apex"):
             if not out["has"][k]:
@@ -98,10 +98,11 @@ def lua_eval():
     return run
 
 
-def both(lua_eval, ref, metrics, history=None):
+def both(lua_eval, ref, metrics, history=None, cfg=None):
     """Run a case through both implementations, assert agreement, return the result."""
-    lua = lua_eval(ref, metrics, history)
-    py = pyev.evaluate(CFG, ref, metrics, list(history or []))
+    cfg = cfg or CFG
+    lua = lua_eval(ref, metrics, history, cfg)
+    py = pyev.evaluate(cfg, ref, metrics, list(history or []))
     assert lua["braking"] == py["criteria"]["braking"]
     assert lua["corner_speed"] == py["criteria"]["corner_speed"]
     assert lua["apex"] == py["criteria"]["apex"]
@@ -215,23 +216,51 @@ def test_history_keeps_only_the_window_minus_one(lua_eval):
     for value in range(10):
         pyev.push_history(history, float(value), window)
     assert len(history) == window - 1
-    assert history == [7.0, 8.0, 9.0]
+    # Derived from `window`, not written out: this read `[7.0, 8.0, 9.0]` and
+    # broke when the window went 4 -> 3 at frozen-g1b, which told us nothing
+    # about the evaluator. What matters is that it keeps the LAST window-1
+    # values, in order.
+    assert history == [float(v) for v in range(10 - (window - 1), 10)]
 
 
 # --- corner speed and apex ---------------------------------------------------
 
-def test_corner_speed_is_two_sided(lua_eval):
-    """Too fast is an error too: the car runs wide.
+def test_corner_speed_fails_only_on_the_slow_side(lua_eval):
+    """Carrying MORE speed than the reference is not an error (2026-10-14).
+
+    It was a two-sided band, justified as "too fast is an error too: the car runs
+    wide". The shortHUDtest block refuted that on its own data -- 15 of 24
+    corner-speed failures were for carrying more speed than the 85% reference, 1
+    of those 15 put a wheel outside against 2 of 9 on the slow side, and within
+    the fast passes more speed went with a BETTER apex line. The apex gate is
+    already one-sided on the same argument, and the metric is a MINIMUM over the
+    window, so an entry too hot to sustain shows up as a lower minimum later in
+    the same window.
 
     Written against the CONFIGURED floor rather than a literal, because Gate G1
     moved it (3.0 -> 4.0 km/h) and Gate G2 may move it again.
     """
     band = FLOORS["corner_speed_kmh"]
     ref = corner_ref(sigma_speed=0.0, mean_speed=90.0)
-    for inside in (90.0 - band * 0.9, 90.0, 90.0 + band * 0.9):
-        assert both(lua_eval, ref, {"min_corner_speed_kmh": inside})["corner_speed"] is True
+    for ok in (90.0 - band * 0.9, 90.0, 90.0 + band * 0.9, 90.0 + band * 5):
+        assert both(lua_eval, ref, {"min_corner_speed_kmh": ok})["corner_speed"] is True
+    assert both(lua_eval, ref,
+                {"min_corner_speed_kmh": 90.0 - band * 1.1})["corner_speed"] is False
+
+
+def test_the_two_sided_corner_speed_gate_is_still_available(lua_eval):
+    """`two_sided` is the comparison case for the argument above, so it has to
+    keep working -- in both implementations -- rather than rotting in the schema.
+    """
+    band = FLOORS["corner_speed_kmh"]
+    ref = corner_ref(sigma_speed=0.0, mean_speed=90.0)
+    cfg = json.loads(json.dumps(CFG))
+    cfg["criteria"]["corner_speed_gate"] = "two_sided"
     for outside in (90.0 - band * 1.1, 90.0 + band * 1.1):
-        assert both(lua_eval, ref, {"min_corner_speed_kmh": outside})["corner_speed"] is False
+        assert both(lua_eval, ref, {"min_corner_speed_kmh": outside},
+                    cfg=cfg)["corner_speed"] is False
+    assert both(lua_eval, ref, {"min_corner_speed_kmh": 90.0 + band * 0.9},
+                cfg=cfg)["corner_speed"] is True
 
 
 def test_the_speed_deviation_is_signed_and_logged(lua_eval):
@@ -242,10 +271,18 @@ def test_the_speed_deviation_is_signed_and_logged(lua_eval):
 
 def test_apex_is_one_sided_against_the_reference_mean_rms(lua_eval):
     """Driving closer to the expert line than the AI managed is not an error."""
-    ref = corner_ref(sigma_apex=0.0, mean_rms=0.05)       # band = 0.5 m floor
+    mean_rms = 0.05
+    # sigma_apex = 0 means the band IS the configured floor. Taken from the
+    # config rather than written out: this was `0.54 / 0.56` against a 0.5 m
+    # floor and broke when frozen-g1b widened it to 1.5 m, which says nothing
+    # about one-sidedness. The shape is what is under test -- below and just
+    # inside pass, just outside fails -- so the probes straddle the edge
+    # wherever the floor puts it.
+    edge = mean_rms + CFG["band_floors"]["apex_m"]
+    ref = corner_ref(sigma_apex=0.0, mean_rms=mean_rms)
     assert both(lua_eval, ref, {"apex_rms_m": 0.0})["apex"] is True
-    assert both(lua_eval, ref, {"apex_rms_m": 0.54})["apex"] is True
-    assert both(lua_eval, ref, {"apex_rms_m": 0.56})["apex"] is False
+    assert both(lua_eval, ref, {"apex_rms_m": edge - 0.01})["apex"] is True
+    assert both(lua_eval, ref, {"apex_rms_m": edge + 0.01})["apex"] is False
 
 
 # --- nulls -------------------------------------------------------------------

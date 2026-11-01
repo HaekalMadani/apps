@@ -17,6 +17,7 @@
     "probe",
     "brake_initiation",
     "salience",
+    "kr",
     "logging"
   ],
   "properties": {
@@ -47,7 +48,7 @@
           "description": "EVM for human-substituted corners, whose sigma_ref ALREADY contains human motor variability and would otherwise be inflated twice. Provisional default 1.25."
         }
       },
-      "description": "Expertise Variance Multiplier, source-dependent (eval plan v2): band_m = max(sigma_ref,m x EVM_source, floor_m). Which multiplier applies is decided per corner by the reference table's `source` field. Both values are finalised at Gate G2 (pilot)."
+      "description": "Expertise Variance Multiplier, source-dependent (eval plan v2): band_m = max(sigma_ref,m x EVM_source, floor_m). Which multiplier applies is decided per corner by the reference table's `source` field. Both values are finalised at Gate G2 (pilot). INOPERATIVE IN PRACTICE (2026-10-14): measured sigma_ref is ~0.02 m, so sigma_ref x EVM_ai is ~0.06 m and every band is its floor instead - the multiplier has never changed a decision in any reported run, and no published precedent exists for inflating an artificial reference's variance. Kept for the human-substitution path (where sigma_ref is a measured human spread) and for schema stability; the citable form of the same idea with a human reference is Gallagher et al. (2004), a criterion at 2 SD from the expert mean. See BAND_CALIBRATION_BRIEF.md."
     },
     "band_floors": {
       "type": "object",
@@ -82,12 +83,17 @@
     "criteria": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["consistency_delta_ratio"],
+      "required": ["consistency_delta_ratio", "corner_speed_gate"],
       "properties": {
         "consistency_delta_ratio": {
           "type": "number",
           "exclusiveMinimum": 0,
           "description": "The braking criterion's CONSISTENCY delta, as a fraction of that corner's accuracy band: delta_m = consistency_delta_ratio x band_m. A pass meets the braking criterion only when brake-initiation distance is inside the accuracy band AND within delta_m of the rolling mean of that corner's recent brake-initiation distances (framing v6's two-gate, per-pass criterion). Consistency alone is insufficient by design: a learner braking reliably 30 m early sits tight to their own mean but outside the accuracy band. Default 0.5, tuned in Phase 1 (impl plan section 7)."
+        },
+        "corner_speed_gate": {
+          "type": "string",
+          "enum": ["slow_only", "two_sided"],
+          "description": "Which side of the expert corner-speed minimum the criterion fails on. `slow_only` (default): the pass fails only when the minimum is MORE than a band BELOW the reference, and carrying more speed than the expert is never a failure. `two_sided`: a band about the mean, failing in both directions. Decided 2026-10-14 on the shortHUDtest block, where 15 of 24 corner-speed failures were for carrying MORE speed than the 85% reference. The reasons: (a) the apex gate is already one-sided on the same argument -- beating the reference is not an error; (b) the metric is a MINIMUM over the corner-speed window, so an unsustainably hot entry shows up as a LOWER minimum later in the same window, and the only way to post a high minimum is to have carried the speed through; (c) the two-sided band's stated rationale was that too much speed runs the car wide, and it did not hold in the data -- 1 of those 15 fast passes put a wheel outside, against 2 of 9 on the slow side, and within the fast passes more speed went with a BETTER apex line (r = -0.26). `two_sided` is kept as a config value because it is the comparison case for that argument, and because the residual risk of `slow_only` is real: a driver who sustains an over-the-limit minimum and ruins the exit is caught only by the apex element and by the pass's own track-limits flags. KNOWN CONSEQUENCE: a one-sided gate makes the reference's STRENGTH the whole target on this element, since there is no longer an upper edge to be inside of -- revisit it with the reference strength at Gate G2."
         }
       },
       "description": "Per-pass criterion parameters that are not bands or floors."
@@ -147,6 +153,39 @@
         }
       },
       "description": "How each UI element is drawn per salience stage. Alpha is the fading seam itself (framing v6: fading is implemented by modulating a marker's rgbm alpha), and the form decides which parts of the cue survive the reduction."
+    },
+    "kr": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["enabled", "elements", "max_messages", "hold_s"],
+      "properties": {
+        "enabled": {
+          "type": "boolean",
+          "description": "Whether bandwidth knowledge of results is delivered at all. An APPARATUS property, identical in every condition — KR is not part of the fading manipulation and never fades (lib/kr.lua rule 5), so switching it off changes the apparatus for both arms, not the contrast between them. Hashed into every block's manifest like every other config value, because \"was this participant told their error?\" is not a question a convention may answer."
+        },
+        "elements": {
+          "type": "array",
+          "uniqueItems": true,
+          "maxItems": 3,
+          "items": {
+            "type": "string",
+            "enum": ["braking", "corner_speed", "apex"]
+          },
+          "description": "Which elements may deliver KR, as an ORDERED PRIORITY LIST — the array order is the delivery order when max_messages is smaller than the number of elements outside their bands. The order braking → corner_speed → apex is the causal chain through a corner (brake point sets entry speed sets the line through the apex), so the message names the cause rather than its consequence. An element left out of the list delivers no KR at all and is logged `off`."
+        },
+        "max_messages": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 3,
+          "description": "Most KR messages delivered per corner pass. 1 at frozen-g1: per-component bandwidth KR on a multi-part task can overload the learner, and a single braking message is what the literature review's section 0A diagnostic specifies. KNOWN CONSEQUENCE at the frozen floors: braking is outside its band on ~94% of novice passes, so it monopolises KR and the other two elements are near-silent. Revisit at G2, where the calibrated floors let the priority list actually distribute."
+        },
+        "hold_s": {
+          "type": "number",
+          "exclusiveMinimum": 0,
+          "description": "Seconds a delivered message stays on screen, measured on the same session clock as the pass records. Long enough to read two short lines, short enough to be gone before the next corner's approach readout on these layouts. A later delivery replaces an earlier one. Legibility at speed is an in-game check, so this is provisional until the G2 review."
+        }
+      },
+      "description": "Bandwidth knowledge of results — terminal, per-corner-pass, signed error, delivered only when the pass fell OUTSIDE the element's tolerance band, and suppressed for an element whenever that element is hidden (probe, removed, or the off condition). Added 2026-10-10 in response to the literature review's central finding: TRACE's three elements are prescriptive concurrent guidance and the system delivered no knowledge of results at all, which is the one thing the bandwidth-KR literature its tolerance bands are modelled on actually requires. Full rationale and rules: lua/trace_rt/lib/kr.lua."
     },
     "logging": {
       "type": "object",

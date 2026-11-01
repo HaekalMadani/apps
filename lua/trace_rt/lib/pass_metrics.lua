@@ -139,10 +139,11 @@ function M.open(plan, snap)
     prev = nil,                 -- previous sample: { axis, x, y, z }
     -- braking
     candidate = nil,            -- pending sustained-brake candidate
-    brake_init = nil,           -- confirmed { t, spline }
+    brake_init = nil,           -- confirmed { t, spline, clamped }
     brake_peak = 0.0,
     brake_releases = 0,
     brake_was_above = false,
+    brake_seen = false,         -- has any sample been folded in yet?
     -- corner speed
     min_speed = nil,
     -- apex: one cursor per gate line
@@ -195,7 +196,25 @@ function M.update(st, snap)
     if st.brake_init == nil then
       if above then
         if st.candidate == nil and in_zone(snap.spline, plan.braking_zone.start, plan.braking_zone["end"]) then
-          st.candidate = { t = snap.t, spline = snap.spline }
+          -- CLAMPED INITIATION (2026-10-14). The zone bounds where the event
+          -- is SEARCHED for, so a driver already hard on the brakes when they
+          -- enter it has their initiation clamped to the first in-zone sample.
+          -- The reported distance is then a FLOOR, not a measurement: the truth
+          -- is "at least this early". Caught live by the KRtest block, which
+          -- announced "83 m early" and "79 m early" on two deliberately very
+          -- early passes -- both within 0.3 m of their zone's opening -- the
+          -- same clamping reference.check_braking_zone_fit warns about offline.
+          --
+          -- Detected from the brake trace rather than from a distance
+          -- threshold, which makes it exact: the brake was already above
+          -- threshold on the sample BEFORE this one. That sample must have been
+          -- outside the zone, because an in-zone sample above threshold would
+          -- already have created the candidate. `not st.brake_seen` covers the
+          -- other way in -- a pass whose very first sample is already braking
+          -- inside the zone, where the crossing happened before the bracket
+          -- opened and so was never observed either.
+          st.candidate = { t = snap.t, spline = snap.spline,
+                           clamped = (st.brake_was_above or not st.brake_seen) }
         end
         -- The zone bounds where the event is SEARCHED for, not where braking
         -- must stay: a trail-braking driver is legitimately still on the
@@ -214,6 +233,7 @@ function M.update(st, snap)
       st.brake_releases = st.brake_releases + 1
     end
     st.brake_was_above = above
+    st.brake_seen = true
   end
 
   -- --- minimum corner speed ---
@@ -249,7 +269,7 @@ end
 -- never a failure — see rule 4 in lib/controller.lua.
 --
 --   { brake_initiation_distance_m, brake_initiation = { t, spline_pos },
---     brake_modulation = { peak, releases },
+--     brake_initiation_clamped = true?, brake_modulation = { peak, releases },
 --     min_corner_speed_kmh, apex_rms_m }
 function M.close(st)
   local plan = st.plan
@@ -257,6 +277,17 @@ function M.close(st)
 
   if st.brake_init ~= nil then
     out.brake_initiation = { t = st.brake_init.t, spline_pos = st.brake_init.spline }
+    -- Present only when true, the `dev_block` / `aborted` pattern: absent and
+    -- false are the same fact, so no reader needs a third state and every log
+    -- recorded before this existed stays schema-valid.
+    --
+    -- The distance is still reported, and the CRITERION still fails on it. That
+    -- is deliberate: the driver really did brake at least that early, so a
+    -- failure is the truth and withholding it would hand the controller a null
+    -- -- no evidence -- for a pass that is unambiguously evidence. What the flag
+    -- changes is what may be SAID about the magnitude (lib/kr) and what may be
+    -- averaged into a bias (trace_kit.analysis).
+    if st.brake_init.clamped then out.brake_initiation_clamped = true end
     -- Signed forward distance FROM the driver's brake point TO the expert's:
     -- positive when the driver braked earlier, which is the sign convention
     -- passes.schema.json states and the direction novice error runs in.

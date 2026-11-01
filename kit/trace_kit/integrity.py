@@ -290,6 +290,89 @@ def check_fades(fades, passes):
     return problems
 
 
+ELEMENTS = ("braking", "corner_speed", "apex")
+
+# Controller stages at which an element's cue is hidden, and therefore at which
+# its bandwidth KR must be withdrawn (lua/trace_rt/lib/kr.lua rule 4).
+HIDDEN_STAGES = ("probe", "removed")
+
+
+def check_kr(passes, condition):
+    """The probe-suppression guarantee, checked from the logs alone.
+
+    An element's KR is withdrawn exactly when that element is not being shown,
+    because the probe stage is this project's retention test and a retention
+    test with feedback still running measures performance-WITH-feedback instead
+    (Winstein & Schmidt 1990). That is a claim the methods chapter will make, so
+    it needs to be falsifiable from the recorded data rather than resting on the
+    runtime being correct — the same reasoning as the fade-log replay clause.
+
+    Two directions are checked, and the second matters as much as the first:
+
+    * nothing was DELIVERED for an element whose recorded stage was hidden
+      (probe/removed), or in an `off` block where nothing is shown at all;
+    * nothing was WITHDRAWN for an element whose stage was visible — a message
+      silently suppressed while the cue was on screen would be a quieter
+      apparatus than the one described, and would bias the diagnostic toward
+      "the learner was never told".
+
+    A third pairing is checked too (2026-10-14): the `clamped` outcome and
+    `metrics.brake_initiation_clamped` must agree. A brake initiation clamped to
+    its zone's opening is a floor -- "at least 83 m early" -- and a block in
+    which one of those was read out as a magnitude is a block whose KR reported
+    a quantity the apparatus never measured.
+
+    `kr` is absent on a pass that never reached the evaluator (a dev block with
+    no reference table), which is not a fault: there were no bands, so there was
+    no KR to have an outcome about.
+    """
+    problems = []
+    for record in passes or []:
+        kr = record.get("kr")
+        if not kr:
+            continue
+        for element in ELEMENTS:
+            entry = kr.get(element) or {}
+            outcome = entry.get("outcome")
+            stage = (record.get("stage") or {}).get(element)
+            hidden = condition == "off" or stage in HIDDEN_STAGES
+            where = "{} lap {} {}".format(record["corner_id"], record["lap"], element)
+            if hidden and outcome == "delivered":
+                problems.append(
+                    "passes: {} was told its error while the element was hidden"
+                    " (stage {}, condition {}) -- a probe with KR running is not a"
+                    " retention test".format(where, stage, condition))
+            elif not hidden and outcome == "withdrawn":
+                problems.append(
+                    "passes: {} had its KR withdrawn while the element was visible"
+                    " (stage {}, condition {})".format(where, stage, condition))
+
+            # The `clamped` outcome and the metric flag that justifies it must
+            # agree, in both directions. A clamped outcome without the flag is a
+            # message withheld for no recorded reason; the flag without the
+            # outcome is a FLOOR that was read out to the participant as though
+            # it were a measurement, which is the KRtest fault itself. Only
+            # braking can be clamped, so a clamped outcome on another element is
+            # a bug rather than a quieter apparatus.
+            flagged = bool((record.get("metrics") or {}).get(
+                "brake_initiation_clamped"))
+            if outcome == "clamped" and element != "braking":
+                problems.append(
+                    "passes: {} reports a clamped KR outcome, but only the"
+                    " braking metric can be clamped".format(where))
+            elif element == "braking" and not hidden:
+                if flagged and outcome == "delivered":
+                    problems.append(
+                        "passes: {} was told a brake-initiation distance that was"
+                        " clamped to its braking zone's opening -- the magnitude"
+                        " is a floor, not a measurement".format(where))
+                elif outcome == "clamped" and not flagged:
+                    problems.append(
+                        "passes: {} reports a clamped KR outcome but the metric"
+                        " is not flagged clamped".format(where))
+    return problems
+
+
 def check_passes(passes):
     """Problems in a block's per-pass stream beyond schema validity."""
     problems = []
@@ -356,6 +439,7 @@ def check_block(manifest_path, ticks_path=None, max_gap_s=DEFAULT_MAX_GAP_S, col
         problems.extend(pass_problems)
         problems.extend(fade_problems)
         problems.extend(check_passes(passes))
+        problems.extend(check_kr(passes, (manifest_data or {}).get("condition")))
         problems.extend(check_fades(fades, passes))
         summary["pass_count"] = len(passes) if passes is not None else None
         summary["fade_count"] = len(fades) if fades is not None else None
@@ -367,7 +451,8 @@ def check_block(manifest_path, ticks_path=None, max_gap_s=DEFAULT_MAX_GAP_S, col
         # whatever it did record still has to be readable, because an abort
         # discards the block, never the record of what happened.
         excused = bool(manifest_data) and (
-            manifest_data.get("dev_block") or manifest_data.get("aborted"))
+            manifest_data.get("dev_block") or manifest_data.get("aborted")
+            or manifest_data.get("autopilot"))
         if manifest_data and not excused:
             if passes is None:
                 problems.append(
@@ -437,8 +522,12 @@ def check_instruments(directory, manifests):
         if doc.get("block_id"):
             have_block.add((doc["block_id"], doc["instrument"]))
 
+    # `autopilot` joins dev_block and aborted here for the same reason it does in
+    # analysis.block_kind: the AC AI answers no questionnaires, and a reference
+    # recording made with the dev toggle off would otherwise be chased for a TLX.
     blocks = [(n, m) for n, m in manifests
-              if m and not m.get("dev_block") and not m.get("aborted")]
+              if m and not m.get("dev_block") and not m.get("aborted")
+              and not m.get("autopilot")]
     known_block_ids = {m.get("block_id") for _, m in blocks}
 
     # Every session that produced a block must have produced its instruments.

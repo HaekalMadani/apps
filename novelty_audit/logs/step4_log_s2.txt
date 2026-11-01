@@ -1,0 +1,29 @@
+### regression to the mean mastery criterion
+Q='regression to the mean mastery criterion' ERROR HTTP Error 429: 
+### null model learner fading guidance withdrawal
+Q='null model learner fading guidance withdrawal' total=48
+  2026 | A five-function theory-informed instructional design model for developing clinical reasoning | Frontiers in Education | 10.3389/feduc.2026.1861062 | c=0
+  2026 | Learner-Centred English Language Teaching: Supported Agency, Adaptive Instruction, and Context-Responsive Peda | Porta Universorum | 10.69760/portuni.26100012 | c=0
+  1981 | Prompting and Fading Guidance Procedures: Their Effect on Chaining and Whole Task Teaching Strategies. |  | None | c=10
+  2026 | Multi-Tiered Scaffolding and Scaffold Fading in Teaching Chinese as a Second Language: Effects on Oral Profici | International Journal of Current Sc | 10.47191/ijcsrr/v9-i4-05 | c=0
+  2026 | Parental Heteroregulation and Mathematical Efficiency among Secondary School Learners: Support, Control and Sc | International journal of research a | 10.47772/ijriss.2026.100700054 | c=0
+  2026 | Non-Stationarity Breaks Permutation Surrogates in Multi-Agent Reinforcement Learning: Diagnosis and Remedies |  | 2604.23716 | c=1
+  2025 | Exploring the Causes of Emotional Disturbance Among Early Childhood Learners | JECCE | 10.30971/jecce.v9i2.3241 | c=0
+  2026 | On the Structural Necessity of Temporal Memory: A Causal Analysis of Scaffolding in Intelligent Tutoring | International Conference on Informa | 10.1109/IISA71656.2026.11705517 | c=0
+  2025 | Bridging Traditional and AI-Enhanced Scaffolding: A Systematic Integrative Review of Early Childhood Intervent | International Conference on Develop | 10.1109/ICDL63968.2025.11204440 | c=0
+  2026 | The GPS for thinking: How AI partners are reshaping student metacognition | Indonesian Journal of Innovation an | 10.47540/ijias.v6i2.2774 | c=0
+  2026 | Beyond Information: A Dual-Path Strategy for Sustainable Digital-Cultural-Heritage Management Driven by Affect | Sustainability | 10.3390/su18020699 | c=2
+  2026 | Towards neurodiversity-affirming practice in ABA schools | Tizard Learning Disability Review | 10.1108/tldr-02-2026-0016 | c=0
+  2026 | Toward AI-Scaffolded Pedagogical Stylistics: A Conceptual Framework for Bridging the Language–Literature Divid | Journal of Studies in the English L | 10.64731/jsel.v21i2.290770 | c=0
+  2026 | Motivational Apprenticeship: An Apprenticeship Framework for Developing Students’ Motivational Competencies | Educational Psychology Review | 10.1007/s10648-025-10114-3 | c=3
+  2026 | Designing ZPD-Based Writing Worksheets With Corrective Feedback: An Integrative Review for EFL Academic Writin | Language, Technology, and Social Me | 10.70211/ltsm.3026-7196.400 | c=0
+### sequential detection of learning false alarm
+Q='sequential detection of learning false alarm' ERROR HTTP Error 429: 
+### simulated learner evaluation knowledge tracing mastery threshold premature
+Q='simulated learner evaluation knowledge tracing mastery threshold premature' ERROR HTTP Error 429: 
+### learning curve CUSUM false declaration competence simulation
+Q='learning curve CUSUM false declaration competence simulation' ERROR HTTP Error 429: 
+### assistance withdrawal performance drop regression to the mean
+Q='assistance withdrawal performance drop regression to the mean' ERROR HTTP Error 429: 
+### selection bias threshold-triggered intervention regression to the mean simulation
+Q='selection bias threshold-triggered intervention regression to the mean simulation' ERROR HTTP Error 429: 

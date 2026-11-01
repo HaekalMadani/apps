@@ -417,3 +417,85 @@ def test_metrics_are_stable_across_frame_rates(lua_metrics):
     assert coarse["brake_initiation_distance_m"] == pytest.approx(
         fine["brake_initiation_distance_m"], abs=3.0), \
         "brake point should agree to within a few metres of track"
+
+
+# --- clamped initiations (2026-10-14) ----------------------------------------
+#
+# The braking zone bounds where the event is SEARCHED for, so a driver already
+# on the brakes when they enter it has their initiation clamped to the zone's
+# first sample and the distance that comes back is a FLOOR -- "at least this
+# early". The KRtest block read two of those out loud as "83 m early" and
+# "79 m early", both within 0.3 m of their zone's opening. The flag is what lets
+# lib/kr stay silent and trace_kit.analysis keep the floor out of a bias mean.
+
+def test_braking_before_the_zone_opens_is_flagged_clamped(lua_metrics):
+    """Already hard on the brakes on entering the zone: a floor, not a value."""
+    zone = {"start": 0.30, "end": 0.45}
+    corner, reference = plan_corner(braking_zone=zone, brake_ref_spline=0.40)
+    # On the brakes from the very first sample, well before spline 0.30.
+    rows = make_rows(80, 0.25, 0.005, brake=lambda i: 0.8)
+    lua = lua_metrics(corner, reference, rows)
+    assert lua["brake_initiation_clamped"] is True
+    # The distance is still reported, and is the zone's opening rather than the
+    # driver's real brake point -- which is exactly why it must not be spoken.
+    assert lua["brake_initiation"]["spline_pos"] == pytest.approx(0.30, abs=0.006)
+    assert lua["brake_initiation_distance_m"] > 0
+
+
+def test_braking_inside_the_zone_is_not_flagged(lua_metrics):
+    """The ordinary case, and the one that must stay unflagged."""
+    zone = {"start": 0.30, "end": 0.45}
+    corner, reference = plan_corner(braking_zone=zone, brake_ref_spline=0.40)
+    rows = make_rows(80, 0.25, 0.005, brake=lambda i: 0.8 if i >= 30 else 0.0)
+    lua = lua_metrics(corner, reference, rows)
+    assert lua.get("brake_initiation_clamped") is None, \
+        "absent, not false: absent and false are the same fact and old logs have neither"
+
+
+def test_a_pass_opening_already_inside_the_zone_and_braking_is_flagged(lua_metrics):
+    """The other way in: the crossing happened before the bracket opened.
+
+    Nothing observed it, so the initiation is censored by the pass bracket
+    rather than by the zone, and it is just as much a floor.
+    """
+    zone = {"start": 0.20, "end": 0.45}
+    corner, reference = plan_corner(braking_zone=zone, brake_ref_spline=0.40)
+    rows = make_rows(60, 0.25, 0.005, brake=lambda i: 0.8)
+    lua = lua_metrics(corner, reference, rows)
+    assert lua["brake_initiation_clamped"] is True
+
+
+def test_a_pedal_tap_before_the_zone_does_not_flag_the_real_initiation(lua_metrics):
+    """A tap is not an initiation, and it must not make the real one look clamped.
+
+    The brake is released before the zone opens, so the sample before the real
+    crossing is below threshold and nothing is clamped.
+    """
+    zone = {"start": 0.30, "end": 0.45}
+    corner, reference = plan_corner(braking_zone=zone, brake_ref_spline=0.40)
+    rows = make_rows(80, 0.25, 0.005,
+                     brake=lambda i: 0.8 if (2 <= i <= 4 or i >= 30) else 0.0)
+    lua = lua_metrics(corner, reference, rows)
+    assert lua.get("brake_initiation_clamped") is None
+    assert lua["brake_initiation"]["spline_pos"] == pytest.approx(0.25 + 30 * 0.005)
+
+
+@pytest.mark.parametrize("brake,zone_start,expected", [
+    (lambda i: 0.8, 0.30, True),                               # already braking
+    (lambda i: 0.8 if i >= 30 else 0.0, 0.30, False),          # crosses inside
+    (lambda i: 0.8 if (2 <= i <= 4 or i >= 30) else 0.0, 0.30, False),  # tap first
+    (lambda i: 0.0, 0.30, False),                              # never brakes
+])
+def test_the_clamp_flag_agrees_with_the_extractor(lua_metrics, brake, zone_start, expected):
+    """Parity, the same discipline as every other metric in this file.
+
+    The runtime and ``trace_kit.reference`` must call the same passes clamped,
+    or a reference built offline and a participant judged at runtime disagree
+    about which brake points were even measurable.
+    """
+    zone = {"start": zone_start, "end": 0.45}
+    corner, reference = plan_corner(braking_zone=zone, brake_ref_spline=0.40)
+    rows = make_rows(80, 0.25, 0.005, brake=brake)
+    lua = lua_metrics(corner, reference, rows)
+    offline = ref.brake_initiation_clamped(rows, zone, BRAKE_THRESHOLD, DEBOUNCE_S)
+    assert bool(lua.get("brake_initiation_clamped")) is offline is expected

@@ -1,91 +1,91 @@
 {
-  "schema_version": 1,
-  "track": "ks_silverstone-national",
-  "notes": "Re-derived 2026-09-08 from the AI reference block 1_s2_pair1_adaptive_20260908_005132 (ks_bmw_m235i_racing, AI 100 pct), replacing the 2026-07-09 drive-and-mark version. Three corrections. (1) Corner 1 was annotated as taken FLAT; at racing pace the car brakes hard there (205->146 km/h at spline 0.0436, 12/12 laps) - drive-and-mark is done slowly, where that corner genuinely needs no brakes. It now has a braking zone and is in the braking element's applicable set. (2) Corners 2 and 3 had braking zones that opened 18 m and 3 m AFTER the expert brake point, so every lap clamped to the zone start, giving a biased-late brake point and a fake near-zero sigma. (3) The old compound corner 3 is SPLIT into corners 3 and 4: the car brakes twice (0.6266, 207->96 km/h and 0.7205, 121->92 km/h) with 113 m of acceleration between them (95->124 km/h) and one apex after each, and framing v6 sec 107 makes separate braking events separate corners. National therefore has 4 corners, all with braking, which also lifts the braking element's quorum denominator from 2 to 4. Each braking zone starts ~60 m before the expert brake point (43 m on corner 4, limited by corner 3's exit) so novice early-braking is still detected, and ends at turn-in. Corner 3 uses a 15 m apex half-window so the window fits inside its shortened pass bracket. PENDING Gate G0 on-track review.",
-  "corners": [
-    {
-      "id": "1",
-      "type": "fast",
-      "compound": false,
-      "entry_gate": 0.0109,
-      "exit_gate": 0.1281,
-      "zones": {
-        "braking": {
-          "start": 0.0205,
-          "end": 0.0551
-        },
-        "apex_gates": [
-          0.097
-        ],
-        "apex_window_half_m": 20.0,
-        "corner_speed": {
-          "start": 0.0551,
-          "end": 0.1169
-        }
-      }
+ "schema_version": 1,
+ "track": "ks_silverstone-national",
+ "notes": "Re-derived 2026-10-10 from the 85%-strength AI reference block 85AI1_s2_pair1_adaptive_20261010_125726, superseding the 2026-09-08 version that was derived from the 100% AI. Only the BRAKING zones and the pass brackets that bound them moved; apex gates, apex windows and corner-speed windows are untouched. WHY: no element ever faded in any human block, and the braking criterion was the worst of the three (one pass in ten clearing accuracy). The 100% AI brakes 22-27 m later than the 85% AI at corners 1-3, so an 85% reference is under review as the target; the zones are anchored on the 85% brake points because those are the EARLIEST of the three candidates (100/85/80%), which makes one set of zones fit whichever reference is finally committed. HOW: a braking zone must contain the learner's brake initiation, early or late, or the criterion yields null and the corner silently leaves the braking element's evidence. Room is therefore budgeted in SECONDS at the approach speed, not in metres: target 1.5 s before the reference brake point and 1.0 s after it. Approach speeds at the 85% brake points are 197, 191, 199 and 114 km/h, which is why corner 4's 48 m buys more early-braking room than corner 1's 67 m. Measured against 155 real human passes, brake points ran 28 m early to 46 m late of the 85% reference, so the new zones hold roughly 2-3x the worst observed excursion in both directions. LIMITS, both geometric and worth stating: corner 1 (Copse) brakes only 92 m after the start/finish line, so its zone cannot reach 1.5 s back without wrapping the line - and a wrapping bracket would attribute the pass to the previous lap. It gets 1.22 s (67 m), the most the layout allows. Corner 4 is bounded by corner 3's pass bracket; corner 3's exit gate moved from 0.6970 to 0.6945 to free 13 m for it, which leaves 2.4 m between corner 3's 15 m apex window and its exit gate. Corner 4 reaches 1.50 s (48 m). Also 2026-10-10: braking.end was extended at corners 1 and 4, which had only 5.7 m and 28 m of zone beyond the latest observed brake point - the mirror of the fault the 2026-09-08 re-derivation fixed on the early side, and unflagged until the extractor's zone-fit check learned to look both ways. Corner 1's braking zone now overlaps its corner-speed window by 1.4 m, which is legal and expected (trail braking); the two chains are checked independently.",
+ "corners": [
+  {
+   "id": "1",
+   "type": "fast",
+   "compound": false,
+   "entry_gate": 0.004,
+   "exit_gate": 0.1281,
+   "zones": {
+    "braking": {
+     "start": 0.0096,
+     "end": 0.0565
     },
-    {
-      "id": "2",
-      "type": "fast",
-      "compound": false,
-      "entry_gate": 0.2701,
-      "exit_gate": 0.391,
-      "zones": {
-        "braking": {
-          "start": 0.2797,
-          "end": 0.326
-        },
-        "apex_gates": [
-          0.3512
-        ],
-        "apex_window_half_m": 20.0,
-        "corner_speed": {
-          "start": 0.326,
-          "end": 0.3729
-        }
-      }
-    },
-    {
-      "id": "3",
-      "type": "medium",
-      "compound": false,
-      "entry_gate": 0.5939,
-      "exit_gate": 0.697,
-      "zones": {
-        "braking": {
-          "start": 0.6035,
-          "end": 0.6482
-        },
-        "apex_gates": [
-          0.6878
-        ],
-        "apex_window_half_m": 15.0,
-        "corner_speed": {
-          "start": 0.6482,
-          "end": 0.69
-        }
-      }
-    },
-    {
-      "id": "4",
-      "type": "medium",
-      "compound": false,
-      "entry_gate": 0.698,
-      "exit_gate": 0.7787,
-      "zones": {
-        "braking": {
-          "start": 0.7038,
-          "end": 0.73
-        },
-        "apex_gates": [
-          0.7399
-        ],
-        "apex_window_half_m": 20.0,
-        "corner_speed": {
-          "start": 0.73,
-          "end": 0.7559
-        }
-      }
+    "apex_gates": [
+     0.097
+    ],
+    "apex_window_half_m": 20.0,
+    "corner_speed": {
+     "start": 0.0551,
+     "end": 0.1169
     }
-  ]
+   }
+  },
+  {
+   "id": "2",
+   "type": "fast",
+   "compound": false,
+   "entry_gate": 0.2555,
+   "exit_gate": 0.391,
+   "zones": {
+    "braking": {
+     "start": 0.2632,
+     "end": 0.326
+    },
+    "apex_gates": [
+     0.3512
+    ],
+    "apex_window_half_m": 20.0,
+    "corner_speed": {
+     "start": 0.326,
+     "end": 0.3729
+    }
+   }
+  },
+  {
+   "id": "3",
+   "type": "medium",
+   "compound": false,
+   "entry_gate": 0.5765,
+   "exit_gate": 0.6945,
+   "zones": {
+    "braking": {
+     "start": 0.5844,
+     "end": 0.6482
+    },
+    "apex_gates": [
+     0.6878
+    ],
+    "apex_window_half_m": 15.0,
+    "corner_speed": {
+     "start": 0.6482,
+     "end": 0.69
+    }
+   }
+  },
+  {
+   "id": "4",
+   "type": "medium",
+   "compound": false,
+   "entry_gate": 0.6955,
+   "exit_gate": 0.7787,
+   "zones": {
+    "braking": {
+     "start": 0.6995,
+     "end": 0.734
+    },
+    "apex_gates": [
+     0.7399
+    ],
+    "apex_window_half_m": 20.0,
+    "corner_speed": {
+     "start": 0.73,
+     "end": 0.7559
+    }
+   }
+  }
+ ]
 }

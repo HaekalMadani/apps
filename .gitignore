@@ -5,7 +5,46 @@
 !/.gitignore
 
 !/CLAUDE.md
-!/thesis_framing_v6.md
+# CLAUDE.md's two companions: the full build record it was split from, and the
+# open question of how the tolerance bands should be calibrated. This is an
+# allowlist, so a new top-level file is invisible to git until it is named here.
+!/MILESTONE_LOG.md
+!/BAND_CALIBRATION_BRIEF.md
+# The reply to BAND_CALIBRATION_BRIEF.md's prompt. Tracked because the brief and
+# CLAUDE.md now cite it for claims they do not restate in full -- including which
+# of its findings were marked unverified, which is the part a viva would ask
+# about. (`trace-litreview-v0.3.md` is still untracked; name it here too if it is
+# meant to be kept.)
+!/TRACE_tolerance-calibration_lit-review_v1.0.md
+# The session-budget brief: the 30-minute participant-time constraint, the three
+# protocol shapes costed against it, and the decisions taken (Shape B at 15
+# laps, the frozen-g1b recalibration, and the two Gate G1 targets restated).
+# CLAUDE.md, evaluation_plan_v2.md and G1_REVIEW.md all cite it for reasoning
+# they do not restate. It was written on 2026-10-15 and was silently IGNORED by
+# this allowlist for the rest of that session -- which is exactly the failure
+# mode the comment above warns about, so it is worth saying twice: a new
+# top-level file does not exist as far as git is concerned until it is named
+# here, and `git status` will not tell you it is missing.
+!/SESSION_BUDGET_BRIEF.md
+# The CURRENT thesis framing (2026-10-30). v6 was deleted that day; read it with
+#   git show 110156e:thesis_framing_v6.md
+# and its last uncommitted edits are in novelty_audit/logs/ as a patch.
+!/thesis_framing_v9.md
+# The v9 novelty audit: its README is the entry point, CLAIMS_SHEET_v9.md is
+# what the thesis may claim. papers_txt/ holds extracted full texts of
+# copyrighted papers and must NEVER be tracked; neither may /Academic Papers/
+# (already excluded by /* above).
+!/novelty_audit/
+/novelty_audit/papers_txt/
+# Project-scoped Claude Code config: settings.json enables the
+# academic-research-skills plugin (CC BY-NC 4.0, installed from its marketplace).
+# The llm-council skill is NOT tracked: its source repo
+# (github.com/aiwithremy/claude-skills-llm-council) carries no licence, so copy
+# it into .claude/skills/llm-council/ by hand on a fresh clone.
+# settings.local.json is personal and stays out.
+!/.claude/
+/.claude/settings.local.json
+/.claude/skills/
 !/implementation_plan_v2.md
 !/evaluation_plan_v2.md
 !/DATASET_README.md

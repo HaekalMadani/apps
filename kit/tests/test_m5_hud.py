@@ -100,7 +100,13 @@ def hud():
 
 
 def approach_to(corner_start, speed=150.0, metres_out=100.0, steps=20):
-    """Frames running up to a zone start from `metres_out` before it."""
+    """Frames running up to a zone start from `metres_out` before it.
+
+    The default starts FURTHER out than the readout's lookahead, deliberately:
+    the readout is taken after the last frame, so these fixtures test what is
+    shown on arrival, not when it first appeared. When the question is when it
+    appears, assert on a single frame at a known distance instead.
+    """
     span = metres_out / TRACK_LENGTH_M
     return [(corner_start - span + span * i / steps, speed) for i in range(steps)]
 
@@ -128,10 +134,50 @@ def test_the_upcoming_corner_appears_on_the_approach(hud):
 
 
 def test_the_nearest_corner_wins_when_two_are_in_range(hud):
-    """Corner 2's zone opens at 0.65; from 0.62 that is the one being approached."""
-    r = hud([(0.62, 150.0)])
+    """Corner 2's zone opens at 0.65; from 0.642 that is the one being approached.
+
+    0.642 is 21 m out, inside the 1.5 s lookahead at this speed; corner 1's
+    zone ended 890 m ago and is long gone.
+    """
+    r = hud([(0.642, 150.0)])
     assert r["corner_id"] == "2"
     assert r["target_kmh"] == pytest.approx(120.0)
+
+
+def test_a_corner_further_out_than_the_lookahead_shows_nothing(hud):
+    """The readout is a cue for the corner being arrived at, not a lap preview.
+
+    It used to appear 300 m out, flat. Measured against the real National
+    annotation that put it on screen for 76% of every lap -- which is not a cue,
+    it is furniture: the participant stops reading a thing that is always there,
+    and withdrawing it at `reduced` then changes the whole screen rather than one
+    corner's worth of help.
+    """
+    # 260 m before corner 1's zone, at 150 km/h: 4.2 s away, far outside 1.5 s.
+    assert hud([(0.20 - 0.1, 150.0)]) is None
+    # 26 m before it, same speed: 0.6 s away, inside.
+    assert hud([(0.20 - 0.01, 150.0)])["phase"] == "approach"
+
+
+def test_the_lookahead_is_seconds_of_travel_not_metres_of_track(hud):
+    """One spline position, two speeds, two answers.
+
+    The same lesson the braking zones learned at M6: a flat metre budget buys
+    1.1 s at Copse and 1.9 s at a slow corner, so one number means two different
+    things at two corners of one lap. Here it is what decides whether the driver
+    gets the target in time to act on it.
+    """
+    out = 0.20 - 0.02                      # 52 m before the zone
+    assert hud([(out, 200.0)])["phase"] == "approach"   # 0.9 s away: shown
+    assert hud([(out, 60.0)]) is None                   # 3.1 s away: not yet
+
+
+def test_the_settled_window_scales_with_speed_too(hud):
+    """A fast exit carries the driver further in the same reading time."""
+    frames = through(0.20, 0.30, [110.0, 95.0, 86.0])
+    far = 0.30 + 0.02                      # 52 m past the zone end
+    assert hud(frames + [(far, 200.0)])["phase"] == "settled"
+    assert hud(frames + [(far, 40.0)]) is None
 
 
 def test_inside_a_zone_the_phase_switches(hud):
@@ -196,12 +242,29 @@ def test_a_minimum_outside_the_band_reads_as_outside(hud):
     assert r["within_band"] is False
 
 
-def test_too_fast_is_outside_the_band_too(hud):
-    """The corner-speed criterion is two-sided; the readout must agree."""
+def test_carrying_more_speed_than_the_target_reads_as_on_target(hud):
+    """The criterion stopped faulting the fast side on 2026-10-14, so the colour
+    on screen had to stop too -- otherwise the readout goes red on a pass the
+    record says met the criterion, and the participant is trained against a
+    target the system does not reward.
+
+    `within_band` means "met the criterion" for this element, not "between two
+    edges": there is no upper edge any more.
+    """
     band = CFG["band_floors"]["corner_speed_kmh"]
     r = hud(through(0.20, 0.30, [90.0 + band * 2, 90.0 + band * 2]))
-    assert r["within_band"] is False
+    assert r["within_band"] is True
     assert r["deviation_kmh"] > 0
+
+
+def test_the_readout_follows_the_configured_gate_shape(hud):
+    """Under `two_sided` the same pass reads as a miss, from the same config
+    field the criterion reads."""
+    band = CFG["band_floors"]["corner_speed_kmh"]
+    cfg = json.loads(json.dumps(CFG))
+    cfg["criteria"]["corner_speed_gate"] = "two_sided"
+    r = hud(through(0.20, 0.30, [90.0 + band * 2, 90.0 + band * 2]), cfg=cfg)
+    assert r["within_band"] is False
 
 
 def test_no_verdict_is_given_on_the_approach(hud):
@@ -300,3 +363,103 @@ def test_the_readout_uses_the_real_study_references():
         for corner in ref["corners"]:
             target = corner["corner_speed"]["mean_kmh"]
             assert 50.0 < target < 250.0, "{} corner {}".format(name, corner["corner_id"])
+
+
+# --- screen layout -----------------------------------------------------------
+
+@pytest.fixture(scope="module")
+def layout():
+    lua = LuaRuntime(unpack_returned_tuples=True)
+    lua.execute('package.path = "{}/?.lua;" .. package.path'.format(LUA_APP_DIR.as_posix()))
+    fn = lua.eval("""
+        function(w, h)
+          local json = require('lib/json')
+          local hud = require('lib/hud')
+          return json.encode(hud.layout(w, h))
+        end
+    """)
+    return lambda w, h: json.loads(fn(w, h))
+
+
+def test_the_readout_is_centred_horizontally(layout):
+    for w in (1280.0, 1920.0, 3440.0):
+        assert layout(w, 1080.0)["centre_x"] == pytest.approx(w / 2)
+
+
+def test_every_size_scales_with_the_window_height(layout):
+    """So the cue subtends the same angle at the same seating distance on any
+    display -- it is a stimulus, and its apparent size is part of the apparatus.
+
+    The box dimensions are in here too: a box that scaled differently from the
+    number inside it would crop the number on some displays and not others.
+    """
+    small, big = layout(1280.0, 720.0), layout(2560.0, 1440.0)
+    for key in ("top_y", "size_label", "size_speed", "size_target", "size_kr",
+                "line_gap", "box_w", "box_h", "box_radius"):
+        assert big[key] == pytest.approx(small[key] * 2.0), key
+
+
+def test_the_live_speed_is_the_biggest_thing_on_screen(layout):
+    """REVISED 2026-10-15, after the dry run.
+
+    It was the TARGET that held the big size, and on track it took the attention
+    the live number should have had. The driver needs to read what they are
+    *doing*; the target is reference they glance at, and the box's fill colour
+    already carries the comparison. So `size_speed` is now the largest and the
+    target is a caption -- smaller than the KR message, which is a sentence that
+    has to be read rather than a number to be glanced at.
+    """
+    lay = layout(1920.0, 1080.0)
+    assert lay["size_speed"] > lay["size_kr"] > lay["size_target"]
+    assert lay["size_target"] > lay["size_label"]
+
+
+def test_the_number_fits_inside_its_box(layout):
+    """The box is fixed-width on purpose -- a box sized to its contents changes
+    width when the speed crosses 100 km/h, a twitch at exactly the moment the
+    driver is reading it. Fixed width then has to be wide enough for the widest
+    number it will ever hold, and tall enough for the glyphs.
+
+    Three digits at `size_speed` is the worst case for this element (corner
+    speeds on both layouts are well under 1000 km/h). DWrite advance widths are
+    not available headlessly, so this bounds it generously: a digit in a
+    semibold UI face is comfortably under 0.7 em wide.
+    """
+    for h in (240.0, 720.0, 1080.0, 1440.0, 2160.0):
+        lay = layout(h * 16.0 / 9.0, h)
+        assert lay["box_w"] > 3.0 * 0.7 * lay["size_speed"], h
+        assert lay["box_h"] > lay["size_speed"], h
+
+
+def test_the_block_grows_downward_from_a_fixed_top_of_the_upper_half(layout):
+    """The KR message is drawn below the readout and the top never moves, so a
+    message appearing cannot shift the speed number under the driver's eyes.
+
+    Pinned as arithmetic because the alternative is only visible in game: a
+    bottom-anchored layout looks identical until the moment a message lands.
+
+    MOVED TO THE UPPER HALF 2026-10-15. Impl plan section 7 said centre-bottom,
+    which put the one element a participant is meant to stare at into the strip
+    of screen AC's own HUD already owns -- speedometer, gear, pedal bars. The
+    dry run found it competing with them.
+    """
+    lay = layout(1920.0, 1080.0)
+    # The box, the target caption, a corner label and a KR line, plus gaps,
+    # still has to clear the bottom of the screen.
+    stack = (lay["size_label"] + lay["box_h"] + lay["size_target"]
+             + lay["size_kr"] + 4 * lay["line_gap"])
+    assert lay["top_y"] + stack < 1080.0
+    # ...and the whole block must stay in the UPPER half, clear of the native
+    # instruments along the bottom.
+    assert lay["top_y"] + stack < 540.0
+    # ...without riding so high it leaves the screen or sits under AC's own
+    # top-centre widgets.
+    assert lay["top_y"] > 1080.0 * 0.10
+
+
+def test_a_tiny_window_does_not_collapse_the_cue(layout):
+    """AC can be run in a small window while setting up; the readout must stay
+    legible rather than scaling to nothing."""
+    lay = layout(320.0, 240.0)
+    assert lay["size_speed"] >= 10.0
+    assert lay["box_border"] >= 1.0

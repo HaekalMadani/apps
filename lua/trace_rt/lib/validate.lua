@@ -88,6 +88,27 @@ local function check_spline(errs, path, v)
   check_number(errs, path, v, { min = 0, max = 1 })
 end
 
+-- An array of enum values, with no duplicates and no more than `max_items`.
+-- `#v` is the whole length test this needs: a JSON array decodes to a Lua
+-- sequence here, and a non-table or a map fails the type test first.
+local function check_enum_array(errs, path, v, values, max_items)
+  if type(v) ~= "table" then
+    add_err(errs, path, "must be an array")
+    return
+  end
+  if max_items ~= nil and #v > max_items then
+    add_err(errs, path, "must have at most " .. max_items .. " items")
+  end
+  local seen = {}
+  for i = 1, #v do
+    check_enum(errs, path .. "[" .. i .. "]", v[i], values)
+    if seen[v[i]] then
+      add_err(errs, path .. "[" .. i .. "]", "duplicate value '" .. tostring(v[i]) .. "'")
+    end
+    seen[v[i]] = true
+  end
+end
+
 -- Reject any key on `obj` not present in the `allowed` set (additionalProperties: false).
 local function check_no_extra_keys(errs, path, obj, allowed)
   for k in pairs(obj) do
@@ -163,13 +184,14 @@ local function validate_controller_config(errs, cfg)
   local p = "controller_config"
   if not require_object(errs, p, cfg, {
     "schema_version", "config_id", "mode", "evm", "band_floors",
-    "qualification", "criteria", "quorum", "probe", "brake_initiation", "salience", "logging",
+    "qualification", "criteria", "quorum", "probe", "brake_initiation", "salience", "kr",
+    "logging",
   }) then return end
 
   check_no_extra_keys(errs, p, cfg, {
     schema_version = true, config_id = true, mode = true, evm = true, band_floors = true,
     qualification = true, criteria = true, quorum = true, probe = true,
-    brake_initiation = true, salience = true, logging = true,
+    brake_initiation = true, salience = true, kr = true, logging = true,
   })
 
   if cfg.schema_version ~= nil then check_const(errs, p .. ".schema_version", cfg.schema_version, 1) end
@@ -212,10 +234,21 @@ local function validate_controller_config(errs, cfg)
   -- band so it scales with each corner's own band rather than being a second
   -- absolute constant to calibrate.
   local cr = cfg.criteria
-  if cr ~= nil and require_object(errs, p .. ".criteria", cr, { "consistency_delta_ratio" }) then
-    check_no_extra_keys(errs, p .. ".criteria", cr, { consistency_delta_ratio = true })
+  if cr ~= nil and require_object(errs, p .. ".criteria", cr,
+    { "consistency_delta_ratio", "corner_speed_gate" }) then
+    check_no_extra_keys(errs, p .. ".criteria", cr,
+      { consistency_delta_ratio = true, corner_speed_gate = true })
     if cr.consistency_delta_ratio ~= nil then
       check_number(errs, p .. ".criteria.consistency_delta_ratio", cr.consistency_delta_ratio, { ex_min = 0 })
+    end
+    -- Which side of the expert minimum the corner-speed criterion fails on.
+    -- Config rather than a literal for the same reason `salience.reduced_form`
+    -- is: `two_sided` is the comparison case for the argument that beating the
+    -- reference is not an error, and the choice has to be frozen and hashed
+    -- before the pilot like every other criterion parameter.
+    if cr.corner_speed_gate ~= nil then
+      check_enum(errs, p .. ".criteria.corner_speed_gate", cr.corner_speed_gate,
+        { "slow_only", "two_sided" })
     end
   end
 
@@ -254,6 +287,28 @@ local function validate_controller_config(errs, cfg)
       check_enum(errs, p .. ".salience.reduced_form", s.reduced_form,
         { "minimal", "intermediate", "dimmed" })
     end
+  end
+
+  -- Bandwidth knowledge of results (lib/kr.lua). An apparatus property, not
+  -- part of the fading manipulation: it is identical in every condition and
+  -- never fades, so it is config -- frozen and hashed -- for the same reason
+  -- `salience.reduced_form` is. `elements` is an ORDERED priority list, so its
+  -- order carries meaning and is not normalised here.
+  local k = cfg.kr
+  if k ~= nil and require_object(errs, p .. ".kr", k,
+    { "enabled", "elements", "max_messages", "hold_s" }) then
+    check_no_extra_keys(errs, p .. ".kr", k,
+      { enabled = true, elements = true, max_messages = true, hold_s = true })
+    if k.enabled ~= nil then check_bool(errs, p .. ".kr.enabled", k.enabled) end
+    if k.elements ~= nil then
+      check_enum_array(errs, p .. ".kr.elements", k.elements,
+        { "braking", "corner_speed", "apex" }, 3)
+    end
+    if k.max_messages ~= nil then
+      check_number(errs, p .. ".kr.max_messages", k.max_messages,
+        { integer = true, min = 1, max = 3 })
+    end
+    if k.hold_s ~= nil then check_number(errs, p .. ".kr.hold_s", k.hold_s, { ex_min = 0 }) end
   end
 
   local lg = cfg.logging

@@ -18,7 +18,8 @@
     "requalify_on_advance": true
   },
   "criteria": {
-    "consistency_delta_ratio": 0.5
+    "consistency_delta_ratio": 0.5,
+    "corner_speed_gate": "slow_only"
   },
   "quorum": {
     "advance_threshold": 1.5,
@@ -36,6 +37,12 @@
     "full_alpha": 1.0,
     "reduced_alpha": 0.4,
     "reduced_form": "minimal"
+  },
+  "kr": {
+    "enabled": true,
+    "elements": ["braking", "corner_speed", "apex"],
+    "max_messages": 1,
+    "hold_s": 3.0
   },
   "logging": {
     "tick_rate_hz": 20

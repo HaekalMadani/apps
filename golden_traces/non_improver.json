@@ -22,6 +22,60 @@
       "4"
     ]
   },
+  "config": {
+    "schema_version": 1,
+    "config_id": "frozen-g1b",
+    "mode": "adaptive",
+    "evm": {
+      "ai": 3.0,
+      "human": 1.25
+    },
+    "band_floors": {
+      "braking_m": 12.0,
+      "corner_speed_kmh": 9.0,
+      "apex_m": 1.5
+    },
+    "qualification": {
+      "window_passes": 3,
+      "required_passes": 2,
+      "dequalify_consecutive_failures": 2,
+      "requalify_on_advance": true
+    },
+    "criteria": {
+      "consistency_delta_ratio": 0.5,
+      "corner_speed_gate": "slow_only"
+    },
+    "quorum": {
+      "advance_threshold": 0.75,
+      "revert_threshold": 0.5
+    },
+    "probe": {
+      "laps": 2,
+      "reversion_cap": 2
+    },
+    "brake_initiation": {
+      "threshold": 0.1,
+      "debounce_ms": 100
+    },
+    "salience": {
+      "full_alpha": 1.0,
+      "reduced_alpha": 0.4,
+      "reduced_form": "minimal"
+    },
+    "kr": {
+      "enabled": true,
+      "elements": [
+        "braking",
+        "corner_speed",
+        "apex"
+      ],
+      "max_messages": 1,
+      "hold_s": 3.0
+    },
+    "logging": {
+      "tick_rate_hz": 20
+    }
+  },
   "passes": [
     {
       "corner_id": "1",
@@ -642,7 +696,6 @@
           "window": [
             false,
             false,
-            false,
             false
           ],
           "consec_fail": 15
@@ -650,7 +703,6 @@
         {
           "corner_id": "2",
           "window": [
-            false,
             false,
             false,
             false
@@ -662,7 +714,6 @@
           "window": [
             false,
             false,
-            false,
             false
           ],
           "consec_fail": 15
@@ -670,7 +721,6 @@
         {
           "corner_id": "4",
           "window": [
-            false,
             false,
             false,
             false
@@ -694,7 +744,6 @@
           "window": [
             false,
             false,
-            false,
             false
           ],
           "consec_fail": 15
@@ -702,7 +751,6 @@
         {
           "corner_id": "2",
           "window": [
-            false,
             false,
             false,
             false
@@ -714,7 +762,6 @@
           "window": [
             false,
             false,
-            false,
             false
           ],
           "consec_fail": 15
@@ -722,7 +769,6 @@
         {
           "corner_id": "4",
           "window": [
-            false,
             false,
             false,
             false
@@ -746,7 +792,6 @@
           "window": [
             false,
             false,
-            false,
             false
           ],
           "consec_fail": 15
@@ -754,7 +799,6 @@
         {
           "corner_id": "2",
           "window": [
-            false,
             false,
             false,
             false
@@ -766,7 +810,6 @@
           "window": [
             false,
             false,
-            false,
             false
           ],
           "consec_fail": 15
@@ -774,7 +817,6 @@
         {
           "corner_id": "4",
           "window": [
-            false,
             false,
             false,
             false

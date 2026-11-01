@@ -57,7 +57,17 @@ def block_kind(manifest):
       dev    — scratch recording, opted out of the annotation gate (M2)
       abort  — the experimenter discarded it from the panel, with a reason (M6)
       dry    — protocol rehearsal, a full study block in every other respect (M6)
+      ai     — the AC AI drove it (a reference recording), never a participant
+
+    `autopilot` is checked FIRST and without regard to the other flags. A
+    reference recording is not participant data no matter what else is or is not
+    stamped on it, and relying on the operator to also tick `dev block` is
+    exactly the kind of convention the M2 lesson says is not a constraint: the
+    85%-strength reference block of 2026-10-10 was recorded with the dev toggle
+    off and would otherwise have been ingested as a participant.
     """
+    if manifest.get("autopilot"):
+        return "ai"
     if manifest.get("dev_block"):
         return "dev"
     if manifest.get("aborted"):
@@ -564,6 +574,223 @@ def trajectory_svg(report):
 
 # --- CLI --------------------------------------------------------------------
 
+# --- the section 0A KR diagnostic (CE/VE) -----------------------------------
+#
+# Added 2026-10-10 with bandwidth KR. The literature review's step 2 is a
+# diagnostic, not a study: drive blocks with the error signal on and ask whether
+# the bias moves. Its two readings are
+#
+#   CE shrinks within a few passes  -> the target is reachable and the missing
+#                                      error signal was the cause of the plateau
+#   CE does not move                -> the target is physically hard to reach
+#                                      with this car and input setup, and the
+#                                      reference change is justified
+#                                      non-circularly
+#
+# so the thing to report is the SIGNED error over passes in order, per corner,
+# per element. The review's section 5 asks for the same decomposition in the
+# thesis generally: gate separately on accuracy and consistency, adopt CE/VE
+# vocabulary, and report CE and VE per corner as quantities rather than only
+# pass/fail. Both needs are the same table, so there is one.
+#
+# NOTE on vocabulary, which the review corrects and the thesis should adopt:
+# TRACE's "accuracy" gate is a per-pass ABSOLUTE error (it mixes bias and
+# scatter), and its "consistency" gate is a VE proxy (distance from the
+# learner's own rolling mean). CE and VE below are the textbook quantities,
+# computed here over passes rather than per pass -- which is exactly why they
+# are a REPORT and not a criterion. The review's section 10.2 proposes gating on
+# them instead; that is NOT done, because framing v6 withdrew window-level
+# gating for a per-pass boolean and the review's own note concedes an SD from
+# 3-4 passes is very noisy.
+
+# Which metric carries each element's signed error, and what to call its unit.
+KR_METRIC = {
+    "braking": ("brake_initiation_distance_m", "m", "early", "late"),
+    "corner_speed": ("speed_envelope_deviation_kmh", "km/h", "fast", "slow"),
+    # The apex metric is an RMS and has no sign, so there is no CE to speak of:
+    # it is reported as a magnitude and its "bias" column is the mean excess.
+    "apex": ("apex_rms_m", "m", "wide", "wide"),
+}
+
+
+# Metrics whose value can come back as a FLOOR rather than a measurement, and
+# the per-pass flag that says so. A brake initiation clamped to its braking
+# zone's opening means "at least this early": the magnitude is the zone's
+# geometry, not the driver's, so it must not enter a bias average. Nothing else
+# can be clamped -- the corner-speed and apex windows are not search brackets in
+# the same sense, and a window a pass did not cover yields a null instead.
+#
+# NOTE on vocabulary: the fade log's `censored` is a different thing (a block
+# that ended mid-probe, so the probe OUTCOME is right-censored). Both are
+# genuine right-censoring, one of an error magnitude and one of an event, and
+# they live in different streams. This one is called `clamped` throughout,
+# which is also what reference.check_braking_zone_fit has always called it.
+CLAMPABLE = {"braking": "brake_initiation_clamped"}
+
+
+def is_clamped(record, element):
+    """True when this pass's value for `element` is a lower bound, not a value."""
+    flag = CLAMPABLE.get(element)
+    if flag is None:
+        return False
+    return bool((record.get("metrics") or {}).get(flag))
+
+
+def ce_ve(values):
+    """Constant error (signed mean) and variable error (SD) of a pass series.
+
+    The textbook decomposition (Schmidt & Lee; Chapanis 1951): CE is bias, VE is
+    scatter, and the two answer different questions. The measured novice problem
+    is a CE problem — 89% of brake points on the same side of the reference —
+    which a composite absolute error cannot show, and which is the reason this
+    function exists at all.
+    """
+    values = [v for v in values if v is not None]
+    n = len(values)
+    if n == 0:
+        return {"n": 0, "ce": None, "ve": None, "ae": None}
+    ce = sum(values) / n
+    ae = sum(abs(v) for v in values) / n
+    ve = None
+    if n >= 2:
+        ve = math.sqrt(sum((v - ce) ** 2 for v in values) / (n - 1))
+    return {"n": n, "ce": round(ce, 3), "ve": round(ve, 3) if ve is not None else None,
+            "ae": round(ae, 3)}
+
+
+def kr_diagnostic(dataset, halves=True):
+    """The section 0A diagnostic report.
+
+    Per block, per element, per corner: the signed error series in pass order,
+    its CE/VE, and — when `halves` — the same split first half versus second
+    half, which is the "does the bias move within the block?" reading. Plus what
+    KR actually did, counted by outcome, because a diagnostic in which the
+    messages never fired measures nothing and that has to be visible rather than
+    inferred.
+
+    The half-split is reported and is NOT evidence of learning on its own: the
+    review's own flag on Finding 3 is that a half-split cannot detect learning in
+    a plateaued driver by construction. It is here to show the direction and
+    magnitude of any shift, for a driver who is NOT plateaued.
+
+    CLAMPED passes are excluded from every average and counted in
+    `clamped_excluded`. A brake initiation clamped to its zone's opening is a
+    floor ("at least 83 m early"), and averaging a floor pulls CE toward zero by
+    exactly the amount the zone happens to be narrow -- which would turn an
+    annotation geometry constant into an apparent reduction in bias, in the one
+    report whose whole job is to say whether bias moved. `series` still carries
+    the recorded value, because it is the audit trail.
+    """
+    passes_by_block = {}
+    for record in dataset["passes"]:
+        passes_by_block.setdefault(record.get("block_id"), []).append(record)
+
+    per_block = []
+    for block in dataset["blocks"]:
+        block_id = block["block_id"]
+        # Pass order is the order they closed, which is t_exit — not file order,
+        # which a flush could in principle reorder.
+        records = sorted(passes_by_block.get(block_id, []), key=lambda r: r.get("t_exit", 0))
+        elements = {}
+        for element in ELEMENTS:
+            field = KR_METRIC[element][0]
+            by_corner = {}
+            for record in records:
+                value = (record.get("metrics") or {}).get(field)
+                # `series` keeps the value the apparatus recorded, clamped or
+                # not, because it is the audit trail; only the AVERAGES drop it.
+                # Carried as a pair so a clamped pass is not silently
+                # indistinguishable from an unmeasured one.
+                by_corner.setdefault(record["corner_id"], []).append(
+                    (value, is_clamped(record, element)))
+            corners = {}
+            for corner_id, pairs in sorted(by_corner.items(), key=lambda kv: str(kv[0])):
+                series = [v for v, _ in pairs]
+                usable = [v for v, clamped in pairs if v is not None and not clamped]
+                clamped_n = sum(1 for v, clamped in pairs if v is not None and clamped)
+                entry = {"series": series, "overall": ce_ve(usable),
+                         "clamped_excluded": clamped_n}
+                if halves:
+                    mid = len(usable) // 2
+                    entry["first_half"] = ce_ve(usable[:mid])
+                    entry["second_half"] = ce_ve(usable[mid:])
+                corners[corner_id] = entry
+            pooled = [v for pairs in by_corner.values()
+                      for v, clamped in pairs if v is not None and not clamped]
+            elements[element] = {
+                "unit": KR_METRIC[element][1],
+                "pooled": ce_ve(pooled),
+                "clamped_excluded": sum(c["clamped_excluded"] for c in corners.values()),
+                "corners": corners,
+                "kr_outcomes": _kr_outcome_counts(records, element),
+            }
+        per_block.append({
+            "block_id": block_id,
+            "participant_id": block["participant_id"],
+            "session": block["session"],
+            "condition": block["condition"],
+            "pair_id": block["pair_id"],
+            "kind": block["kind"],
+            "pass_count": len(records),
+            "elements": elements,
+        })
+    return {"block_count": len(per_block), "blocks": per_block}
+
+
+def _kr_outcome_counts(records, element):
+    """What KR did for one element across a block, by outcome.
+
+    A pass with no `kr` field never reached the evaluator (a dev block with no
+    reference table), counted as `absent` rather than folded into `off` — the
+    two mean different things and the diagnostic turns on telling the silences
+    apart.
+    """
+    counts = {}
+    for record in records:
+        kr = record.get("kr")
+        if not kr:
+            counts["absent"] = counts.get("absent", 0) + 1
+            continue
+        outcome = (kr.get(element) or {}).get("outcome", "absent")
+        counts[outcome] = counts.get(outcome, 0) + 1
+    return counts
+
+
+def cmd_kr(args):
+    dataset = load_dataset(args.path, include=tuple(args.include))
+    report = kr_diagnostic(dataset)
+    print("KR diagnostic over {} block(s)".format(report["block_count"]))
+    for block in report["blocks"]:
+        print("\n{} ({}, session {}, {}, {} passes)".format(
+            block["block_id"], block["kind"], block["session"], block["condition"],
+            block["pass_count"]))
+        for element in ELEMENTS:
+            data = block["elements"][element]
+            p, unit = data["pooled"], data["unit"]
+            sent = data["kr_outcomes"].get("delivered", 0)
+            print("  {:<13} n={:<4} CE={:<9} VE={:<9} AE={:<9} [{}]  KR sent {}".format(
+                element, p["n"],
+                "{} {}".format(p["ce"], unit) if p["ce"] is not None else "-",
+                "{} {}".format(p["ve"], unit) if p["ve"] is not None else "-",
+                "{} {}".format(p["ae"], unit) if p["ae"] is not None else "-",
+                ", ".join("{} {}".format(k, v)
+                          for k, v in sorted(data["kr_outcomes"].items())),
+                sent))
+            for corner_id, corner in data["corners"].items():
+                first, second = corner.get("first_half"), corner.get("second_half")
+                if first is None or first["n"] == 0:
+                    continue
+                print("      corner {:<4} CE {} -> {}  (n {} -> {})".format(
+                    corner_id, first["ce"], second["ce"], first["n"], second["n"]))
+    if args.out:
+        out = Path(args.out)
+        out.mkdir(parents=True, exist_ok=True)
+        (out / "kr_diagnostic.json").write_text(json.dumps(report, indent=2),
+                                                encoding="utf-8")
+        print("\nwrote kr_diagnostic.json to {}".format(out))
+    return 0
+
+
 def cmd_ingest(args):
     dataset = load_dataset(args.path, include=tuple(args.include))
     print("blocks: {}  laps: {}  passes: {}  fades: {}  instruments: {}".format(
@@ -614,15 +841,16 @@ def cmd_rq1(args):
 def main(argv=None):
     parser = argparse.ArgumentParser(
         prog="trace_kit.analysis",
-        description="Phase 4 ingestion and RQ1 descriptives (the RQ2 Bayesian model "
-                    "is deliberately not here -- see the module docstring).")
+        description="Phase 4 ingestion, RQ1 descriptives and the section 0A KR "
+                    "diagnostic (the RQ2 Bayesian model is deliberately not here "
+                    "-- see the module docstring).")
     sub = parser.add_subparsers(dest="command", required=True)
-    for name, handler in (("ingest", cmd_ingest), ("rq1", cmd_rq1)):
+    for name, handler in (("ingest", cmd_ingest), ("rq1", cmd_rq1), ("kr", cmd_kr)):
         p = sub.add_parser(name)
         p.add_argument("path", help="directory of recorded blocks")
         p.add_argument("--out", help="directory to write tables/figures into")
         p.add_argument("--include", action="append", default=None,
-                       choices=["study", "dry_run", "dev", "aborted"],
+                       choices=["study", "dry_run", "dev", "aborted", "ai"],
                        help="block kinds to ingest (default: study only; the M6 "
                             "dry run passes --include dry_run)")
         p.set_defaults(func=handler)

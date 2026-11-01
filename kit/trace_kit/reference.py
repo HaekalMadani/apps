@@ -153,6 +153,22 @@ def load_block(manifest_path):
     return manifest, read_ticks(ticks_path)
 
 
+def pit_laps(rows):
+    """Lap numbers on which the car was in the pits at any point.
+
+    Pit involvement is a property of the LAP, not of a corner pass. The AI
+    approaching its pit box lifts and brakes differently a corner or two before
+    the pit entry, so a pass can sit entirely outside the pit lane -- clean by
+    every validity gate -- and still be driven by a car that is no longer
+    racing. See `pass_is_clean`.
+    """
+    laps = set()
+    for row in rows:
+        if row.get("in_pit"):
+            laps.add(row["lap"])
+    return laps
+
+
 def lap_times(rows):
     """Per-lap durations, seconds, keyed by lap number.
 
@@ -166,15 +182,29 @@ def lap_times(rows):
     matches the eval plan's lap-validity rule, which discards the first lap of a
     block anyway.
 
+    PIT LAPS ARE EXCLUDED TOO (added 2026-10-10). The eval plan's lap-validity
+    rules already discard a lap involving a pit entry or exit, but this function
+    did not apply that and it matters at exactly the wrong moment: a reference
+    recording where the AI pits for fuel reports a CoV computed over laps that
+    include the pit lap. On the first 85%-strength block that was one 77.45 s lap
+    among eight laps of 67.5-67.6 s, which reported **4.8% CoV and a failing
+    Gate G0** on a lap set whose clean laps agreed to within 0.1 s. The corner
+    passes were already being filtered by validity; only the lap timing was not.
+
     At 20 Hz the quantisation is +/- 0.05 s -- about 0.09% of a 55 s lap, far
     inside G0's 1% CoV bar.
     """
     starts = OrderedDict()
     for row in rows:
         starts.setdefault(row["lap"], row["t"])
+    pitted = pit_laps(rows)
     laps = list(starts)
+    # A lap is timed from its own first tick to the next lap's first tick, so a
+    # pit lap must drop out as a TIMED lap while still bounding its neighbour.
     return OrderedDict(
-        (laps[i], starts[laps[i + 1]] - starts[laps[i]]) for i in range(1, len(laps) - 1)
+        (laps[i], starts[laps[i + 1]] - starts[laps[i]])
+        for i in range(1, len(laps) - 1)
+        if laps[i] not in pitted
     )
 
 
@@ -203,8 +233,21 @@ def corner_passes(rows, corner):
         prev = cur
 
 
-def pass_is_clean(pass_rows):
-    """A reference pass must be on-track and out of the pits."""
+def pass_is_clean(pass_rows, pitted_laps=frozenset()):
+    """A reference pass must be on-track, out of the pits, and on a racing lap.
+
+    `pitted_laps` is the lap-scoped gate (added 2026-10-10): a pass on a lap the
+    car pitted on is rejected even when the pass itself never touched the pit
+    lane. Found on the first real 85%-strength block, where the AI boxed for
+    fuel on lap 9: its corner-4 pass was clean by every gate and braked **35 m
+    earlier** than the other nine, because the car was already on its way in.
+    That single pass took corner 4's sigma_ref from 0.49 m to 10.98 m -- and
+    since bands are max(sigma_ref x EVM_AI, floor), it would have handed that
+    corner a 33 m braking band and made its criterion trivially true. A silent
+    reference-contamination fault, not a loud one.
+    """
+    if any(r["lap"] in pitted_laps for r in pass_rows):
+        return False
     return not any(
         r["in_pit"] or r.get("wheels_outside", 0) >= WHEELS_OUTSIDE_INVALID_MIN
         for r in pass_rows
@@ -248,6 +291,38 @@ def brake_initiation(pass_rows, braking_zone, threshold, debounce_s):
     return None
 
 
+def brake_initiation_clamped(pass_rows, braking_zone, threshold, debounce_s):
+    """True when the detected initiation is a FLOOR rather than a measurement.
+
+    The braking zone bounds where the event is SEARCHED for, so a driver already
+    above the brake threshold when they enter it has their initiation clamped to
+    the first in-zone sample: the distance that comes back means "at least this
+    early", and it is the zone's geometry talking, not the driver's. Measured
+    live for the first time by the KRtest block (2026-10-14), which announced
+    "83 m early" and "79 m early" on two deliberately very early passes, both
+    within 0.3 m of their zone's opening.
+
+    Detected from the brake trace, not from a distance threshold, which makes it
+    exact: either the sample before the event was already above threshold (and
+    was therefore outside the zone, since an in-zone sample above threshold
+    would already have been the event), or the event is the pass's very first
+    sample and the crossing happened before the bracket opened.
+
+    This mirrors `lib/pass_metrics`'s `brake_initiation_clamped`, and the parity
+    test pins the two against each other. `check_braking_zone_fit` already
+    reports the same condition as an extraction-time PROBLEM; this reports it
+    per pass, because at runtime it is not a problem to fix but a fact to record
+    about one pass -- and the thing bandwidth KR must not read out loud.
+    """
+    hit = brake_initiation(pass_rows, braking_zone, threshold, debounce_s)
+    if hit is None:
+        return False
+    index = pass_rows.index(hit)
+    if index == 0:
+        return True
+    return pass_rows[index - 1]["brake"] >= threshold
+
+
 # How much track must lie between the start of a braking zone and the expert's
 # brake point. The zone bounds where a brake initiation is SEARCHED FOR, and
 # novices brake EARLIER than the reference -- so a zone that only just contains
@@ -256,6 +331,26 @@ def brake_initiation(pass_rows, braking_zone, threshold, debounce_s):
 # evidence without anything looking wrong. Generous is nearly free; the only
 # cost of a wide zone is reaching back toward the previous corner's braking.
 MIN_EARLY_MARGIN_M = 30.0
+
+# ... and how much must lie AFTER it, for the mirror-image fault. A learner who
+# brakes LATE is detected only if the zone is still open where they brake; past
+# the zone end the criterion yields null, so the corner silently leaves the
+# braking element's evidence exactly as it does on the early side. Added
+# 2026-10-10, after measuring 155 real human passes on National against the 85%
+# AI reference: brake points ran 28 m early to **46 m late**, and corner 1's
+# zone ended only 5.7 m beyond the latest observed brake point. Nothing had
+# flagged it, because the check only ever looked one way.
+MIN_LATE_MARGIN_M = 30.0
+
+# Required margins are stated in METRES but earned in SECONDS. 60 m before a
+# 196 km/h brake point is 1.1 s of early braking; the same 60 m at corner 4's
+# 114 km/h approach is 1.9 s, and 36 m there already buys what 60 m buys at
+# Copse. So a flat metre threshold reads a slow corner as short when it is not
+# -- which is what made corner 4 look like the problem corner in the first 85%
+# extraction. The threshold stays in metres because the reference table does not
+# carry an approach speed, and raising the floor to cover the fastest corner
+# would demand impossible zones at the slow ones; the per-corner derivation in
+# the annotation notes does the time arithmetic explicitly instead.
 
 
 def check_braking_zone_fit(corner, passes, braking_zone, threshold, track_length_m):
@@ -278,6 +373,7 @@ def check_braking_zone_fit(corner, passes, braking_zone, threshold, track_length
     problems = []
     already_braking = 0
     margins = []
+    late_margins = []
     for p in passes:
         rows = zone_rows(p["rows"], braking_zone)
         if not rows:
@@ -287,6 +383,8 @@ def check_braking_zone_fit(corner, passes, braking_zone, threshold, track_length
         hit = brake_initiation(p["rows"], braking_zone, threshold, 0.0)
         if hit is not None:
             margins.append(signed_delta(braking_zone["start"], hit["spline"]) * track_length_m)
+            late_margins.append(
+                signed_delta(hit["spline"], braking_zone["end"]) * track_length_m)
 
     if already_braking:
         problems.append(
@@ -305,6 +403,17 @@ def check_braking_zone_fit(corner, passes, braking_zone, threshold, track_length
                 "reference, so their brake initiation would fall outside the zone "
                 "and go undetected. Move zones.braking.start earlier".format(
                     corner["id"], worst, MIN_EARLY_MARGIN_M)
+            )
+    if late_margins:
+        worst_late = min(late_margins)
+        if worst_late < MIN_LATE_MARGIN_M:
+            problems.append(
+                "corner {}: only {:.1f} m of braking zone lies after the expert's "
+                "brake point (want >= {:.0f} m). A learner braking later than that "
+                "has no initiation inside the zone, so the criterion yields null "
+                "and the corner drops out of the braking element's evidence. "
+                "Move zones.braking.end later".format(
+                    corner["id"], worst_late, MIN_LATE_MARGIN_M)
             )
     return problems
 
@@ -572,7 +681,10 @@ def extract(blocks, annotation, pair_id, car, track_length_m, source,
     for corner in annotation["corners"]:
         passes = []
         for rows in blocks:
-            passes.extend(p for p in corner_passes(rows, corner) if pass_is_clean(p["rows"]))
+            pitted = pit_laps(rows)
+            passes.extend(
+                p for p in corner_passes(rows, corner) if pass_is_clean(p["rows"], pitted)
+            )
         if not passes:
             problems.append("corner {}: no clean passes in any block".format(corner["id"]))
             continue

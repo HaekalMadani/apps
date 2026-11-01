@@ -322,3 +322,272 @@ def test_an_aborted_block_is_still_held_to_well_formedness(tmp_path):
         ticks=["this,is,not,a,valid,tick,row"])
     problems, _ = integrity.check_block(path)
     assert problems != []
+
+
+# --- the panel -> manifest bridge -------------------------------------------
+#
+# REGRESSION (2026-10-10). `dry_run` was added to the panel, to manifest.lua and
+# to the schema, and the toggle still did nothing: start_block assembled the
+# manifest meta inline by copying panel fields one at a time, and that copy list
+# never gained the new flag. Four rehearsal blocks recorded as participant data.
+#
+# The tests at the time passed because they called manifest.build directly with a
+# dry_run key already set -- they tested the seam AFTER the one that was broken.
+# The mapping now lives in manifest.block_meta, which these tests drive, and
+# the panel flag list is data rather than straight-line code.
+
+@pytest.fixture(scope="module")
+def lua_block_meta(lua):
+    return lua.eval(
+        """
+        function(panel_text, extras_text)
+          local json = require('lib/json')
+          local manifest = require('lib/manifest')
+          return json.encode(manifest.block_meta(json.decode(panel_text),
+                                                 json.decode(extras_text)))
+        end
+        """
+    )
+
+
+PANEL = {"participant_id": "P01", "pair_id": "pair1", "session": 2,
+         "condition": "adaptive", "sequence": "", "dev_block": False,
+         "dry_run": False}
+EXTRAS = {"block_id": "P01_s2_pair1_adaptive_20261010_120000",
+          "track_id": "ks_silverstone-national", "car_id": "ks_bmw_m235i_racing",
+          "track_length_m": 2600.26}
+
+
+def _meta(lua_block_meta, **panel_overrides):
+    panel = dict(PANEL)
+    panel.update(panel_overrides)
+    return json.loads(lua_block_meta(json.dumps(panel), json.dumps(EXTRAS)))
+
+
+def test_block_meta_carries_the_panel_fields_and_the_extras(lua_block_meta):
+    meta = _meta(lua_block_meta)
+    assert meta["participant_id"] == "P01"
+    assert meta["session"] == 2
+    assert meta["condition"] == "adaptive"
+    assert meta["pair_id"] == "pair1"
+    assert meta["block_id"] == EXTRAS["block_id"]
+    assert meta["car_id"] == "ks_bmw_m235i_racing"
+
+
+@pytest.mark.parametrize("flag", ["dev_block", "dry_run"])
+def test_every_panel_flag_reaches_the_manifest(lua_block_meta, flag):
+    """The actual regression: a flag set on the panel must arrive.
+
+    Parametrised over the flag LIST rather than naming them one by one, so a
+    third flag added to manifest.PANEL_FLAGS is covered the moment it exists.
+    """
+    assert flag not in _meta(lua_block_meta)
+    assert _meta(lua_block_meta, **{flag: True})[flag] is True
+
+
+def test_the_flag_list_is_the_one_this_test_checks(lua):
+    """Pin the parametrisation above to the module's own list.
+
+    If someone adds a flag to PANEL_FLAGS, this fails until the parametrize
+    list above grows too -- which is the point.
+    """
+    flags = list(lua.eval(
+        """
+        function()
+          local manifest = require('lib/manifest')
+          local out = {}
+          for i = 1, #manifest.PANEL_FLAGS do out[i] = manifest.PANEL_FLAGS[i] end
+          return out
+        end
+        """
+    )().values())
+    assert sorted(flags) == ["dev_block", "dry_run"]
+
+
+def test_a_blank_sequence_is_omitted_not_stored_as_empty_string(lua_block_meta):
+    assert "sequence" not in _meta(lua_block_meta)
+    assert _meta(lua_block_meta, sequence="A")["sequence"] == "A"
+
+
+def test_block_meta_output_builds_a_schema_valid_manifest(lua, lua_block_meta):
+    """End to end through the real seam: panel -> block_meta -> build -> schema."""
+    built = lua.eval(
+        """
+        function(panel_text, extras_text)
+          local json = require('lib/json')
+          local manifest = require('lib/manifest')
+          local meta = manifest.block_meta(json.decode(panel_text), json.decode(extras_text))
+          local m = manifest.build(meta,
+            { annotation = string.rep('a', 64), reference = string.rep('b', 64),
+              controller_config = string.rep('c', 64) },
+            { app = '0.3.0', csp = '0.2.11', ac = '1.16.4' },
+            '2026-10-10T12:00:00')
+          return json.encode(m)
+        end
+        """
+    )(json.dumps(dict(PANEL, dry_run=True)), json.dumps(EXTRAS))
+    doc = json.loads(built)
+    assert doc["dry_run"] is True
+    assert pyval.validate_data("session_manifest", doc) == []
+
+
+# --- the braking band trapezoid (M6, 2026-10-10) ----------------------------
+#
+# The braking cue became a trapezoid lying on the road and spanning the accuracy
+# band, replacing the disc at the reference point: the learner is judged on a
+# RANGE of brake points, so the cue shows the range. The geometry is pure
+# (lib/markers), and these tests are the whole headless half of it -- that CSP
+# projects the quad onto the tarmac is an in-game check, like every other
+# rendering clause.
+
+import math
+
+from pathlib import Path
+
+REPO = Path(__file__).resolve().parents[2]
+
+
+@pytest.fixture(scope="module")
+def markers_lua():
+    from lupa.luajit21 import LuaRuntime
+    rt = LuaRuntime(unpack_returned_tuples=True)
+    rt.execute('package.path = "{}/?.lua;" .. package.path'.format(
+        (REPO / "lua" / "trace_rt").as_posix()))
+    return rt.eval("require('lib/markers')")
+
+
+def test_band_splines_span_the_band_either_side_of_the_reference_point(markers_lua):
+    """The trapezoid covers +/- the band, not the band on one side."""
+    early, mid, late = markers_lua.band_splines(0.5, 13.0, 2600.0)
+    assert mid == pytest.approx(0.5)
+    assert (0.5 - early) * 2600.0 == pytest.approx(13.0)
+    assert (late - 0.5) * 2600.0 == pytest.approx(13.0)
+
+
+def test_band_splines_wrap_around_start_finish(markers_lua):
+    """A brake point just after the line has its early edge before it.
+
+    National's corner 1 brakes 92 m after the start/finish line, so a band wide
+    enough to be worth drawing puts the early edge on the other side of the
+    wrap. Returning a negative spline there would send the renderer to a
+    coordinate that does not exist.
+    """
+    early, mid, late = markers_lua.band_splines(0.002, 20.0, 2600.0)
+    assert 0.0 <= early < 1.0 and early > 0.9
+    assert 0.0 <= mid < 1.0
+    assert 0.0 <= late < 1.0
+
+
+def test_band_quad_is_centred_on_the_track_line_and_tapers_forward(markers_lua):
+    """Straight track: a symmetric quad, wide mouth early, narrow exit late."""
+    early = {"x": 0.0, "y": 1.0, "z": 0.0}
+    mid = {"x": 10.0, "y": 1.0, "z": 0.0}
+    late = {"x": 20.0, "y": 1.0, "z": 0.0}
+    q = markers_lua.band_quad(early, mid, late, 3.0, 1.0)
+    pts = [(q[i].x, q[i].y, q[i].z) for i in range(1, 5)]
+    # On a track running along +x, the lateral axis is +/-z.
+    assert sorted(round(p[2], 6) for p in pts) == [-3.0, -1.0, 1.0, 3.0]
+    # The two wide corners sit at the early edge, the two narrow ones at the late.
+    for x, _, z in pts:
+        assert x == pytest.approx(0.0 if abs(z) == 3.0 else 20.0)
+    # Centred: the lateral offsets cancel.
+    assert sum(p[2] for p in pts) == pytest.approx(0.0)
+
+
+def test_band_quad_follows_a_curving_braking_zone(markers_lua):
+    """Each edge takes its own tangent, so the shape bends with the track.
+
+    The tangents come from the three samples rather than from one chord: a
+    braking zone that is already turning in would otherwise get a quad that
+    cuts the corner, drawn partly off the road.
+    """
+    early = {"x": 0.0, "y": 0.0, "z": 0.0}
+    mid = {"x": 10.0, "y": 0.0, "z": 0.0}
+    late = {"x": 18.0, "y": 0.0, "z": 6.0}      # the track turns right
+    q = markers_lua.band_quad(early, mid, late, 2.0, 2.0)
+    early_axis = (q[1].x - q[2].x, q[1].z - q[2].z)
+    late_axis = (q[4].x - q[3].x, q[4].z - q[3].z)
+    # Both edges are 2 x half-width across...
+    assert math.hypot(*early_axis) == pytest.approx(4.0)
+    assert math.hypot(*late_axis) == pytest.approx(4.0)
+    # ...but they are not parallel, because the tangents differ.
+    cos = sum(a * b for a, b in zip(early_axis, late_axis)) / 16.0
+    assert abs(cos) < 0.99
+
+
+def test_band_quad_refuses_degenerate_samples(markers_lua):
+    """A zero-length band yields nil, not a zero-area quad or a NaN."""
+    p = {"x": 5.0, "y": 0.0, "z": 5.0}
+    assert markers_lua.band_quad(p, p, p, 2.0, 1.0) is None
+
+
+def test_build_carries_the_braking_band_onto_the_braking_marker(markers_lua):
+    """The trapezoid's width is resolved at reference-load time, from the
+    evaluator's own band, so the shape on the road cannot drift from the
+    tolerance the criterion applies."""
+    import json as _json
+    from lupa.luajit21 import LuaRuntime
+    rt = LuaRuntime(unpack_returned_tuples=True)
+    rt.execute('package.path = "{}/?.lua;" .. package.path'.format(
+        (REPO / "lua" / "trace_rt").as_posix()))
+    fn = rt.eval(
+        """
+        function(text, cfg_text)
+          local json = require('lib/json')
+          local markers = require('lib/markers')
+          local evaluator = require('lib/evaluator')
+          local doc = json.decode(text)
+          local cfg = json.decode(cfg_text)
+          local bands = {}
+          for i = 1, #doc.corners do
+            local cr = doc.corners[i]
+            bands[cr.corner_id] = evaluator.bands(cfg, cr).braking_m
+          end
+          local out = {}
+          local list = markers.build(doc, bands)
+          for i = 1, #list do
+            out[i] = json.encode({ element = list[i].element,
+              corner_id = list[i].corner_id, band_m = list[i].band_m })
+          end
+          return json.encode(out)
+        end
+        """
+    )
+    doc = _json.loads((REPO / "configs" / "references" / "reference_pair1.json").read_text())
+    cfg = _json.loads((REPO / "configs" / "controller_config.json").read_text())
+    rows = [_json.loads(s) for s in _json.loads(fn(_json.dumps(doc), _json.dumps(cfg)))]
+    braking = [r for r in rows if r["element"] == "braking"]
+    assert braking, "the committed pair-1 reference has no braking markers"
+    assert all(r["band_m"] == cfg["band_floors"]["braking_m"] for r in braking), braking
+    # An apex marker never carries one: an apex criterion is a lateral RMS about
+    # a line and has no along-track extent to draw.
+    assert all("band_m" not in r for r in rows if r["element"] == "apex")
+
+
+def test_build_without_bands_still_builds_markers(markers_lua):
+    """Pair 2's reference predates the band plumbing and its tick logs are gone,
+    so it cannot be re-extracted; its braking markers carry no band and the
+    renderer falls back to the disc. A missing band must never be an error."""
+    import json as _json
+    from lupa.luajit21 import LuaRuntime
+    rt = LuaRuntime(unpack_returned_tuples=True)
+    rt.execute('package.path = "{}/?.lua;" .. package.path'.format(
+        (REPO / "lua" / "trace_rt").as_posix()))
+    fn = rt.eval(
+        """
+        function(text)
+          local json = require('lib/json')
+          local markers = require('lib/markers')
+          local list = markers.build(json.decode(text))
+          local n = 0
+          for i = 1, #list do
+            if list[i].element == 'braking' and list[i].band_m ~= nil then n = n + 1 end
+          end
+          return json.encode({ total = #list, with_band = n })
+        end
+        """
+    )
+    doc = _json.loads((REPO / "configs" / "references" / "reference_pair2.json").read_text())
+    got = _json.loads(fn(_json.dumps(doc)))
+    assert got["total"] > 0
+    assert got["with_band"] == 0

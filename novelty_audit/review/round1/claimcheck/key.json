@@ -1,0 +1,230 @@
+{
+  "checker": "audit_panel_claims/1",
+  "seats": [
+    "eic",
+    "methodology",
+    "domain",
+    "perspective",
+    "da"
+  ],
+  "unread": [],
+  "manuscript_sha256": "59287ecb5f52febd9ffa9c34bdb949f0d83312b03fc667cf8e88ee53a5087b43",
+  "items": [
+    {
+      "claim_id": "c001",
+      "seat": "eic",
+      "finding_id": "W3",
+      "text": "Demoting the system to supporting evidence narrows the HCI-visible contribution\n**Severity**: Minor\n**Evidence Anchor**: text: §4 \"Supporting evidence, not a research contribution.\"\n**Confidence**: 3 — judgement about how HCI readers weigh system and method contributions\nWith RQ3 explicitly not a contribution, the paper's contribution is a statistical attribution procedure. An HCI reader may then read it as statistics attached to a system, which is the risk named on the eic card. The brief could reduce this by stating that the per-element probe-and-revert controller is what makes post-withdrawal evidence exist at all, so the audit is the system's design rationale and not an analysis added afterwards. This is a framing choice and does not change the core claim."
+    },
+    {
+      "claim_id": "c002",
+      "seat": "da",
+      "finding_id": "M3",
+      "text": "Probe-as-intervention (surprise or attention transient) and KR withdrawal both predict the same probe failures as dependency. With one arm and no sham withdrawal, the design cannot separate them, so the dependency interpretation of Δ has live rivals.\n\nName Δ as a \"withdrawal-associated excess\" with dependency as one of several readings, or add a cheap discriminating observable such as failure timing within the probe (a transient versus a sustained deficit).\n\n**Evidence Anchor**: text: §8 \"Removing a cue may itself change behaviour (surprise, attention shift), apart from dependency.\""
+    },
+    {
+      "claim_id": "c003",
+      "seat": "methodology",
+      "finding_id": "W2",
+      "text": "The model check targets a statistic the fitting rationale predicts the null will miss\n**Severity**: Major\n**Evidence Anchor**: text: §5 \"the null must reproduce observed cue-on statistics (lap-to-lap SD, qualification rate, timing of first qualification)\"\n**Confidence**: 4 — the logical conflict is internal to the brief; how large it is in practice depends on the unmeasured cue-on/cue-off variance ratio\n\nThe null is fitted on cue-off laps because \"a cue-on σ is plausibly biased low\". If that premise holds, a null with the larger cue-off σ should over-predict cue-on lap-to-lap SD and under-predict cue-on qualification rate, and so fail the check. If it passes the check, that suggests cue-on and cue-off variability are similar, which removes the stated reason for fitting on cue-off laps alone. The check therefore cannot pass in exactly the case the design was built for, and passing it partly undercuts the design. The check also has no stated tolerance (no interval, no distance, no rule for which of the three statistics must match), so \"reproduce\" is not yet a decision rule. Remedy: either (a) check against statistics not expected to differ under guidance (for example cue-off statistics held out of the fit, see W3), or (b) model guidance-on variability explicitly as a separate parameter estimated from cue-on laps and check the full model, stating the tolerance (for example a posterior-predictive or simulation interval) before data."
+    },
+    {
+      "claim_id": "c004",
+      "seat": "perspective",
+      "finding_id": "W4",
+      "text": "The pre-registered predictions are not falsifiable as stated, and the one testable one lacks a decision rule\n**Severity**: Major\n**Evidence Anchor**: text: §6 \"apex uninformative by design; braking\"\n**Confidence**: 4 — the falsifiability point follows from the wording; the precision arithmetic is elementary binomial.\n\n\"Apex uninformative by design\" follows from P_null = 0.53, so no observation could contradict it. \"Corner speed no claim\" makes no prediction. That leaves braking, and \"the candidate for a detectable excess\" states no direction threshold, magnitude or decision rule. Even before clustering, ~16 braking probes at a base rate near 0.16 give a binomial SE of about 0.09 for P_obs. A Δ would therefore need to be large to be distinguishable from the null, before adding the participant clustering and P_null parameter uncertainty the brief itself plans. A reader trained on pre-registration will ask what observed result would count *against* the braking prediction. Minimum remedy: state in advance, for braking, the interval-based rule under which Δ is reported as an excess, no excess, or indeterminate. Also state the smallest Δ the planned probe count can resolve at the planned uncertainty procedure. Stronger option: specify an equivalence region (TOST-style) so that \"no excess\" is a reportable outcome and not only an absence. This is design text only and needs no data."
+    },
+    {
+      "claim_id": "c005",
+      "seat": "methodology",
+      "finding_id": "W8",
+      "text": "The interpretation of Δ is exposed to a rival the design cannot separate\n**Severity**: Major\n**Evidence Anchor**: text: §8 item 1 \"Removing a cue may itself change behaviour (surprise, attention shift), apart from dependency.\"\n**Confidence**: 3 — the statistical point is firm; how large any withdrawal-surprise effect is lies outside my competence (see card blind spot)\n\nA null built from learning plus noise excludes both dependency and any transient effect of withdrawing the cue. A positive Δ is therefore consistent with either, and with no randomised timing arm the design has no internal contrast that separates them. The brief's hedge (\"interpreted as\") is honest, but RQ2 is still introduced as the place where Δ is read as guidance dependency. Minimum remedy: scope the reported construct to \"probe-failure excess over a learning-plus-noise null\" and list withdrawal-as-intervention as an unexcluded alternative beside it. A partial, low-cost discriminator is to pre-specify the within-probe time profile: a surprise effect would plausibly be concentrated in the first passes after withdrawal, while dependency would persist across the probe and into the unassisted block. This must be stated before data and not adopted after seeing the profile."
+    },
+    {
+      "claim_id": "c006",
+      "seat": "eic",
+      "finding_id": "W2",
+      "text": "What a designer would do with Δ is asserted, not shown\n**Severity**: Major\n**Evidence Anchor**: absence: §1–§8 — expected a statement of what an adaptive-system designer would change in a fading rule given a positive or a null probe-failure excess; checked §1 problem, §4 RQ2, §5 null, §6 predictions, §7 claimed novelty, §8 open questions\n**Confidence**: 4 — this is the eic card's stated focus on whether a one-condition design answers a question designers act on\nThe brief shows that a cue-on rule cannot tell dependency from regression to the mean. It does not close the loop: if Δ for braking is positive, should designers lengthen qualification windows, add probes, or keep KR during probes? If Δ is null, may they trust cue-on gating? With no static arm and no learning-benefit claim, this designer-facing implication is what makes the result matter to an HCI reader. Its absence is what my Phase 1 warn trigger describes. Minimum remedy: one paragraph linking each Δ outcome to a concrete design implication for fading controllers, worded within the §7 \"Never claimed\" limits."
+    },
+    {
+      "claim_id": "c007",
+      "seat": "perspective",
+      "finding_id": "W1",
+      "text": "RQ1's ICC is under-specified, and per-element-per-corner precision at n ≈ 15 is not addressed\n**Severity**: Major\n**Evidence Anchor**: text: §4 RQ1 \"SEM, ICC and MDC of the metrics, for novices\"\n**Confidence**: 4 — reliability-estimation specialist; the issue is the stated design, not domain facts.\n\n\"ICC\" names a family of coefficients. The brief does not say which one: one-way vs two-way, consistency vs absolute agreement, single vs average measures (Shrout & Fleiss 1979; McGraw & Wong 1996). It also does not say what the \"subjects\" and the \"raters/occasions\" are. Within one session, the natural reading is drivers as objects of measurement and laps as occasions. With 15 drivers, any ICC has a wide confidence interval. The literature on sample size for ICC estimation (e.g., Bonett 2002) puts reasonably precise estimates well above 15 subjects unless the ICC is very high. The brief asks for these quantities \"for each element and corner\", which gives 12 coefficients each resting on ~15 drivers. Detrending each driver's own slope interacts with this as well. If the trend is fitted per driver, the between-driver variance in the ICC numerator excludes slope differences, and the residual degrees of freedom per driver fall with every trend parameter (more so for a saturating curve). That shrinks the information for σ_within at 15 laps. SEM and MDC inherit this. MDC₉₅ = 1.96·√2·SEM is only as precise as the SEM behind it (Weir 2005). Minimum remedy: name the ICC form, the facets and the detrending model's degrees of freedom; report every coefficient with its CI; state that per-corner ICCs at n ≈ 15 are descriptive. Stronger option: pool corners in one variance-components model (see W5) and report per-corner quantities as conditional estimates. This costs modelling effort but no new data."
+    },
+    {
+      "claim_id": "c008",
+      "seat": "da",
+      "finding_id": "M6",
+      "text": "The feasibility counts that justify the study size come from the committed novice model, whose brake and speed sigmas are unmeasured. The probe yield per element is therefore itself a model output.\n\nReport the probe yield across a plausible sigma range, and state a pilot stopping rule if braking yields too few probes.\n\n**Evidence Anchor**: text: §6 \"so ~42 at n = 15, clustered\""
+    },
+    {
+      "claim_id": "c009",
+      "seat": "perspective",
+      "finding_id": "W7",
+      "text": "Internal labels and a thinly identified citation limit accessibility for adjacent readers\n**Severity**: Minor\n**Evidence Anchor**: text: §5 \"form still open: F5/F6\"\n**Confidence**: 3 — accessibility judgement; an internal brief may tolerate it, a thesis chapter will not.\n\nLabels such as F2, F5/F6 and \"v9 threat 6\" are pointers into documents the reader does not have. \"TRACK 2026\" is cited for a \"first rung\" claim without enough bibliographic identity for an outside reader to find it. Since RQ1's rationale rests partly on that citation, it should be fully referenced. Minimum remedy: expand each internal label inline, and give the full reference for TRACK 2026."
+    },
+    {
+      "claim_id": "c010",
+      "seat": "da",
+      "finding_id": "M2",
+      "text": "After the stated limitations, Δ is identifiable on one element only (braking, ~16 clustered probes), with an assumed sigma. Corner speed's P_null of 0.00 makes any failure a positive excess.\n\nReframe RQ2 as a braking-element feasibility estimate conditional on pilot sigmas, and pre-specify the minimum detectable Δ at the clustered n.\n\n**Evidence Anchor**: text: §6 \"the brake and speed sigmas are assumptions\" and \"the element where Δ is identifiable\""
+    },
+    {
+      "claim_id": "c011",
+      "seat": "eic",
+      "finding_id": "W1",
+      "text": "No stated reportable result for the branches where Δ is withheld or uninformative\n**Severity**: Major\n**Evidence Anchor**: text: §6 \"apex uninformative by design; braking the candidate for a detectable excess; corner speed no claim until the pilot.\"\n**Confidence**: 4 — editorial judgement of reportability against the brief's own feasibility figures\nBy the brief's own predictions, two of the three elements cannot yield an interpretable Δ. Apex is swamped by the null, and corner speed rests on an assumed sigma. The core claim therefore rests on the braking element, at about 16 probes clustered within roughly 15 participants. On top of that, the §5 model check can remove Δ as a dependency estimate altogether. The brief never says what the core contribution is if the check fails, or if braking's Δ is indistinguishable from zero. Does it fall back to RQ1 reliability, to the attribution method as a method, or to a documented negative result? That decision decides whether a ~40-probe, one-condition study has a reportable result. It should be written down before data, ideally as part of the pre-registered predictions already planned in §6. Minimum remedy: add a short \"what is reported under each outcome\" paragraph covering Δ > 0, Δ ≈ 0, and model check failed. Stronger, costlier option: give the method contribution its own validation (for example, recovery of a known injected dependency in simulation), so the method stands even if the empirical Δ is withheld. This is the author's choice and adds simulation work."
+    },
+    {
+      "claim_id": "c012",
+      "seat": "domain",
+      "finding_id": "W2",
+      "text": "Fitting the null on cue-off laps absorbs the effect Δ is meant to detect\n**Severity**: Major\n**Evidence Anchor**: text: §5 \"**Fitted on cue-off laps** (probe laps plus the unassisted block).\"\n**Confidence**: 4 — the direction of the bias follows from the guidance hypothesis itself\n\nThe case for cue-off calibration is domain-correct as far as it goes: concurrent feedback improves performance while it is present, so cue-on spread is plausibly understated. But the same literature predicts that withdrawal raises error and variability in learners who depend on the feedback. Probe laps, and the first laps of the unassisted block, are exactly where that rise would show. A noise model fitted there takes the dependency-driven spread into its residual σ. That raises P_null and pulls Δ toward zero. The bias is not neutral: if the effect is there, this design understates it. The brief raises the circularity under §8.2, but only as a question of sample reuse. It does not say that the bias has a known sign, and that sign is set by the domain theory it relies on. The planned model check (reproducing cue-on statistics) partly constrains this, but not fully, because a model that fits cue-on laps can still carry a withdrawal-inflated σ.\n\nMinimum remedy: state the expected direction of the bias. Report Δ under both a cue-on-fitted σ and a cue-off-fitted σ, so a reader can see the range bracketed by the two known biases (understated in opposite directions). Consider excluding the first passes after any withdrawal from the fit. Stronger option: estimate σ from cue-off passes only after the post-withdrawal transient has been modelled explicitly. This is costlier and needs a pre-specified transient form."
+    },
+    {
+      "claim_id": "c013",
+      "seat": "methodology",
+      "finding_id": "W4",
+      "text": "The calibration laps mix conditions and are timed by the selection rule\n**Severity**: Major\n**Evidence Anchor**: text: §5 \"(probe laps plus the unassisted block)\"\n**Confidence**: 3 — inferred from the per-element fading description in §2; the brief does not say whether other elements' cues stay on during an element's probe\n\nBecause fading is per element, a probe lap for element X is presumably a lap where the other two elements' cues and KR are still on, while the unassisted block has everything off and comes after the 15 guided laps. These two sources differ in condition (partial vs total guidance withdrawal) and in time (mid-session at selected moments vs session end). Pooling them into one noise model assumes that neither difference matters. Probe laps also occur only after a qualification run, which is the selection event whose regression the null exists to model; a trend fitted partly on post-selection laps can absorb some of that regression into the trend. Remedy: state whether the noise model includes a condition indicator (probe vs unassisted) and how the trend is extrapolated back over the cue-on laps, and include the selection timing in the recovery study of W1."
+    },
+    {
+      "claim_id": "c014",
+      "seat": "methodology",
+      "finding_id": "W7",
+      "text": "The unit of P_obs's denominator is ambiguous\n**Severity**: Minor\n**Evidence Anchor**: text: §4 \"P_obs: the probe-failure rate over all guided-qualification events.\"\n**Confidence**: 3 — may be a wording issue rather than a design one\n\nQualification is defined per corner (§2), while probes are entered per element on a quorum. \"Guided-qualification events\" could therefore mean corner qualifications or element-level probe entries, which give different denominators and different clustering structures. State the unit explicitly (presumably element-level probe entries), and use the same unit in P_null."
+    },
+    {
+      "claim_id": "c015",
+      "seat": "domain",
+      "finding_id": "W5",
+      "text": "The claim that concurrent feedback lowers variability carries no citation, though it supports a design choice\n**Severity**: Minor\n**Evidence Anchor**: text: §5 \"concurrent feedback reduces movement variability while it is on, so a cue-on σ is plausibly biased low\"\n**Confidence**: 4 — the claim is plausible and has support in the literature, but is uncited here\n\nThis premise is the stated reason for fitting the null on cue-off laps, which is the most consequential modelling choice in the brief. It needs a source: Schmidt & Wulf (1997) on concurrent feedback in acquisition, or the review by Sigrist et al. (2013). Note also that bandwidth KR has its own documented effect on consistency (Sherwood 1988; Lee & Carnahan 1990). The brief keeps KR on throughout cue-on laps, so the cue-on σ reflects cue plus KR, not cue alone. State this."
+    },
+    {
+      "claim_id": "c016",
+      "seat": "eic",
+      "finding_id": "W5",
+      "text": "Source reconciliation is stated but not itemised\n**Severity**: Minor\n**Evidence Anchor**: text: header \"Where v9's text is stale (3-of-4 window, two tracks, per-corner controller), this brief uses the repository's settled values.\"\n**Confidence**: 4 — direct reading of the text\nThe header says some values replace stale v9 text, but the body does not mark which numbers are repository-settled and which come from the framing document. Simulator rates (8.5%, 0%, 79%) and the feasibility counts in §6 are where a reader would want the provenance. A one-line source tag per figure, or a footnote, would let reviewers check the numbers against the right document."
+    },
+    {
+      "claim_id": "c017",
+      "seat": "methodology",
+      "finding_id": "W9",
+      "text": "Two of three null parameter sets are assumed, and the third comes from a single non-representative driver\n**Severity**: Minor\n**Evidence Anchor**: text: §6 \"the brake and speed sigmas are assumptions.\"\n**Confidence**: 4 — read directly from the brief\n\nThe feasibility table's P_null values are conditional on the committed model, as the brief says. Two consequences should be drawn explicitly. First, the corner-speed P_null of 0.00 is a boundary value, so any observed failure becomes an \"excess\" and any ratio comparison is undefined. The brief already withholds a corner-speed claim, which is correct, but the table should not appear to give that element a working null. Second, the apex parameters come from n = 1 (the researcher), so the \"apex uninformative by design\" prediction is itself model-conditional and should be re-derived after the pilot."
+    },
+    {
+      "claim_id": "c018",
+      "seat": "da",
+      "finding_id": "M4",
+      "text": "The problem statement promises a separation that the design delivers only conditional on the null model being right, because the randomised arm that would validate it is dropped.\n\nReword the problem and contribution so the separation is model-conditional throughout, and carry the §6 concession into §1 and §7.\n\n**Evidence Anchor**: text: §1 \"A rule that reads only cue-on performance cannot separate the two.\""
+    },
+    {
+      "claim_id": "c019",
+      "seat": "perspective",
+      "finding_id": "W3",
+      "text": "\"Premature\" against the system's own criterion is decision consistency across conditions, not decision accuracy\n**Severity**: Major\n**Evidence Anchor**: text: §8.3 \"v9 defines it relative to the system's own\"\n**Confidence**: 4 — the accuracy/consistency distinction is standard in classification-reliability work; how strongly the authors lean on \"accuracy\" is a reading judgement.\n\nIn mastery testing, *decision accuracy* is agreement between the observed classification and the examinee's true (latent) mastery status. *Decision consistency* is agreement between two classifications made with the same procedure. RQ2 compares a qualification decision made with the cue on against a probe outcome judged by the same per-pass criterion and quorum with the cue off. That is agreement between two administrations of one procedure under two conditions. In the measurement sense it is a consistency quantity, and the change of condition is the thing of interest. Calling it \"decision accuracy\" will lead an adjacent-field reader to assume there is an external or latent criterion, and there is none. The definition is not wrong, and the brief flags the issue openly in §8.3. But the label invites exactly the circularity objection the authors anticipate. Minimum remedy: relabel RQ2's quantity as cross-condition decision consistency (or \"probe agreement\") and keep \"accuracy\" only for the simulator, where the latent state is known. Stronger option: report simulated decision accuracy against the simulator's known latent skill alongside the observed consistency. That makes explicit that only the simulator can speak to accuracy."
+    },
+    {
+      "claim_id": "c020",
+      "seat": "perspective",
+      "finding_id": "W5",
+      "text": "Generalizability theory is the more natural frame for a crossed driver × corner × lap design and is not considered\n**Severity**: Minor\n**Evidence Anchor**: absence: §4 RQ1 and §5 — expected a variance-components / G-study frame with driver, corner and lap facets and a D-study for the window length; checked §2, §4, §5, §6, §8\n**Confidence**: 4 — G-theory practitioner; whether it changes conclusions depends on the variance components.\n\nRQ1 computes classical coefficients separately per element and corner. The design is naturally crossed (drivers × corners × laps, with the element as a fixed multivariate facet). A G-study would estimate the driver, corner, driver×corner and residual components in one model (Brennan 2001; Shavelson & Webb 1991). A D-study on Φ, the absolute-decision coefficient, which suits a criterion-referenced band, would directly address how many passes and corners a qualification decision needs. That is exactly the 2-of-3 window and 4-corner quorum the controller fixes. This frame also makes the \"per-corner then quorum\" structure an object of analysis rather than an assumption. Minimum remedy: name G-theory as a considered alternative and say why classical per-corner coefficients were preferred. Stronger option: fit the G-study on the pilot data and report Φ against the window length."
+    },
+    {
+      "claim_id": "c021",
+      "seat": "domain",
+      "finding_id": "W4",
+      "text": "The guidance hypothesis is paraphrased as the learning–performance distinction\n**Severity**: Minor\n**Evidence Anchor**: text: §1 \"Performance with guidance is not performance without it (the guidance hypothesis; Salmoni et al. 1984).\"\n**Confidence**: 4 — standard textbook construct\n\nThe guidance hypothesis says more than this. Frequent or concurrent feedback guides performance during acquisition, and that guidance creates a dependency that degrades performance when the feedback is withdrawn at retention. The one-line gloss is closer to the general learning–performance distinction. Restate it fully. The full version is also what makes W1 visible."
+    },
+    {
+      "claim_id": "c022",
+      "seat": "perspective",
+      "finding_id": "W2",
+      "text": "No decision-consistency index links metric reliability (RQ1) to decision quality (RQ2)\n**Severity**: Major\n**Evidence Anchor**: text: §4 RQ1 \"RQ1 is also the calibration input\"\n**Confidence**: 5 — decision consistency in mastery testing is my core field.\n\nThe brief's link between RQ1 and RQ2 is that RQ1 calibrates the null. A mastery-testing reader would expect a second, more direct companion quantity: the consistency of the qualification decision itself. That is, the probability that the same corner, element and driver would be classified the same way (qualified vs not) on an independent set of passes at the same skill level. Standard indices for this are the agreement coefficient p₀ and κ. There are single-administration estimators (Huynh 1976; Subkoviak 1976) and Livingston & Lewis (1995) for derived scores. The brief already has everything needed to estimate this by simulation: per-pass σ_within, the band, and the 2-of-3 rule. It matters because decision consistency is lowest when true performance sits near the cut. The brief's own σ/band ratios suggest that is where the apex element and part of braking live. Without the index, a reader cannot tell how much of P_null is just the qualification decision's own unreliability, as distinct from regression to the mean. Minimum remedy: report simulated decision consistency (p₀, κ) of the per-corner qualification and of the per-element quorum, per element, as a function of the true-score distance from the band. Stronger option: also report it conditionally at the observed pilot distribution of true scores. This is an analysis on existing machinery and needs no new data."
+    },
+    {
+      "claim_id": "c023",
+      "seat": "perspective",
+      "finding_id": "W6",
+      "text": "The null's model check conflicts with the stated reason for fitting on cue-off laps\n**Severity**: Major\n**Evidence Anchor**: text: §5 \"the null must reproduce observed cue-on statistics\"\n**Confidence**: 3 — the logical tension is clear from the text; how large the gap is in practice is an empirical matter I cannot judge pre-data.\n\nThe null is fitted on cue-off laps *because* cue-on σ is plausibly biased low under concurrent feedback. It must then pass a check that it reproduces cue-on lap-to-lap SD and qualification rates. If the stated premise is true, a correctly fitted cue-off null should *fail* to reproduce cue-on SD, and the gate would then suppress Δ in exactly the case the design was built for. If the null passes, cue-on and cue-off variability are similar, which undercuts the reason for fitting on cue-off laps. There is a second measurement issue. Cue-off variance is the variance under the condition whose effect is being tested. If dependency exists, it inflates cue-off σ, so P_null absorbs part of the effect and Δ is biased toward zero. That is conservative, and it should be stated as such. Minimum remedy: state which cue-on statistics the null is expected to reproduce *after* a modelled cue-on/cue-off variance ratio, or restrict the check to statistics the premise does not predict will differ (e.g., timing of first qualification). Also state the direction of the bias in Δ. Stronger option: estimate the variance ratio as a parameter and propagate it into P_null's uncertainty."
+    },
+    {
+      "claim_id": "c024",
+      "seat": "da",
+      "finding_id": "M5",
+      "text": "How censored (mid-probe) blocks enter P_obs is undecided. Late probes are both the most likely to be censored and the most practised, so the choice shifts the core numerator in a trend-dependent direction.\n\nPre-specify censoring handling, applied identically to P_obs and the simulated P_null, and report a sensitivity range.\n\n**Evidence Anchor**: text: §8 \"how censored blocks (ending mid-probe) enter P_obs\""
+    },
+    {
+      "claim_id": "c025",
+      "seat": "methodology",
+      "finding_id": "W1",
+      "text": "The null model is not shown to be identifiable from the cue-off data volume\n**Severity**: Critical\n**Evidence Anchor**: text: §5 \"per element (form still open: F5/F6)\" and \"a practice trend (per-driver slope or saturating curve);\"\n**Confidence**: 4 — direct competence in random-intercept/trend models and simulation-based nulls; the data volumes are read from the brief, not measured\n\nP_null is the denominator of the core claim, and its model has three per-element components (driver intercept, driver trend, residual variability), with the trend's functional form and the residual pooling still undecided. They are to be fitted only on cue-off laps. Per participant and element, that is the 4-lap unassisted block plus whatever probe laps that element happened to receive (2 laps per probe, about 2.8 probes per participant across all elements, so often zero or one probe for a given element). Separating a per-driver slope from a per-driver intercept and a residual σ needs observations spread over time. Here they are concentrated at the session end (the unassisted block) and at moments the controller picks (probes). A saturating curve adds at least one more parameter. Nothing in the brief shows that this volume can recover the trend and σ well enough for P_null to be stable, and the brief lists the question as open (§8 item 4). A simple illustration: if a driver's trend is under-estimated, part of the learning goes into the residual σ; if it is over-estimated, the opposite happens. Either error moves P_null directly, because whether a probe fails turns on noise relative to the band. Uncorrected, the defect leaves Δ without a defined reference, so it alone invalidates RQ2's core claim. It is repairable before any participant drives.\n\nMinimum remedy: a pre-data parameter-recovery study. Generate cue-off data under the committed novice model at the brief's own cue-off lap counts and probe timings, fit each candidate null form, and report how well slope and σ are recovered and how much P_null spreads across fits. Then pre-register a form-selection rule (for example, a stated information criterion or a pre-chosen default with sensitivity forms). Stronger and costlier: a hierarchical model that partially pools trends across drivers, which trades per-driver fidelity for identifiability and needs the pooling assumption defended; or a few fixed-schedule cue-off catch laps, independent of qualification, which buys timing spread at a cost in lap budget (the author must weigh this against the 15-lap traversal constraint)."
+    },
+    {
+      "claim_id": "c026",
+      "seat": "eic",
+      "finding_id": "W4",
+      "text": "Internal shorthand left undecoded for an outside reader\n**Severity**: Minor\n**Evidence Anchor**: text: §5 \"form still open: F5/F6\"\n**Confidence**: 5 — direct reading of the text\nSeveral references point to documents the reader does not have: \"F5/F6\", \"F2\", \"v9 threat 6\", \"v9 threat 2\", \"the committed novice model\", \"ARRS\", and \"TRACK 2026\" (named as a recent sim-racing paper but not cited in full). A methodological reviewer from an adjacent field cannot decode these without the source documents. Expand each one at first use, or add a short glossary."
+    },
+    {
+      "claim_id": "c027",
+      "seat": "methodology",
+      "finding_id": "W11",
+      "text": "RQ1's role as calibration input conflicts with fitting the null on cue-off laps\n**Severity**: Minor\n**Evidence Anchor**: text: §4 \"RQ1 is also the calibration input for RQ2.\"\n**Confidence**: 3 — may resolve to a lap-subset statement\n\nRQ1's reliability statistics are computed over the session, which is mostly cue-on laps, while §5 fits the null on cue-off laps only, precisely because cue-on σ is thought to be biased. State which laps RQ1 is computed on and which of its quantities feed P_null, so that the calibration path is unambiguous."
+    },
+    {
+      "claim_id": "c028",
+      "seat": "domain",
+      "finding_id": "W1",
+      "text": "A within-acquisition probe decrement is labelled with a learning construct\n**Severity**: Major\n**Evidence Anchor**: text: §4 RQ2 \"It is *interpreted* as **guidance dependency** (cue plus KR, withdrawn together); it is not measured as such.\"\n**Confidence**: 4 — direct expertise in guidance-hypothesis and retention-test conventions\n\nSalmoni et al. (1984) and the studies that followed (Winstein & Schmidt 1990; Schmidt & Wulf 1997) define dependency through retention or transfer performance after acquisition with frequent or concurrent feedback. That performance is measured once the transient effects of the feedback schedule have dissipated, typically on a delayed no-feedback test, and is compared against a lower-feedback schedule. The 2-lap probe has neither feature. It sits inside acquisition with no delay, and the comparison is a simulated learner, not a group trained differently. A decrement on such a probe mixes three things: dependency in the field's sense (no internal reference has formed); a temporary performance effect of losing information the learner is still using; and the attentional effects the brief already lists under §8.1. In the brief's own logic, the null removes only regression to the mean and the practice trend. The temporary performance effect is part of Δ by construction.\n\nMinimum remedy: name Δ for what it measures, such as \"excess immediate withdrawal decrement\" or \"probe-failure excess attributable to guidance withdrawal\". Reserve \"guidance dependency\" for the field's retention-based construct, and state the learning–performance distinction explicitly (Kantak & Winstein 2012 is a citable review), with the 4-lap unassisted block identified as an immediate, not delayed, no-feedback test. A stronger but costlier option is a short delayed no-feedback test. Even then, the brief's single-condition design means the comparison would be with the null, not with a lower-feedback group. That choice belongs to the author."
+    },
+    {
+      "claim_id": "c029",
+      "seat": "domain",
+      "finding_id": "W6",
+      "text": "Several cited works have no full references, so their representation cannot be checked\n**Severity**: Minor\n**Evidence Anchor**: absence: manuscript reference list — expected full bibliographic entries for TRACK 2026, Eneano et al. 2026, Linden 2026, Ye et al. 2016 and ARRS; checked §1, §4, §6, §7, §8 and the document end\n**Confidence**: 3 — I cannot verify these works independently\n\nThe novelty positioning in §7 rests on the claim that Eneano et al. propose probe-gated withdrawal and that ARRS implements it, and RQ1's motivation rests on how TRACK 2026 is characterised. With no references given, D2's requirement that prior work be represented correctly cannot be checked for these sources. Add full entries.\n\n**Suggested references (only works I am confident exist).** Salmoni, Schmidt & Walter (1984), Psychological Bulletin, on KR and motor learning; Winstein & Schmidt (1990), Journal of Experimental Psychology: Learning, Memory, and Cognition, on reduced KR frequency; Schmidt & Wulf (1997), Human Factors, on continuous concurrent feedback degrading learning; Sherwood (1988), Perceptual and Motor Skills, on bandwidth KR and movement consistency; Lee & Carnahan (1990), Quarterly Journal of Experimental Psychology, on bandwidth KR; Kantak & Winstein (2012), Behavioural Brain Research, on the learning–performance distinction; Sigrist, Rauter, Riener & Wolf (2013), Psychonomic Bulletin & Review, a review of augmented feedback modalities; Biau et al. (2008), British Journal of Surgery, on LC-CUSUM."
+    },
+    {
+      "claim_id": "c030",
+      "seat": "methodology",
+      "finding_id": "W5",
+      "text": "No pre-data outcome is stated that would count against the braking prediction\n**Severity**: Major\n**Evidence Anchor**: text: §6 \"braking the candidate for a detectable excess; corner speed no claim until the pilot.\"\n**Confidence**: 4 — the absence of a decision rule is read directly; the precision estimate is a rough binomial calculation from the brief's counts, not a fitted result\n\nThe predictions are labelled pre-registered but are qualitative. There is no decision rule on Δ (an interval excluding zero? a minimum Δ of interest?), and no statement of the smallest excess the design could resolve. At about 16 clustered braking probes and a P_null near 0.16, the binomial standard error alone is about 0.09 before any clustering inflation and before P_null's own parameter uncertainty is added. So the plausible-excess range the design can resolve may be wide, and the brief should say how wide before data. Without that, any braking Δ can be read as \"a candidate excess\" or \"underpowered\", and no outcome counts against the prediction. Remedy: pre-specify the inferential rule for Δ per element, the minimum Δ of interest, and a simulated design-sensitivity figure (the distribution of the Δ interval width under the null, at the expected probe counts and clustering). Do this without asserting any value for the real data."
+    },
+    {
+      "claim_id": "c031",
+      "seat": "da",
+      "finding_id": "M1",
+      "text": "The model check contradicts the fitting rationale: a null fitted on cue-off σ (argued to exceed cue-on σ) is required to reproduce cue-on SD. Neither outcome of the check validates the counterfactual the null encodes.\n\nState which cue-on statistics the null should reproduce given a stated cue-on/cue-off variance relation. Admit that no one-arm check tests the counterfactual.\n\n**Evidence Anchor**: text: §5 \"a cue-on σ is plausibly biased low\" and \"the null must reproduce observed cue-on statistics\""
+    },
+    {
+      "claim_id": "c032",
+      "seat": "domain",
+      "finding_id": "W3",
+      "text": "LC-CUSUM is placed among regression-to-the-mean corrections\n**Severity**: Minor\n**Evidence Anchor**: text: §7 \"regression-to-the-mean corrections (LC-CUSUM / Biau 2008; Ye et al. 2016; Linden 2026)\"\n**Confidence**: 3 — familiar with LC-CUSUM from the surgical learning-curve literature; Ye et al. 2016 and Linden 2026 not verified\n\nBiau et al. (2008) is a sequential test for declaring when an individual has reached a competence level, with controlled error rates under a null of inadequate performance. It is not a regression-to-the-mean correction. It is closer prior art for the \"decision accuracy\" framing of RQ2: a competence declaration with a stated false-declaration rate. Grouping it with RTM corrections understates how much the decision-error framing overlaps with it. Recategorise it, and state how attributing post-withdrawal failures differs from declaring competence sequentially."
+    },
+    {
+      "claim_id": "c033",
+      "seat": "da",
+      "finding_id": "C1",
+      "text": "The null is fitted on the cue-off laps where dependency would show up, so any dependency effect is absorbed into P_null and biases Δ toward zero. A null Δ is uninterpretable, and the size of a positive one is unbounded by the design.\n\nFit the null on data that cannot contain the effect, or specify and simulate how much a given dependency size inflates the fitted parameters, and report Δ only together with that absorption bound. A held-out or randomised-timing fit is the stronger, costlier option.\n\n**Evidence Anchor**: text: §5 \"probe laps plus the unassisted block\""
+    },
+    {
+      "claim_id": "c034",
+      "seat": "methodology",
+      "finding_id": "W10",
+      "text": "Simulator gate figures lack the run size and uncertainty needed to reproduce them\n**Severity**: Minor\n**Evidence Anchor**: text: §2 \"false fade for a non-improving learner: 8.5% (bound ≤ 10%);\"\n**Confidence**: 4 — reproducibility affordance\n\nThe gate figures (8.5%, 0%, 79%) are reported without the number of simulated streams, a seed, or a Monte Carlo interval. That information decides whether 8.5% sits clearly inside the 10% bound or within simulation error of it. Report the streams per learner type and an interval for each gated rate."
+    },
+    {
+      "claim_id": "c035",
+      "seat": "methodology",
+      "finding_id": "W3",
+      "text": "Probe laps calibrate the null and also supply the failures it judges\n**Severity**: Major\n**Evidence Anchor**: text: §8 item 2 \"The null is fitted on cue-off laps from the same participants whose probe failures it judges.\"\n**Confidence**: 4 — standard double-use argument; the direction of bias follows from the brief's own definitions\n\nThe brief acknowledges this overlap but gives no correction and does not say which way it biases Δ. If dependency exists, it shows up as worse or more variable probe-lap passes. Those passes enter the fit, inflate the fitted σ (or depress the fitted trend), raise P_null, and shrink Δ toward zero. The design is therefore biased against detecting the effect it is built to detect. That is conservative, not self-sealing, but a null Δ would be uninterpretable. Minimum remedy: fit P_null with each participant's own probe laps held out (leave-own-probes-out), or fit on the unassisted block only, as the primary analysis or a pre-registered sensitivity analysis, and state the expected direction of bias. Stronger: a leave-one-participant-out fit, so that no participant's data calibrates their own null."
+    },
+    {
+      "claim_id": "c036",
+      "seat": "methodology",
+      "finding_id": "W6",
+      "text": "Treatment of censored probes is unspecified, and it changes P_obs\n**Severity**: Major\n**Evidence Anchor**: text: §8 item 5 \"how censored blocks (ending mid-probe) enter P_obs\"\n**Confidence**: 4 — censoring handling for a rate over a fixed lap budget is squarely in competence\n\nA 15-lap block with a 2-lap probe late in the block often ends mid-probe. Counting censored probes as passes, as failures, or excluding them gives different P_obs values, and the choice interacts with timing: probes that start late are both more likely to be censored and more likely to involve a practised driver. The comparison is fair only if P_null applies the identical rule to identically censored simulated probes, which the \"same lap budget\" phrase implies but does not state. Remedy: pre-specify one censoring rule (exclusion with a reported censoring count is the simplest), apply it identically in the simulator, and report sensitivity to the alternatives."
+    }
+  ]
+}

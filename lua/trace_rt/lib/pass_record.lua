@@ -92,12 +92,15 @@ end
 --   evaluation = lib/evaluator.evaluate(...)      (criteria + the two braking gates)
 --   qualified  = lib/controller.qualified(state, corner_id)
 --   stage      = lib/controller.stages(state)
+--   kr         = lib/kr.evaluate(...).outcomes    (optional; nil => no kr key)
 --
 -- Note what is recorded even when the pass fed nothing to the controller: a null
 -- criterion, a null metric and the gates that produced them. The Gate G2 audit
 -- has to be able to tell "the driver failed this corner" from "we never measured
--- it", and only the log can say which.
-function M.attach(rec, metrics, evaluation, qualified, stage)
+-- it", and only the log can say which. The KR outcomes are here for the mirror
+-- reason, one level out: they tell "the driver was told their error" from the
+-- three different silences (inside the band, withdrawn, not measured).
+function M.attach(rec, metrics, evaluation, qualified, stage, kr)
   local m = rec.metrics
   m.brake_initiation_distance_m = or_null(metrics.brake_initiation_distance_m)
   m.min_corner_speed_kmh = or_null(metrics.min_corner_speed_kmh)
@@ -108,6 +111,12 @@ function M.attach(rec, metrics, evaluation, qualified, stage)
       spline_pos = metrics.brake_initiation.spline_pos,
     }
   end
+  -- Present only when true, so absent means not clamped (the dev_block pattern)
+  -- and every pass record written before this field existed stays schema-valid.
+  -- Copied explicitly, like every other metric: this function never spreads the
+  -- metrics table wholesale, so that a field reaching the log is always a
+  -- deliberate act and the schema and this function cannot drift apart silently.
+  if metrics.brake_initiation_clamped then m.brake_initiation_clamped = true end
   if metrics.brake_modulation ~= nil then
     m.brake_modulation = {
       peak = metrics.brake_modulation.peak,
@@ -134,6 +143,26 @@ function M.attach(rec, metrics, evaluation, qualified, stage)
     for i = 1, #ELEMENTS do
       rec.stage[ELEMENTS[i]] = stage[ELEMENTS[i]]
     end
+  end
+
+  -- Absent rather than placeholder when KR did not run. A block with no
+  -- reference table has no bands, so it has no KR to have an outcome about, and
+  -- a row of 'off' entries would read as "KR was configured off" — which is a
+  -- different fact and one that matters to the diagnostic. Copied field by
+  -- field so a schema-invalid extra key cannot ride in from the caller.
+  if kr ~= nil then
+    local t = {}
+    for i = 1, #ELEMENTS do
+      local src = kr[ELEMENTS[i]]
+      if src ~= nil then
+        local e = { outcome = src.outcome }
+        if src.text ~= nil then e.text = src.text end
+        if src.error_value ~= nil then e.error_value = src.error_value end
+        if src.band ~= nil then e.band = src.band end
+        t[ELEMENTS[i]] = e
+      end
+    end
+    rec.kr = t
   end
   return rec
 end

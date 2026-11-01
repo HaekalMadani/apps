@@ -45,6 +45,24 @@ def load_trace(path):
 
 
 def merged_config(trace):
+    """The config a trace runs under: its OWN pinned one, never the live file.
+
+    Changed 2026-10-15. Traces used to carry no config, so both implementations
+    read `configs/controller_config.json` and the corpus was coupled to
+    calibration: the frozen-g1 -> frozen-g1b recalibration churned all eleven
+    traces, and three of them silently stopped exercising the behaviour their
+    names claim. The corpus exists to catch a Lua/Python DIVERGENCE, and at the
+    one moment the two could have diverged, the detector had to be regenerated.
+
+    Pinning decouples them. What pins the LIVE configuration is the committed
+    simulation report's SHA-256 (test_m4_simulate.py), which is the right place
+    for it.
+
+    The fallback is kept so a trace written before this change still loads,
+    rather than failing in a way that looks like a parity bug.
+    """
+    if "config" in trace:
+        return json.loads(json.dumps(trace["config"]))
     cfg = json.loads(json.dumps(BASE_CONFIG))
     for section, values in trace.get("config_overrides", {}).items():
         cfg[section].update(values)
@@ -190,6 +208,56 @@ def test_trace_id_matches_filename(path):
     assert load_trace(path)["trace_id"] == path.stem
 
 
+@pytest.mark.parametrize("path", TRACES, ids=TRACE_IDS)
+def test_each_trace_pins_its_own_valid_controller_config(path):
+    """Every trace carries the complete config it was generated against.
+
+    Added 2026-10-15 with the `config` field. The corpus's job is catching a
+    divergence between `controller.lua` and `controller.py`; it is not a check
+    on the live calibration, which the committed simulation report's SHA-256
+    pins instead (test_m4_simulate.py). Keeping the two separate is what stops
+    a recalibration churning the corpus -- and the churn was not harmless: when
+    frozen-g1b shortened the ladder, three cases silently stopped exercising
+    the behaviour their names claim.
+
+    The pinned config must be a VALID controller config, or the trace is
+    certifying agreement on input the apparatus would refuse to load.
+    """
+    trace = load_trace(path)
+    assert "config" in trace, (
+        "{} carries no pinned config, so it would fall back to the live file "
+        "and re-couple the corpus to calibration".format(path.name))
+    errors = pyval.validate_data("controller_config", trace["config"])
+    assert errors == [], "{}: {}".format(path.name, errors)
+    # `config_overrides`, where present, is documentation of how this trace
+    # deviates from the study configuration -- so it must actually be reflected
+    # in the pinned config, or the two disagree about what the case is.
+    for section, values in trace.get("config_overrides", {}).items():
+        for key, value in values.items():
+            assert trace["config"][section][key] == value, (
+                "{}: config_overrides says {}.{} = {} but the pinned config "
+                "says {}".format(path.name, section, key, value,
+                                 trace["config"][section][key]))
+
+
+def test_the_corpus_is_not_silently_detached_from_the_study_configuration():
+    """Pinning decouples the corpus from calibration -- but not from reality.
+
+    If NO trace is pinned at the live configuration, the corpus is testing
+    parity only at calibrations nobody drives, and a divergence that appears
+    only at the shipped settings would go unseen. So at least one trace must
+    still match `configs/controller_config.json`, and when a recalibration
+    breaks that, the fix is to re-author the corpus deliberately rather than to
+    delete this test.
+    """
+    live = json.dumps(BASE_CONFIG, sort_keys=True)
+    pinned = [json.dumps(load_trace(p).get("config"), sort_keys=True) for p in TRACES]
+    assert live in pinned, (
+        "no golden trace is pinned at the live controller config, so the "
+        "corpus no longer exercises parity at the calibration participants "
+        "drive -- re-run golden_traces/generate.py")
+
+
 # --- 1. Lua and Python agree -------------------------------------------------
 
 @pytest.mark.parametrize("path", TRACES, ids=TRACE_IDS)
@@ -252,14 +320,32 @@ def trace_named(name):
 
 
 def test_fast_improver_traverses_the_whole_machine_within_the_lap_budget():
-    """Framing v6's arithmetic: full traverse in roughly 9-11 laps."""
+    """The lap-budget arithmetic, computed rather than written out.
+
+    A traversal cannot complete before
+    `2 * required_passes + max(probe.laps, required_passes)` laps, because
+    `_quorum_ready` is keyed on `required_passes` and gates `probe_to_removed`
+    too, so the probe needs a fresh window after the advance into it resets the
+    evidence. This read `8 <= laps <= 11`, which was the frozen-g1 floor of 9
+    plus slack; at frozen-g1b the floor is 6 and the literal said nothing about
+    the rule. The bound is now the floor itself plus the same slack.
+    """
     trace = trace_named("fast_improver")
+    cfg = merged_config(trace)
+    required = cfg["qualification"]["required_passes"]
+    floor = 2 * required + max(cfg["probe"]["laps"], required)
     for element in ("braking", "corner_speed", "apex"):
         assert transitions(trace, element) == [
             "full_to_reduced", "reduced_to_probe", "probe_to_removed"]
         removal_lap = events_of(trace, element)[-1]["lap"]
-        # Laps are 0-indexed, so a removal on lap 8 is the 9th lap of driving.
-        assert 8 <= removal_lap + 1 <= 11, "traverse took {} laps".format(removal_lap + 1)
+        # Laps are 0-indexed, so a removal on lap 5 is the 6th lap of driving.
+        laps_taken = removal_lap + 1
+        assert laps_taken >= floor, (
+            "a traversal completed in {} laps, under the arithmetic floor of "
+            "{} -- the controller skipped evidence it is required to "
+            "collect".format(laps_taken, floor))
+        assert laps_taken <= floor + 2, (
+            "traverse took {} laps against a floor of {}".format(laps_taken, floor))
 
 
 def test_fast_improver_dwells_at_reduced_because_of_the_requalification_reset():
@@ -269,9 +355,14 @@ def test_fast_improver_dwells_at_reduced_because_of_the_requalification_reset():
     the element would advance again on the next pass. The paired
     `no_requalify_degenerate` trace is what that looks like.
     """
-    ev = events_of(trace_named("fast_improver"))
+    trace = trace_named("fast_improver")
+    ev = events_of(trace)
     advance_to_reduced, advance_to_probe = ev[0]["lap"], ev[1]["lap"]
-    assert advance_to_probe - advance_to_reduced >= 3
+    # The dwell the reset enforces is `required_passes` laps -- each applicable
+    # corner must refill its window under the NEW salience level. This read
+    # `>= 3`, which was frozen-g1's value, not the rule.
+    assert (advance_to_probe - advance_to_reduced
+            >= merged_config(trace)["qualification"]["required_passes"])
 
     degenerate = events_of(trace_named("no_requalify_degenerate"))
     assert degenerate[1]["lap"] - degenerate[0]["lap"] <= 1, (
@@ -285,18 +376,56 @@ def test_non_improver_never_leaves_full_salience():
     assert all(el["stage"] == "full" for el in result["final"].values())
 
 
-def test_alternating_corner_never_dequalifies_but_cannot_requalify_after_a_reset():
-    """The acknowledged hysteresis pathology and both of its backstops."""
+def test_alternating_corner_qualifies_under_a_three_pass_window():
+    """The acknowledged hysteresis pathology — which INVERTED at frozen-g1b.
+
+    **Accepted design cost, 2026-10-15. Do not "fix" this test.**
+
+    A corner meeting its criterion every *other* pass never accumulates two
+    consecutive failures, so it can never de-qualify. The question is whether it
+    can ever QUALIFY, and that is pure arithmetic: an alternating pattern yields
+    ceil(n/2) of the last n passes.
+
+        3-of-4 (frozen-g1):  2 of 4 < 3  ->  STALLS, the conservative direction
+        2-of-3 (frozen-g1b): 2 of 3 >= 2 ->  QUALIFIES, permanently
+
+    So under the 3-pass window a driver who is right half the time at a corner
+    is counted as competent there. Only `required_passes = 3` excludes an
+    alternating pattern, and that costs a 9-lap traversal floor against 6 — too
+    long for the adopted 15-lap block to traverse at these floors. **The
+    trade-off is derivable, not tuned: you cannot have both a 6-lap ladder and
+    alternating-rejection.** It was accepted knowingly; see
+    `SESSION_BUDGET_BRIEF.md` section K.
+
+    `dequalify_consecutive_failures = 1` was measured as a fix and rejected: it
+    does not stop the corner qualifying, and it takes
+    `share_removed_despite_regression` from 0.75% to 27%.
+
+    Write this up as a limitation, and state the direction it moved — the
+    design's "conservative on purpose: premature withdrawal is worse than
+    delayed" is weaker at a 3-pass window than it was at 4.
+    """
     trace = trace_named("alternating_corner")
     result = run_python(trace)
     corner_1 = next(c for c in result["final"]["braking"]["corners"] if c["corner_id"] == "1")
-    # Alternating means it never accumulates two consecutive failures...
+    # Alternating still means it never accumulates two consecutive failures.
     assert corner_1["consec_fail"] <= 1
-    # ...but after the re-qualification reset it can never reach 3 of 4 again,
-    # so it stays out of the quorum for the rest of the block.
-    assert "1" not in result["final"]["braking"]["qualified_corners"]
-    # Recorded honestly: at a four-corner denominator the other three still
-    # carry exactly the 0.75 advance threshold, so the element still fades.
+    cfg = merged_config(trace)
+    window = cfg["qualification"]["window_passes"]
+    required = cfg["qualification"]["required_passes"]
+    alternating_hits = -(-window // 2)          # ceil(window / 2)
+    if alternating_hits >= required:
+        assert "1" in result["final"]["braking"]["qualified_corners"], (
+            "an alternating corner yields {} of {}, which meets required_passes="
+            "{}, so it must be reported as QUALIFIED -- if it is not, the "
+            "window arithmetic above no longer describes the controller".format(
+                alternating_hits, window, required))
+    else:
+        assert "1" not in result["final"]["braking"]["qualified_corners"], (
+            "an alternating corner yields {} of {}, below required_passes={}, "
+            "so it must stall".format(alternating_hits, window, required))
+    # Either way the element fades: at a four-corner denominator the other
+    # three carry exactly the 0.75 advance threshold on their own.
     assert transitions(trace)[-1] == "probe_to_removed"
 
 
@@ -323,8 +452,7 @@ def test_block_end_mid_probe_is_censored_and_the_stage_stays_probe():
 def test_reversion_cap_pins_the_element_at_reduced():
     trace = trace_named("erratic_cap_reached")
     result = run_python(trace)
-    cap = trace["config_overrides"]["probe"]["reversion_cap"] if "config_overrides" in trace \
-        else BASE_CONFIG["probe"]["reversion_cap"]
+    cap = merged_config(trace)["probe"]["reversion_cap"]
     for element in ("braking", "corner_speed", "apex"):
         seq = transitions(trace, element)
         assert seq[-2:] == ["probe_to_revert", "cap_reached"]
@@ -364,9 +492,11 @@ def test_staggered_regression_reverts_the_probe():
     assert "probe_to_revert" in seq
     revert = next(e for e in events_of(trace) if e["transition"] == "probe_to_revert")
     probe_entry = next(e for e in events_of(trace) if e["transition"] == "reduced_to_probe")
-    # The probe is 3 laps and regression begins the lap after it is entered, so
-    # the reversion lands at the first lap the evidence can support a verdict.
-    assert revert["lap"] - probe_entry["lap"] <= BASE_CONFIG["probe"]["laps"]
+    # Regression begins the lap after the probe is entered, so the reversion
+    # lands within the probe's own length -- the first lap the evidence can
+    # support a verdict. Read from the trace's pinned config, not the live file.
+    assert (revert["lap"] - probe_entry["lap"]
+            <= merged_config(trace)["probe"]["laps"])
 
 
 def test_a_null_criterion_stalls_an_element_rather_than_fading_it():

@@ -294,3 +294,169 @@ def test_every_golden_trace_replays_cleanly_through_the_checker(tmp_path):
         passes = [{"lap": p["lap"]} for p in trace["passes"]]
         problems = integrity.check_fades(records, passes)
         assert problems == [], "{}: {}".format(path.name, problems)
+
+
+# --- the probe-suppression guarantee (KR, 2026-10-10) ------------------------
+#
+# Bandwidth KR is withdrawn exactly when an element's cue is hidden, because the
+# probe stage is this project's retention test. That is a claim the methods
+# chapter makes, so the checker has to be able to falsify it from the recorded
+# data rather than trusting the runtime -- the same reasoning as the fade-log
+# replay clause above.
+
+
+def kr_entry(outcome, **extra):
+    doc = {"outcome": outcome}
+    if outcome == "delivered":
+        doc.update({"text": "BRAKED 14 m early", "error_value": 14.2, "band": 5.0})
+    doc.update(extra)
+    return doc
+
+
+def kr_pass(corner_id, lap, stages, outcomes, **overrides):
+    return pass_record(corner_id, lap,
+                       stage=dict(stages),
+                       kr={e: kr_entry(o) for e, o in outcomes.items()},
+                       **overrides)
+
+
+FULL = {"braking": "full", "corner_speed": "full", "apex": "full"}
+
+
+def test_kr_delivered_at_full_salience_is_fine(tmp_path):
+    passes = [kr_pass("1", lap, FULL,
+                      {"braking": "delivered", "corner_speed": "inside_band",
+                       "apex": "inside_band"}) for lap in range(3)]
+    problems, _ = check(tmp_path, manifest_doc=manifest(), passes=passes, fades=[])
+    assert problems == [], problems
+
+
+def test_kr_delivered_during_a_probe_is_flagged(tmp_path):
+    """The clause that matters: a probe with feedback running is not a retention
+    test, it is a performance-with-feedback test."""
+    passes = [kr_pass("1", lap, dict(FULL, braking="probe"),
+                      {"braking": "delivered", "corner_speed": "inside_band",
+                       "apex": "inside_band"}) for lap in range(3)]
+    problems, _ = check(tmp_path, manifest_doc=manifest(), passes=passes, fades=[])
+    assert any("told its error while the element was hidden" in p for p in problems), problems
+
+
+def test_kr_delivered_after_removal_is_flagged(tmp_path):
+    passes = [kr_pass("1", 0, dict(FULL, apex="removed"),
+                      {"braking": "inside_band", "corner_speed": "inside_band",
+                       "apex": "delivered"})]
+    problems, _ = check(tmp_path, manifest_doc=manifest(), passes=passes, fades=[])
+    assert any("apex was told its error" in p for p in problems), problems
+
+
+def test_kr_delivered_in_an_off_block_is_flagged(tmp_path):
+    """Sessions 1 and 3 show nothing, so they tell nothing either -- otherwise
+    'unassisted performance' is measured with an error signal running."""
+    passes = [kr_pass("1", 0, FULL,
+                      {"braking": "delivered", "corner_speed": "inside_band",
+                       "apex": "inside_band"})]
+    problems, _ = check(tmp_path, manifest_doc=manifest(condition="off"), passes=passes)
+    assert any("told its error while the element was hidden" in p for p in problems), problems
+
+
+def test_kr_withdrawn_while_the_cue_was_visible_is_flagged(tmp_path):
+    """The other direction, and it matters as much: a message silently suppressed
+    while the cue was on screen is a quieter apparatus than the one described,
+    and biases the diagnostic toward 'the learner was never told'."""
+    passes = [kr_pass("1", 0, FULL,
+                      {"braking": "withdrawn", "corner_speed": "inside_band",
+                       "apex": "inside_band"})]
+    problems, _ = check(tmp_path, manifest_doc=manifest(), passes=passes, fades=[])
+    assert any("withdrawn while the element was visible" in p for p in problems), problems
+
+
+def test_kr_withdrawn_at_reduced_salience_is_still_flagged(tmp_path):
+    """KR does not fade (lib/kr rule 5). `reduced` drops parts of the cue; it
+    does not touch the error message."""
+    passes = [kr_pass("1", 0, dict(FULL, braking="reduced"),
+                      {"braking": "withdrawn", "corner_speed": "inside_band",
+                       "apex": "inside_band"})]
+    problems, _ = check(tmp_path, manifest_doc=manifest(), passes=passes, fades=[])
+    assert any("withdrawn while the element was visible" in p for p in problems), problems
+
+
+def test_a_static_block_keeps_its_kr(tmp_path):
+    """Static pins every element at full, so KR runs throughout -- which is what
+    keeps the only difference between conditions 'whether the cues fade'."""
+    passes = [kr_pass("1", 0, FULL,
+                      {"braking": "delivered", "corner_speed": "capped",
+                       "apex": "capped"})]
+    problems, _ = check(tmp_path, manifest_doc=manifest(condition="static"),
+                        passes=passes, fades=[])
+    assert problems == [], problems
+
+
+def test_a_pass_with_no_kr_field_is_not_a_fault(tmp_path):
+    """A dev block with no reference table has no bands, so it has no KR to have
+    an outcome about. Absent is the honest record, not a missing one."""
+    passes = [pass_record("1", lap) for lap in range(3)]
+    problems, _ = check(tmp_path, manifest_doc=manifest(), passes=passes, fades=[])
+    assert problems == [], problems
+
+
+# --- the clamped-initiation pairing (2026-10-14) -----------------------------
+#
+# A brake initiation clamped to its braking zone's opening is a FLOOR -- "at
+# least 83 m early" -- and the KRtest block read two of them out as magnitudes.
+# The outcome and the metric flag that justifies it have to agree, or the log
+# cannot tell a message withheld for a recorded reason from one withheld for
+# none, nor a floor that was spoken from a measurement that was.
+
+def clamped_metrics(distance=82.6):
+    return {"brake_initiation_distance_m": distance, "brake_initiation_clamped": True,
+            "min_corner_speed_kmh": 90.0, "speed_envelope_deviation_kmh": 0.0,
+            "apex_rms_m": 0.1}
+
+
+def test_a_clamped_metric_with_a_clamped_outcome_is_fine(tmp_path):
+    passes = [kr_pass("1", lap, FULL,
+                      {"braking": "clamped", "corner_speed": "inside_band",
+                       "apex": "inside_band"}, metrics=clamped_metrics())
+              for lap in range(3)]
+    problems, _ = check(tmp_path, manifest_doc=manifest(), passes=passes, fades=[])
+    assert problems == [], problems
+
+
+def test_a_clamped_metric_that_was_delivered_is_flagged(tmp_path):
+    """The KRtest fault itself: a floor read out as a measurement."""
+    passes = [kr_pass("1", 0, FULL,
+                      {"braking": "delivered", "corner_speed": "inside_band",
+                       "apex": "inside_band"}, metrics=clamped_metrics())]
+    problems, _ = check(tmp_path, manifest_doc=manifest(), passes=passes, fades=[])
+    assert any("clamped to its braking zone's opening" in p for p in problems), problems
+
+
+def test_a_clamped_outcome_with_no_flag_is_flagged(tmp_path):
+    """The other direction: a message withheld for no recorded reason."""
+    passes = [kr_pass("1", 0, FULL,
+                      {"braking": "clamped", "corner_speed": "inside_band",
+                       "apex": "inside_band"})]
+    problems, _ = check(tmp_path, manifest_doc=manifest(), passes=passes, fades=[])
+    assert any("metric is not flagged clamped" in p for p in problems), problems
+
+
+def test_a_clamped_outcome_on_another_element_is_flagged(tmp_path):
+    """Only the brake-initiation search bracket can clamp. Anything else is a bug."""
+    passes = [kr_pass("1", 0, FULL,
+                      {"braking": "inside_band", "corner_speed": "clamped",
+                       "apex": "inside_band"})]
+    problems, _ = check(tmp_path, manifest_doc=manifest(), passes=passes, fades=[])
+    assert any("only the braking metric can be clamped" in p for p in problems), problems
+
+
+def test_a_clamped_metric_is_not_flagged_while_the_element_is_hidden(tmp_path):
+    """Withdrawal is decided before the metric, so the pairing does not apply.
+
+    A probe that also happened to clamp must still read `withdrawn`, and the
+    clamp pairing must not turn that into a second, spurious problem.
+    """
+    passes = [kr_pass("1", 0, dict(FULL, braking="probe"),
+                      {"braking": "withdrawn", "corner_speed": "inside_band",
+                       "apex": "inside_band"}, metrics=clamped_metrics())]
+    problems, _ = check(tmp_path, manifest_doc=manifest(), passes=passes, fades=[])
+    assert problems == [], problems

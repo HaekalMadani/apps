@@ -536,3 +536,140 @@ def test_committed_reference_tables_meet_gate_g0_countable_clauses():
                     continue
                 assert n >= ref.MIN_LAPS_PER_CORNER, "{}: corner {} {} built from {} lap(s)".format(
                     name, corner["id"], element, n)
+
+
+# --- pit laps and lap timing (regression, 2026-10-10) -----------------------
+#
+# A reference recording where the AI pits for fuel reported 4.8% lap-time CoV --
+# a Gate G0 failure -- on a lap set whose eight clean laps agreed to within
+# 0.1 s. One 77.45 s pit lap among 67.5 s laps did it. Corner passes were
+# already filtered by validity; only the lap TIMING was not.
+
+def _pit_rows():
+    """Five laps at 10 s each; lap 3 is a pit lap and runs long."""
+    rows, t = [], 0.0
+    for lap in range(5):
+        duration = 20.0 if lap == 3 else 10.0
+        n = int(duration / 0.5)
+        for i in range(n):
+            rows.append({"lap": lap, "t": round(t, 3), "spline": i / float(n),
+                         "in_pit": (lap == 3)})
+            t += 0.5
+    rows.append({"lap": 5, "t": round(t, 3), "spline": 0.0, "in_pit": False})
+    return rows
+
+
+def test_lap_times_exclude_pit_laps():
+    from trace_kit import reference
+    times = reference.lap_times(_pit_rows())
+    # First (0) and last (5) are excluded as always; 3 drops out as a pit lap.
+    assert sorted(times) == [1, 2, 4]
+    assert all(abs(v - 10.0) < 1e-6 for v in times.values())
+
+
+def test_a_pit_lap_does_not_wreck_the_lap_time_cov():
+    """The actual G0 symptom: one long pit lap must not fail the gate."""
+    import statistics
+    from trace_kit import reference
+    times = list(reference.lap_times(_pit_rows()).values())
+    mean = statistics.fmean(times)
+    cov = (statistics.stdev(times) / mean) if len(times) > 1 else 0.0
+    assert cov < reference.G0_MAX_LAP_TIME_COV
+
+
+def test_a_pit_lap_still_bounds_its_neighbour():
+    """Dropping a pit lap must not corrupt the laps either side of it.
+
+    The lap before the pit lap is timed to the pit lap's first tick, so the pit
+    lap has to keep bounding its neighbour while not being timed itself.
+    """
+    from trace_kit import reference
+    times = reference.lap_times(_pit_rows())
+    assert abs(times[2] - 10.0) < 1e-6   # the lap immediately before the pit lap
+    assert abs(times[4] - 10.0) < 1e-6   # and the one immediately after
+
+
+# --- lap-scoped pit exclusion (regression, 2026-10-10) ----------------------
+#
+# The first real 85%-strength reference block had the AI box for fuel on lap 9.
+# Its corner-4 pass was clean by every validity gate -- the pass bracket sits
+# well before the pit entry -- and braked 35 m earlier than the other nine,
+# because the car was already on its way in. That one pass took the corner's
+# sigma_ref from 0.49 m to 10.98 m, and since bands are
+# max(sigma_ref x EVM_AI, floor) it would have handed corner 4 a 33 m braking
+# band: a criterion that is trivially true, from a reference that looks fine.
+
+def _lap_rows(laps, pit_laps=(), brake_at=0.5, brake_shift=0.0):
+    """One pass per lap through a corner at spline 0.4-0.6, braking at 0.5.
+
+    `brake_shift` moves the brake point on the PIT laps only, which is the
+    real-world effect being guarded against.
+    """
+    rows, t = [], 0.0
+    for lap in laps:
+        shift = brake_shift if lap in pit_laps else 0.0
+        for i in range(101):
+            spline = i / 100.0
+            rows.append({
+                "lap": lap, "t": round(t, 3), "spline": spline,
+                "brake": 1.0 if brake_at + shift <= spline <= 0.62 else 0.0,
+                "speed_kmh": 100.0, "throttle": 0.0, "steer": 0.0, "gear": 3,
+                "in_pit": lap in pit_laps and spline > 0.9,
+                "wheels_outside": 0,
+                "pos_x": spline * 1000.0, "pos_y": 0.0, "pos_z": 0.0,
+            })
+            t += 0.05
+    return rows
+
+
+def test_pass_is_clean_rejects_a_pass_on_a_lap_the_car_pitted_on():
+    corner = {"id": "1", "entry_gate": 0.4, "exit_gate": 0.62,
+              "zones": {"braking": {"start": 0.42, "end": 0.6}}}
+    rows = _lap_rows(range(1, 6), pit_laps={3})
+    pitted = ref.pit_laps(rows)
+    assert pitted == {3}
+    passes = list(ref.corner_passes(rows, corner))
+    # The pass itself never touches the pit lane -- in_pit is only true past
+    # spline 0.9, long after the exit gate -- so the pass-scoped gate alone
+    # would keep it.
+    pit_pass = [p for p in passes if p["lap"] == 3][0]
+    assert ref.pass_is_clean(pit_pass["rows"]) is True
+    assert ref.pass_is_clean(pit_pass["rows"], pitted) is False
+    kept = [p for p in passes if ref.pass_is_clean(p["rows"], pitted)]
+    assert {p["lap"] for p in kept} == {1, 2, 4, 5}
+
+
+def test_pit_laps_is_the_same_set_lap_timing_and_pass_filtering_both_use():
+    """One definition, two consumers. The CoV fix and this one are the same bug
+    seen at two levels, so they must not be able to disagree about which laps
+    are pit laps."""
+    rows = _lap_rows(range(1, 6), pit_laps={2, 4})
+    assert ref.pit_laps(rows) == {2, 4}
+    assert set(ref.lap_times(rows)) == {3}      # 1 and 5 bound the span; 2, 4 pit
+
+
+def test_braking_zone_fit_flags_too_little_room_AFTER_the_expert_point():
+    """The mirror of the early-side clause. A learner braking later than the
+    zone end has no initiation inside the zone at all, so the criterion yields
+    null and the corner silently leaves the braking element's evidence -- which
+    is exactly the failure the early-side check exists to prevent, unnoticed for
+    a month because the check only looked one way.
+    """
+    # The expert brakes at spline 0.59, 10 m before a zone ending at 0.60.
+    corner = {"id": "1", "entry_gate": 0.4, "exit_gate": 0.70,
+              "zones": {"braking": {"start": 0.40, "end": 0.60}}}
+    rows = _lap_rows(range(1, 6), brake_at=0.59)
+    passes = [p for p in ref.corner_passes(rows, corner)]
+    problems = ref.check_braking_zone_fit(corner, passes, corner["zones"]["braking"],
+                                          0.1, 1000.0)
+    assert any("after the expert's brake point" in p for p in problems), problems
+    assert any("Move zones.braking.end later" in p for p in problems), problems
+
+
+def test_braking_zone_fit_is_silent_when_both_sides_have_room():
+    corner = {"id": "1", "entry_gate": 0.3, "exit_gate": 0.80,
+              "zones": {"braking": {"start": 0.35, "end": 0.75}}}
+    rows = _lap_rows(range(1, 6), brake_at=0.5)
+    passes = [p for p in ref.corner_passes(rows, corner)]
+    assert ref.check_braking_zone_fit(corner, passes, corner["zones"]["braking"],
+                                      0.1, 1000.0) == []

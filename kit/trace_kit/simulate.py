@@ -90,8 +90,21 @@ MODEL = OrderedDict([
     ("brake_sigma_m", 4.0),
     ("speed_offset0_kmh", 12.0),    # km/h SLOW through the corner
     ("speed_sigma_kmh", 2.0),
-    ("apex_offset0_m", 1.2),        # metres of extra RMS deviation from the line
-    ("apex_sigma_m", 0.30),
+    # MEASURED, 2026-10-15, replacing the assumed 1.2 m / 0.30 m. From
+    # kit/tools/apexscan.py over 227 real pair-1 passes against the 85%
+    # reference: mean excess 2.49 m, lap-to-lap SD 1.86 m. The assumed sigma was
+    # wrong by about SIX TIMES, and `CLAUDE.md` had already recorded that G1's
+    # apex numbers were optimistic because of it.
+    #
+    # It is not a cosmetic correction. At the frozen-g1 floors it halved the
+    # typical improver's elements-removed (1.565 -> 0.828). At the frozen-g1b
+    # apex floor of 1.5 m it reverses a GATE VERDICT: the assumed novice's apex
+    # excess is ~1.3 m with sigma 0.30, so a 1.5 m band simply CONTAINS it and
+    # 68% of non-improvers fade; the measured novice sits outside that band and
+    # the figure is 5%. Leaving the assumed values would have certified a band
+    # width against a learner nobody has observed.
+    ("apex_offset0_m", 2.49),       # metres of extra RMS deviation from the line
+    ("apex_sigma_m", 1.86),
     # Corners are not equally hard. Each stream draws a per-corner difficulty
     # multiplier on its initial offsets, so the quorum has to be carried by a
     # mix of easy and hard corners rather than by a uniform learner.
@@ -99,9 +112,71 @@ MODEL = OrderedDict([
     ("difficulty_max", 1.6),
 ])
 
-# A block is 30 minutes of driving, which the eval plan expects to yield 13-15
-# laps on a ~2-minute circuit.
+# A block is 15 laps (2026-10-15, SESSION_BUDGET_BRIEF.md Shape B).
+#
+# It used to read "30 minutes of driving, which the eval plan expects to yield
+# 13-15 laps on a ~2-minute circuit" and BOTH halves of that were wrong. The
+# whole study is now ONE ~30-minute sitting, so the training block is ~17.5 min
+# of driving, not 30; and neither layout is a 2-minute circuit -- measured wall
+# clock is 62-76 s/lap at National and 71-98 s at International, so a time box
+# at 30 min would have yielded ~25 laps.
+#
+# 15 rather than 12 is a deliberate purchase: at the frozen-g1b calibration G1's
+# first target scores 0.430 at 12 laps and 0.720 at 15, so three laps -- about
+# 3.5 minutes of session time -- is what moves target 1 from failing to passing.
+#
+# It must be enforced as a LAP COUNT, never a time box. A participant who spins
+# twice inside a 17.5-minute box lands at 12-13 laps, where the target fails,
+# and nothing about the block would look wrong.
 BLOCK_LAPS = 15
+
+# --- Gate G1's stated error rates (2026-10-15) -------------------------------
+#
+# Targets 2 and 3 used to be ZERO-TOLERANCE clauses: a non-improver must never
+# leave full salience (exactly 0.000), and broad regression must never be
+# answered by removal (exactly 0.000). Both were satisfied at `frozen-g1` -- by
+# a system that never faded anything, for anyone. On real recorded passes at
+# those floors the braking and apex elements never advanced in a single block
+# (`kit/tools/README.md` section `feasible.py`). **A conservatism target is
+# trivially met by a system that never acts**, so neither clause could judge a
+# working configuration, and every calibration that made the machine work failed
+# both.
+#
+# They are now STATED RATES with the counter-rate reported beside them, which is
+# the contrasting-groups reporting style this project already adopted for the
+# band floors (Jorgensen, Konge & Subhi 2018 -- place the cut at a stated
+# false-pass rate and report the false-fail rate;
+# `BAND_CALIBRATION_BRIEF.md` section E). It is also the same move eval plan v2
+# already made once, for target 3's staggered-reversion clause, and for the same
+# reason: a bar below its own arithmetic floor measures nothing.
+#
+# **THESE TWO VALUES ARE DECLARED DESIGN PARAMETERS, NOT MEASUREMENTS, AND THEY
+# ARE PROVISIONAL UNTIL GATE G2.** The literature gives no rate to copy -- that
+# is the band-calibration review's central finding. What justifies them is
+# stated per rate below, and G2's contrasting-groups ROC on recorded pilot data
+# is what replaces them. Report them as thresholds the design declared, never as
+# thresholds the literature set.
+TARGET_RATES = {
+    # FALSE PASS: a learner who never improves loses a cue anyway. Bounded, not
+    # forbidden. Justified by the design's own stated asymmetry -- "conservative
+    # on purpose: premature withdrawal is worse than delayed" -- which requires
+    # this rate to sit well UNDER the false-fail rate rather than at any
+    # particular absolute value. The false-fail rate at this calibration is the
+    # complement of target 1 (~28% of typical improvers do not traverse), so
+    # 0.10 keeps the asymmetry at roughly 3:1. The asymmetry itself is asserted
+    # below, so a calibration that inverted it would fail even inside the bound.
+    "non_improver_false_fade": 0.10,
+    # REMOVED DESPITE REGRESSION: the design's core safety property, and a
+    # strictly costlier error -- a late reversion costs one lap driven without
+    # the cue, a removal costs the rest of the block (permanence is
+    # block-scoped). So it is bounded an order of magnitude tighter than the
+    # false-pass rate. 0.02 is also the value that makes the bound DISCRIMINATE:
+    # the adopted 2-of-3 / 2-lap-probe ladder measures 0.0075, while every
+    # 3-of-4 alternative at workable floors measures 0.12-0.26, because a 9-lap
+    # ladder puts removal exactly where regression onsets land. A bound that
+    # admitted 13% would not be a safety bound at all.
+    "removed_despite_regression": 0.02,
+}
 
 
 class Learner:
@@ -384,17 +459,40 @@ def evaluate_targets(by_type):
 
     non = by_type["non_improver"]["summaries"]
     leaked = _share(non, lambda s: s["left_full"] > 0)
+    # The counter-rate, reported beside it: the share of typical improvers that
+    # did NOT traverse. Contrasting-groups reporting needs both margins, and
+    # these two are the design's false-pass and false-fail.
+    false_fail = round(1.0 - share, 4)
+    bound = TARGET_RATES["non_improver_false_fade"]
     targets.append({
-        "id": "non_improver_never_fades",
-        "statement": "A non-improver never leaves full salience.",
+        "id": "non_improver_false_fade_rate_is_bounded",
+        "statement": (
+            "A non-improver loses a cue in at most {:.0%} of streams, and less "
+            "often than a typical improver fails to traverse.".format(bound)),
         "operationalisation": (
-            "Read strictly: NO non_improver stream may move any element off "
-            "full. This is what bounds the bands from above, and it is the "
-            "direction the design says to err on (premature withdrawal is worse "
-            "than delayed)."),
-        "measured": {"share_with_any_fade": round(leaked, 4)},
-        "threshold": 0.0,
-        "met": leaked == 0.0,
+            "RESTATED 2026-10-15. This read 'a non-improver NEVER leaves full "
+            "salience', at exactly 0.000. That bar was satisfied only by the "
+            "`frozen-g1` floors, which satisfied it by never fading anything "
+            "for anyone -- on real recorded passes the braking and apex "
+            "elements never advanced in a single block. A conservatism target "
+            "is trivially met by a system that never acts, so the clause could "
+            "not judge a working configuration and every calibration that made "
+            "the machine work failed it. It is now a stated FALSE-PASS rate "
+            "with the FALSE-FAIL rate reported beside it, which is the "
+            "contrasting-groups style already adopted for the band floors "
+            "(Jorgensen et al. 2018). The bound is a declared design "
+            "parameter, PROVISIONAL until Gate G2 sets it from pilot data, and "
+            "not a value the literature supplies -- see simulate.TARGET_RATES. "
+            "The asymmetry is asserted as well as the bound: the design errs "
+            "toward delayed withdrawal, so a false pass must stay rarer than a "
+            "false fail even when both are inside tolerance."),
+        "measured": {
+            "share_with_any_fade": round(leaked, 4),
+            "false_fail_share_typical_improver_not_traversing": false_fail,
+            "asymmetry_holds": bool(leaked < false_fail),
+        },
+        "threshold": {"max_false_pass": bound, "false_pass_below_false_fail": True},
+        "met": leaked <= bound and leaked < false_fail,
     })
 
     sync_lags = [lag for s in by_type["synchronised_regressor"]["summaries"]
@@ -421,7 +519,9 @@ def evaluate_targets(by_type):
         "statement": (
             "Reversion triggers on broad regression within one lap of onset when "
             "regression is synchronised across corners, and within two laps when "
-            "it is staggered; and broad regression is never answered by removal."),
+            "it is staggered; and broad regression is answered by removal in at "
+            "most {:.0%} of regressing streams.".format(
+                TARGET_RATES["removed_despite_regression"])),
         "operationalisation": (
             "Measured as EXCESS latency over the arithmetic floor (see "
             "earliest_reversion_lap), read as the median stream for the same "
@@ -444,7 +544,18 @@ def evaluate_targets(by_type):
             "latency is likewise not an anomaly: inside a probe the evidence "
             "windows have just been reset, so a regressing corner never "
             "re-qualifies rather than having to de-qualify, and the reversion "
-            "can beat the de-qualification floor."),
+            "can beat the de-qualification floor. "
+            "REMOVAL CLAUSE RESTATED 2026-10-15: it read 'admits no tolerable "
+            "failures' at exactly 0.000, which -- like target 2 -- only the "
+            "`frozen-g1` floors satisfied, and they satisfied it by never "
+            "removing anything. It is now a stated rate, bounded an order of "
+            "magnitude tighter than target 2's false-pass rate because the "
+            "error is strictly costlier: a late reversion costs one lap driven "
+            "without the cue, a removal costs the rest of the block. The bound "
+            "also discriminates, which a bound must: the adopted 2-of-3 ladder "
+            "measures under 1% while every 3-of-4 alternative at workable "
+            "floors measures 12-26%. PROVISIONAL until Gate G2 -- see "
+            "simulate.TARGET_RATES."),
         "measured": {
             "synchronised_median_excess_laps": sync_excess_median,
             "staggered_median_excess_laps": stag_excess_median,
@@ -456,10 +567,15 @@ def evaluate_targets(by_type):
             "n_staggered_reversions": len(stag_lags),
             "share_removed_despite_regression": round(removed_despite_regression, 4),
         },
-        "threshold": {"median_excess_laps": 1, "share_removed_despite_regression": 0.0},
+        "threshold": {
+            "median_excess_laps": 1,
+            "max_share_removed_despite_regression":
+                TARGET_RATES["removed_despite_regression"],
+        },
         "met": (sync_excess_median is not None and stag_excess_median is not None
                 and sync_excess_median <= 1 and stag_excess_median <= 1
-                and removed_despite_regression == 0.0),
+                and removed_despite_regression
+                <= TARGET_RATES["removed_despite_regression"]),
     })
     return targets
 
@@ -679,6 +795,27 @@ def config_hash():
     return hashlib.sha256(CONFIG_PATH.read_bytes()).hexdigest()
 
 
+def reference_hashes():
+    """SHA-256 per committed reference table, keyed by file name.
+
+    The config is not the only input the verdict depends on. Every stream runs
+    against the committed reference tables, so their corner counts, quorum
+    denominators and (for the apex criterion) their own `mean_rms_m` all feed
+    the numbers -- and a reference the simulation never saw is as much a problem
+    as a config it never saw.
+
+    This exists because that hole was open and was found the hard way: pair 1's
+    reference was replaced with the 85%-strength table on 2026-10-10 and the
+    committed report went on describing results computed against the 100% one.
+    Nothing caught it, because only the config was pinned. It surfaced days'
+    worth of claims later, by accident, when an unrelated config field forced a
+    re-run and the apex curves moved. `test_m4_simulate.py` asserts these now,
+    so a reference swap fails the suite the same way a config edit does.
+    """
+    return {path.name: hashlib.sha256(path.read_bytes()).hexdigest()
+            for path in sorted(REFERENCES_DIR.glob("reference_pair?.json"))}
+
+
 def strip_summaries(report):
     """The report minus the per-stream detail, for writing to disk."""
     out = {"total_streams": report["total_streams"],
@@ -728,6 +865,7 @@ def cmd_run(args):
         doc = strip_summaries(report)
         doc["config_id"] = cfg["config_id"]
         doc["config_sha256"] = config_hash()
+        doc["reference_sha256"] = reference_hashes()
         doc["seed"] = args.seed
         (out / "simulation_report.json").write_text(
             json.dumps(doc, indent=2) + "\n", encoding="utf-8")
@@ -779,12 +917,30 @@ def cmd_sweep(args):
     return 0 if passing else 1
 
 
+def _coerce(value):
+    """Parse a --set value, keeping INTEGERS integral.
+
+    `float(value)` for everything wrote `window_passes: 3.0` into the frozen
+    config (2026-10-15). Several fields are `"type": "integer"` in
+    `schemas/controller_config.schema.json` -- `qualification.window_passes`,
+    `required_passes`, `dequalify_consecutive_failures`, `probe.laps`,
+    `probe.reversion_cap`, `logging.tick_rate_hz` -- and a float there is a
+    config that only validates by the grace of JSON Schema treating 3.0 as an
+    integer. The Lua validator is a separate implementation and must not be
+    relied on to agree. Band floors and thresholds stay floats, as they should.
+    """
+    try:
+        return int(value)
+    except ValueError:
+        return float(value)
+
+
 def cmd_freeze(args):
     cfg = load_config()
     cfg["config_id"] = args.config_id
     for assignment in args.set or []:
         dotted, value = assignment.split("=")
-        _set(cfg, dotted, float(value))
+        _set(cfg, dotted, _coerce(value))
     CONFIG_PATH.write_text(json.dumps(cfg, indent=2) + "\n", encoding="utf-8")
     print("wrote {}".format(CONFIG_PATH))
     print("config_id: {}".format(cfg["config_id"]))

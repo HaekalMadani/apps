@@ -40,6 +40,32 @@ ALL = {"braking": CORNERS, "corner_speed": CORNERS, "apex": CORNERS}
 # enough for a trace whose only use of `t` is stamping events.
 LAP_SECONDS = 60.0
 
+# --- the ladder's landmarks, DERIVED from the config -------------------------
+#
+# Added 2026-10-15. Several traces have to place an event at a precise point on
+# the ladder -- a collapse *inside* a probe, a block ending *mid*-probe, a
+# regression onset arriving before removal completes -- and they did it with
+# written-out lap numbers tuned to the frozen-g1 ladder (9 laps). When
+# frozen-g1b shortened it to 6, those numbers silently stopped meaning what
+# their names said: `block_end_mid_probe` ran past its probe and ended at
+# `removed`, so it censored nothing; `erratic_cap_reached` never reverted, so it
+# never reached the cap; `staggered_regression` had already removed the element
+# before the first onset. **Three cases went on passing their own blobs while
+# testing nothing.** Deriving the landmarks instead means the corpus re-times
+# itself the next time G2 recalibrates.
+#
+# A perfect learner advances every `required_passes` laps, and the advance into
+# a probe resets the evidence, so the probe costs
+# max(probe.laps, required_passes) more laps. Verified against the runtime at
+# frozen-g1b: reduced@1, probe@3, removed@5.
+REQUIRED = BASE_CONFIG["qualification"]["required_passes"]
+PROBE_LAPS = BASE_CONFIG["probe"]["laps"]
+LAP_REDUCED = REQUIRED - 1
+LAP_PROBE = 2 * REQUIRED - 1
+LAP_REMOVED = LAP_PROBE + max(PROBE_LAPS, REQUIRED)
+# One full rebuild after a probe reversion: back to reduced, re-qualify, advance.
+REBUILD_LAPS = 2 * REQUIRED
+
 
 def merged_config(overrides):
     cfg = copy.deepcopy(BASE_CONFIG)
@@ -87,6 +113,12 @@ def build(trace_id, description, pass_list, applicable=None, overrides=None, fin
     }
     if overrides:
         doc["config_overrides"] = overrides
+    # The COMPLETE config this trace was generated against, pinned into the
+    # trace (2026-10-15). Both implementations are handed this object, never the
+    # file on disk, so a recalibration no longer churns the corpus -- see the
+    # `config` description in schemas/golden_trace.schema.json and the
+    # "Re-timing after a calibration change" section of README.md.
+    doc["config"] = cfg
     doc["passes"] = pass_list
     if finish is not None:
         doc["finish"] = finish
@@ -176,18 +208,36 @@ def trace_block_end_mid_probe():
         "censored (incomplete / right-censored): in RQ1's probe-outcome tabulation "
         "it counts as neither held nor reverted, and the element's final stage "
         "stays `probe`.",
-        passes(7, lambda lap, cid: dict(ALL_TRUE)),
-        finish={"lap": 7, "t": 7 * LAP_SECONDS},
+        passes(LAP_PROBE + 2, lambda lap, cid: dict(ALL_TRUE)),
+        finish={"lap": LAP_PROBE + 2, "t": (LAP_PROBE + 2) * LAP_SECONDS},
     )
 
 
 def trace_erratic_cap_reached():
+    # Two broad collapses, each placed INSIDE a probe -- the one entered at
+    # LAP_PROBE, and the one entered after the rebuild -- so both produce probe
+    # reversions rather than reversions from reduced. The second hits the cap.
+    # Two consecutive failing laps per collapse, because a corner cannot
+    # de-qualify before its second consecutive failure.
+    # The collapse must begin the lap AFTER the probe is entered, not on it: a
+    # broad failure ON the entry lap withholds the quorum and simply blocks the
+    # advance, so the element reverts from `reduced` and the case never
+    # exercises `probe_to_revert` at all. (It did exactly that on the first
+    # re-timing attempt.) `staggered_regression` can start on the entry lap
+    # because only one of its four corners fails there, leaving 0.75.
+    first = (LAP_PROBE + 1, LAP_PROBE + 2)
+    # A probe reversion drops the element to `reduced` and leaves the collapsed
+    # corners de-qualified, but it does NOT reset their windows (reversions
+    # never do), so the rebuild is `required_passes` clean laps and the second
+    # probe is entered that soon -- not after a full fresh ladder. Overshooting
+    # this let the second probe complete, so the case reached `removed` and
+    # never touched the cap.
+    second_probe = first[-1] + REQUIRED
+    second = (second_probe + 1, second_probe + 2)
+    collapses = set(first) | set(second)
+
     def decide(lap, cid):
-        # Clean except for two broad collapses, each placed INSIDE a probe (the
-        # one entered at lap 5 and the one entered after the rebuild), so both
-        # produce probe reversions rather than reversions from reduced. The
-        # second hits the cap.
-        met = lap not in (6, 7, 12, 13)
+        met = lap not in collapses
         return const(met, met, met)
 
     return build(
@@ -220,10 +270,13 @@ def trace_zero_applicable_braking():
 
 def trace_staggered_regression():
     def decide(lap, cid):
-        # Broad competence, then regression onset spread one corner per lap from
-        # lap 6 — real regression is not synchronised (eval plan v2, target 3).
-        # Lap 6 lands the onset inside the probe entered at lap 5.
-        onset = {"1": 6, "2": 7, "3": 8, "4": 9}[cid]
+        # Broad competence, then regression onset spread one corner per lap —
+        # real regression is not synchronised (eval plan v2, target 3). The
+        # first onset lands INSIDE the probe entered at LAP_PROBE, which is the
+        # whole point of the case: it must arrive before the probe can
+        # complete, or the element is already `removed` and there is no probe
+        # left to revert.
+        onset = LAP_PROBE + CORNERS.index(cid)
         met = lap < onset
         return const(met, met, met)
 

@@ -1,0 +1,222 @@
+### simulated learners evaluate mastery criteria false mastery rate
+Q='simulated learners evaluate mastery criteria false mastery rate' filter='' count=1639
+  2023 | The Development of an Automatic Test Assembly System for a Formative Assessment in Mastery Learning Instructio | IEEE Access | https://doi.org/10.1109/access.2023.3311615
+  2020 | A Functional Contextualist Approach to Mastery Learning in Vocational Education and Training | Frontiers in Psychology | https://doi.org/10.3389/fpsyg.2020.01479
+  2024 | Automatically assessing student mastery and designing optimal stopping policies |  | https://doi.org/10.5463/thesis.650
+  2026 | Leveraging Large Language Models for Mastery Tutor Construction |  | https://doi.org/10.22215/etd/2026-17143
+  2017 | Sequential mastery detection and Bayesian learning promotion under cognitive diagnosis models | Illinois Digital Environment for Access  | None
+  2026 | When Difficulty Adaptation Reshapes Mastery Dynamics: A Closed-Loop Simulation of Bayesian Knowledge Tracing i | SSRN Electronic Journal | https://doi.org/10.2139/ssrn.7578618
+  2024 | From Exploration to Mastery: Enabling LLMs to Master Tools via Self-Driven Interactions | arXiv (Cornell University) | https://doi.org/10.48550/arxiv.2410.08197
+  2025 | AI-Driven Tai Chi mastery using deep learning framework for movement assessment and personalized training | Scientific Reports | https://doi.org/10.1038/s41598-025-17187-8
+  2026 | When AI evaluates its own work: Validating learner-initiated, AI-generated physics practice problems | Physical Review Physics Education Resear | https://doi.org/10.1103/9hh9-vt4d
+  2026 | ResidencyRL: Reinforcement Learning in Simulated Clinical Environments | arXiv (Cornell University) | https://doi.org/10.48550/arxiv.2608.07418
+  2026 | Counterfactual Question Generation Uncovering Learner Contradictions | Proceedings of the AAAI Conference on Ar | https://doi.org/10.1609/aaai.v40i23.39023
+  2020 | A Simulation-Based Teaching Strategy to Achieve Competence in Learners | University of Bridgeport ScholarWorks (U | None
+  2010 | Report to Senate Tuition and Learner Support Committee | Unisa Institutional Repository (Universi | None
+  2017 | The impact of translation on L2 learners’ metalinguistic competence | International Journal of Research Studie | https://doi.org/10.5861/ijrsll.2017.1685
+  2022 | Development And Implementation Of Genetics Modules For Young Learners | Digital Archive @ GSU | https://doi.org/10.57709/12506222
+Q='simulated learners evaluate mastery criteria false mastery rate' ERROR HTTP Error 429: 
+### simulated students null model mastery learning stopping rule
+Q='simulated students null model mastery learning stopping rule' filter='' count=114
+  2017 | Sequential mastery detection and Bayesian learning promotion under cognitive diagnosis models | Illinois Digital Environment for Access  | None
+  2016 | Defining a formal model of edutainment that enhances the learning of cyber security subjects by higher educati | Greenwich Academic Literature Archive (U | None
+  2003 | Student modelling by adaptive testing : a knowledge-based approach | Kent Academic Repository (University of  | None
+  2024 | A computational model for the evolution of learning physical micro-contents in peer instruction methodology | arXiv (Cornell University) | https://doi.org/10.48550/arxiv.2405.07055
+  2013 | Detecting students who are conducting inquiry Without Thinking Fastidiously (WTF) in the Context of Microworld | Digital WPI | None
+  2025 | Students' Privacy and Ethical Concerns of Using Social Virtual Worlds for Online Learning | Proceedings of the ACM on Human-Computer | https://doi.org/10.1145/3757428
+  2018 | Predicting Task Persistence within a Learning-by-Teaching Environment | International Conference on Computers in | None
+  2025 | AI-simulated entrepreneurship under uncertainty: forecasting university-driven capability evolution | The Journal of Technology Transfer | https://doi.org/10.1007/s10961-025-10306-7
+  2026 | Machine Learning for Microbiome Statistics | Chapman & Hall/CRC eBooks | https://doi.org/10.1201/9781003610281
+  2019 | THE ROLE OF SIMULATION IN SUPPORTING LONGER-TERM LEARNING AND MENTORING WITH TECHNOLOGY | HARVEST (University of Saskatchewan) | None
+  2014 | Vocabulary Learning through Use of the Picture-Word Inductive Model for Young English Learners in China: A Mix |  | https://doi.org/10.25148/etd.fi14071150
+  2015 | A double-loop learning approach to construct understanding of accumulation principles | ANU Open Research (Australian National U | https://doi.org/10.25911/5d6510e13bb92
+  2026 | Multi-access edge computing scheduling optimization model for remote education under 6G network environment ba | Scientific Reports | https://doi.org/10.1038/s41598-025-29849-8
+  2025 | A Study on the Application of Dynamic Knowledge Graphs in the Evolutionary Analysis of Programming Student Err | International Journal of Computer Applic | https://doi.org/10.5120/ijca2025926109
+  2021 | Interactive Attunement Catalyzes Creative Learning | eScholarship (California Digital Library | None
+Q='simulated students null model mastery learning stopping rule' total=9
+  2021 | Personalized Stopping Rules in Bayesian Adaptive Mastery Assessment |  | 2103.03766 | c=1
+  2023 | Diagnosing Primary Students’ Reading Progression: Is Cognitive Diagnostic Computerized Adaptive Testing the Wa | Journal of educational and behavior | 10.3102/10769986231160668 | c=14
+  2026 | PENGARUH MODEL PEMBELAJARAN VALUE CLARIFICATION TECHNIQUE (VCT) TERHADAP HASIL BELAJAR PENDIDIKAN PANCASILA SI | SOCIAL Jurnal Inovasi Pendidikan IP | 10.51878/social.v6i3.12956 | c=0
+  2025 | Integrating Local Wisdom into Physics Education Through Traditional Games: A Qualitative Ethnoscience Mapping  | Journal of Local Wisdom in Educatio | 10.65508/7hrtt727 | c=2
+  2016 | Sequential detection of learning in cognitive diagnosis. | British Journal of Mathematical & S | 10.1111/bmsp.12065 | c=17
+  2018 | HIGHER-ORDER THINKING SKILLS OF JUNIOR HIGH SCHOOL STUDENTS |  | None | c=5
+  2017 | Medical simulation in medical science education |  | None | c=2
+  2015 | PWE-407 Scottish surgical boot camp: an induction to a community of practice |  | 10.1136/gutjnl-2015-309861.853 | c=2
+  2002 | The Psychology of Trading: Tools and Techniques for Minding the Markets |  | None | c=16
+### regression to the mean adaptive training threshold advancement
+Q='regression to the mean adaptive training threshold advancement' filter='' count=85774
+  1991 | Multivariate Adaptive Regression Splines | The Annals of Statistics | https://doi.org/10.1214/aos/1176347963
+  2024 | Adaptive training instructional interventions: A meta-analysis | Military Psychology | https://doi.org/10.1080/08995605.2024.2377884
+  2026 | Class Adaptive Conformal Training | arXiv (Cornell University) | https://doi.org/10.48550/arxiv.2601.09522
+  2024 | ENTREPRENEURSHIP AND DIGITALISATION IN EU: TWINNING INSIGHTS THROUGH A PANEL THRESHOLD REGRESSION | Journal of Business Economics and Manage | https://doi.org/10.3846/jbem.2024.21206
+  2024 | Adaptive Thresholding for Sentiment Analysis Across Online Reviews Based on BERT Model: BERT-based Adaptive Th | International Conference on Modeling, Na | https://doi.org/10.1145/3677779.3677790
+  2023 | The nonlinear impact of technologies import on industrial employment: A panel threshold regression approach | Heliyon | https://doi.org/10.1016/j.heliyon.2023.e20266
+  2025 | APAR: Modeling Irregular Target Functions in Tabular Regression via Arithmetic-Aware Pre-Training and Adaptive | Proceedings of the AAAI Conference on Ar | https://doi.org/10.1609/aaai.v39i20.35456
+  2026 | Toward Adaptive Privacy-Enhancing Training: A Longitudinal Study of How Personality Shapes Responsiveness to I | Proceedings on Privacy Enhancing Technol | https://doi.org/10.56553/popets-2026-0160
+  2025 | An Adaptive Regressor with Layered Featuring Based on Federated Learning | Electronics | https://doi.org/10.3390/electronics14132573
+  2002 | Adaptive hierarchical classification with limited training data | Texas ScholarWorks (Texas Digital Librar | None
+  2013 | Advancements of Outlier Detection: A Survey | ICST Transactions on Scalable Informatio | https://doi.org/10.4108/trans.sis.2013.01-03.e2
+  2026 | Analysis of Enhanced Adaptive Gradient Boosting Regression in Business Intelligence | International Journal of Advances in Sig | https://doi.org/10.29284/1f9fcb03
+  2017 | Adaptive Simulation-based Training of AI Decision-makers using Bayesian Optimization | arXiv (Cornell University) | https://doi.org/10.48550/arxiv.1703.09310
+  2025 | An adaptive hand exoskeleton rehabilitation training system integrating virtual reality and an AI-based assess | Frontiers in Sports and Active Living | https://doi.org/10.3389/fspor.2025.1724021
+  2021 | Brain-Computer Interface: Advancement and Challenges | Sensors | https://doi.org/10.3390/s21175746
+Q='regression to the mean adaptive training threshold advancement' ERROR HTTP Error 429: 
+### regression to the mean feedback withdrawal performance drop
+Q='regression to the mean feedback withdrawal performance drop' filter='' count=17101
+  2019 | Efficacy of Open Textbook Adoption on Learning Performance and Course Withdrawal Rates: A Meta-Analysis | AERA Open | https://doi.org/10.1177/2332858419872212
+  2016 | Impact of Grit on Performance After Mastery- or Performance-Oriented Feedback |  | https://doi.org/10.12794/metadc849625
+  2021 | Post-Trial Feedback Alters Landing Performance in Adolescent Female Athletes Using a Portable Feedback System | International Journal of Sports Physical | https://doi.org/10.26603/001c.18808
+  2015 | Performance Feedback to Improve Classroom Management Practices | eScholarship (California Digital Library | None
+  2018 | Improving the effectiveness of performance feedback by considering personality traits and task demands | PLoS ONE | https://doi.org/10.1371/journal.pone.0197810
+  1958 | Analysis of tracking performance under varied schedules of achievement information feedback | OhioLink ETD Center (Ohio Library and In | None
+  2023 | Complementary Effect of the Proportion of Overspeed Frames of Withdrawal and Withdrawal Time on Reflecting Col | Clinical and Translational Gastroenterol | https://doi.org/10.14309/ctg.0000000000000566
+  1986 | The effects of feedback frequency and goal setting on data processing performance | VTechWorks (Virginia Tech) | None
+  2017 | Calcineurin inhibitor withdrawal or tapering for kidney transplant recipients | Cochrane Database of Systematic Reviews | https://doi.org/10.1002/14651858.cd006750.pub2
+  2001 | Withdrawal of ventilation from the dying child | Critical Care | https://doi.org/10.1186/cc3863
+  2024 | Over with carbon? Investors’ reaction to the Paris Agreement and the US withdrawal | Journal of Financial Stability | https://doi.org/10.1016/j.jfs.2024.101232
+  2008 | Fairness perceptions of supervisor feedback, LMX, and employee well-being at work | European Journal of Work and Organizatio | https://doi.org/10.1080/13594320701743590
+  2016 | The Use of Performance Feedback to Improve Treatment Integrity and Student Behavior With a Class-Wide Behavior | eScholarship (California Digital Library | None
+  2015 | Trajectories of anxious withdrawal in early childhood | Lincoln (University of Nebraska) | None
+  2021 | Back out or hang on? An event history analysis of withdrawal from doctoral education in Germany | Higher Education | https://doi.org/10.1007/s10734-021-00683-x
+Q='regression to the mean feedback withdrawal performance drop' ERROR HTTP Error 429: 
+### simulated students evaluating adaptive instructional policies
+Q='simulated students evaluating adaptive instructional policies' filter='' count=47659
+  2009 | Reinforcement learning of pedagogical policies in adaptive and intelligent educational systems | Knowledge-Based Systems | https://doi.org/10.1016/j.knosys.2009.01.007
+  2020 | Using Simulated Instruction to Prepare Students to Engage in Culturally Competent Practice | Journal of Social Work in the Global Com | https://doi.org/10.5590/jswgc.2020.05.1.01
+  2025 | TeachTune: Reviewing Pedagogical Agents Against Diverse Student Profiles with Simulated Students | CHI Conference on Human Factors in Compu | https://doi.org/10.1145/3706598.3714054
+  2026 | Evaluating Adaptive Personalization of Educational Readings with Simulated Learners | Workshop on Innovative Use of NLP for Bu | https://doi.org/10.18653/v1/2026.bea-1.63
+  2004 | State Policies and Classroom Practice: Adapting Instruction for English Language Learners | University Libraries (University of Mary | None
+  2026 | A reinforcement learning-based adaptive evaluation framework for personalized music education | PeerJ Computer Science | https://doi.org/10.7717/peerj-cs.3464
+  2010 | Engaging Marketing Students: Student Operated Businesses in a Simulated World | Journal of Marketing Education | https://doi.org/10.1177/0273475310377758
+  2026 | Adaptive AI-Driven Learning Systems for Personalized Student Engagement and Performance | Luminis Applied Science and Engineering | https://doi.org/10.69760/lumin.2026001007
+  2016 | The effect of the flipped classroom approach to OpenCourseWare instruction on students’ self‐regulation | British Journal of Educational Technolog | https://doi.org/10.1111/bjet.12444
+  2012 | The Knowledge‐Learning‐Instruction Framework: Bridging the Science‐Practice Chasm to Enhance Robust Student Le | Cognitive Science | https://doi.org/10.1111/j.1551-6709.2012.01245.x
+  2025 | SMART: Simulated Students Aligned with Item Response Theory for Question Difficulty Prediction | Conference on Empirical Methods in Natur | https://doi.org/10.18653/v1/2025.emnlp-main.1274
+  2014 | An Exploratory Study on Simulated Teaching as Experienced by Education Students | Universal Journal of Educational Researc | https://doi.org/10.13189/ujer.2014.020106
+  2016 | Are simulated patients effective in facilitating development of clinical competence for healthcare students? A | Advances in Simulation | https://doi.org/10.1186/s41077-016-0006-1
+  2017 | Tutoring Students with Adaptive Strategies | Digital WPI | None
+  2026 | AdaPT: Adaptive Lesson Plan Transformer for Cross-Regional and Differentiated Instruction | arXiv (Cornell University) | https://doi.org/10.48550/arxiv.2606.17633
+Q='simulated students evaluating adaptive instructional policies' ERROR HTTP Error 429: 
+### learning curve CUSUM simulation false alarm competence surgical trainee
+Q='learning curve CUSUM simulation false alarm competence surgical trainee' filter='' count=12
+  2017 | Learning curves for three specific procedures by anesthesiology residents using the learning curve cumulative  | Korean Journal of Anesthesiology | https://doi.org/10.4097/kjae.2017.70.2.196
+  2026 | Risk‐Adjusted Surgical Learning Curve Assessment Using Comparative Probability Metrics | Statistics in Medicine | https://doi.org/10.1002/sim.70419
+  2011 | Learning curves of novice anesthesiology residents performing simulated fibreoptic upper airway endoscopy | Canadian Journal of Anesthesia/Journal c | https://doi.org/10.1007/s12630-011-9542-2
+  2025 | Risk-Adjusted learning curve assessment using comparative probability metrics | arXiv (Cornell University) | https://doi.org/10.48550/arxiv.2501.11637
+  2007 | The CUSUM chart method as a tool for continuous monitoring of clinical outcomes using routinely collected data | BMC Medical Research Methodology | https://doi.org/10.1186/1471-2288-7-46
+  2011 | Cumulative sum (CUSUM) assessment and medical education: a square peg in a round hole | Anaesthesia | https://doi.org/10.1111/j.1365-2044.2011.06692.x
+  2024 | The Learning Curve of Sentinel Lymph Node Mapping with Indocyanine Green in Endometrial Cancer Patients | Journal of Surgery | https://doi.org/10.29011/2575-9760.11027
+  2004 | Control chart methods for monitoring cardiac surgical performance and their interpretation | Journal of Thoracic and Cardiovascular S | https://doi.org/10.1016/j.jtcvs.2004.03.011
+  2011 | Applications and Experiences of Quality Control to Surgical and Interventional Procedures | InTech eBooks | https://doi.org/10.5772/15877
+  2025 | The Leaky Integrate-and-Fire Neuron Is a Change-Point Detector for Compound Poisson Processes | Neural Computation | https://doi.org/10.1162/neco_a_01750
+  2024 | Statistical Process Control | Cambridge University Press eBooks | https://doi.org/10.1017/9781009326834
+  2014 | The Development of an Automated Method of Monitoring Surgeon Performance at an Academic Teaching Hospital | uO Research (University of Ottawa) | https://doi.org/10.20381/ruor-3603
+Q='learning curve CUSUM simulation false alarm competence surgical trainee' ERROR HTTP Error 429: 
+### LC-CUSUM learning curve cumulative sum competence
+Q='LC-CUSUM learning curve cumulative sum competence' filter='' count=161
+  2023 | Assessment of the learning curve of peribulbar blocks using the Learning-Curve Cumulative Sum Method (LC-CUSUM | Brazilian Journal of Anesthesiology (Eng | https://doi.org/10.1016/j.bjane.2023.11.003
+  2008 | Quantitative and individualized assessment of the learning curve using LC-CUSUM | British journal of surgery | https://doi.org/10.1002/bjs.6056
+  2017 | Quantitative assessment of the learning curve for cleft lip repair using LC-CUSUM | International Journal of Oral and Maxill | https://doi.org/10.1016/j.ijom.2017.10.005
+  2017 | Learning curves for three specific procedures by anesthesiology residents using the learning curve cumulative  | Korean Journal of Anesthesiology | https://doi.org/10.4097/kjae.2017.70.2.196
+  2017 | Cumulative summation test for learning curve (LC-CUSUM) in outpatient hysteroscopy | Ginekologia Polska | https://doi.org/10.5603/gp.a2017.0002
+  2026 | Cumulative Summation Test for Learning Curve (LC-CUSUM) in Labia Majora Plasty | Anatolian journal of obstetrics and gyne | https://doi.org/10.4274/anajog.galenos.2026.58070
+  2014 | Learning curve for fetoscopic laser surgery using cumulative sum analysis | Acta Obstetricia Et Gynecologica Scandin | https://doi.org/10.1111/aogs.12402
+  2026 | Assessing the Learning Curve of Linear and Wedge Labiaplasty Using the Cumulative Summation (CUSUM) Test | Anatolian journal of obstetrics and gyne | https://doi.org/10.4274/anajog.galenos.2025.69885
+  2001 | Cusum analysis of trends in operative selection and conversion rates for laparoscopic cholecystectomy | ANZ Journal of Surgery | https://doi.org/10.1046/j.1440-1622.2001.02163.x
+  2017 | Evaluation of the learning curve for external cephalic version using cumulative sum analysis | Obstetrics & Gynecology Science | https://doi.org/10.5468/ogs.2017.60.4.343
+  2024 | Learning Curves | Springer eBooks | https://doi.org/10.1007/978-3-031-70211-2_4
+  2020 | Evaluation of the learning curve for laparoscopic pancreatoduodenectomy by CUSUM analyses. Cohort study | International Journal of Surgery | https://doi.org/10.1016/j.ijsu.2020.05.009
+  2009 | Sentinel lymph node biopsy for breast cancer using methylene blue dye manifests a short learning curve among e | BMC Surgery | https://doi.org/10.1186/1471-2482-9-2
+  2013 | Assessment of procedural skills training and performance in anesthesia using cumulative sum analysis (cusum) | Canadian Journal of Anesthesia/Journal c | https://doi.org/10.1007/s12630-013-0045-1
+  2016 | Are we ready to inject? Individualized LC-CUSUM training in ICSI | Journal of Assisted Reproduction and Gen | https://doi.org/10.1007/s10815-016-0686-4
+Q='LC-CUSUM learning curve cumulative sum competence' ERROR HTTP Error 429: 
+### guidance withdrawal motor learning performance decrement baseline model
+Q='guidance withdrawal motor learning performance decrement baseline model' filter='' count=482
+  2024 | THE SPECIFICITY AND GENERALIZABILITY OF MOTOR LEARNING | MacSphere (McMaster University) | https://doi.org/10.71548/8721
+  2017 | Human Movement Sonification for Motor Skill Learning | Research Portal (Queen's University Belf | https://doi.org/10.13140/rg.2.2.27723.08485
+  2019 | Aerobic Fitness Level did not Modify Exercise Effects on Motor Skill Learning | TSpace (University of Toronto) | None
+  2015 | Simulated motion negatively affects motor task but not neuromuscular performance | Ergonomics | https://doi.org/10.1080/00140139.2015.1026405
+  2009 | A Neurocomputational Model of the Functional Role of Dopamine in Stimulus-Response Task Learning and Performan | IUScholarWorks (Indiana University) | None
+  2011 | Assessing the effects of feedback type and modality on motor skill learning and human motivation | NCSU Libraries Repository (North Carolin | None
+  2012 | Humour physiology and motor-skill performance under stress | Lincoln University Research Archive (Lin | None
+  1993 | The Role of Pre-Response and Post-Response Augmented Learning Variables in Motor Skill Acquisition. |  | https://doi.org/10.31390/gradschool_disstheses.5508
+  1971 | EFFECTS OF REINFORCEMENT AND GUIDANCE PROCEDURES ON INSTRUCTION‐FOLLOWING BEHAVIOR OF SEVERELY RETARDED CHILDR | Journal of Applied Behavior Analysis | https://doi.org/10.1901/jaba.1971.4-283
+  2019 | Oral motor performance in children with neurodevelopmental disabilities - about dysphagia and drooling | Radboud Repository (Radboud University) | None
+  2021 | Machine Learning Models to Predict Cognitive Impairment of Rodents Subjected to Space Radiation | Frontiers in Systems Neuroscience | https://doi.org/10.3389/fnsys.2021.713131
+  1981 | The effects of self-instructional training on the reading performance of learning disabled children | NC Digital Online Collection of Knowledg | None
+  2024 | Motor-Control Notions in Health and Disease (What Controls Motor Control?) | Preprints.org | https://doi.org/10.20944/preprints202403.1799.v1
+  2026 | Exploring the psychophysiological predictors of performance under stress: insights from a machine learning app | Royal Society Open Science | https://doi.org/10.1098/rsos.251699
+  2004 | Drugs and human performance fact sheets | PsycEXTRA Dataset | https://doi.org/10.1037/e438332008-001
+Q='guidance withdrawal motor learning performance decrement baseline model' ERROR HTTP Error 429: 
+### catch trials assist-as-needed model of performance without assistance
+Q='catch trials assist-as-needed model of performance without assistance' filter='' count=32011
+  1997 | The quest for more powerful validation of conceptual catchment models | Water Resources Research | https://doi.org/10.1029/97wr01922
+  2007 | Tactical Ineffective Assistance in Capital Trials | Santa Clara Law Digital Commons (Santa C | None
+  2007 | Human-robot cooperative movement training: Learning a novel sensory motor transformation during walking with r | Journal of NeuroEngineering and Rehabili | https://doi.org/10.1186/1743-0003-4-8
+  2015 | On the Well-Timed Assistance in Power-Assisted Sit-to-Stand Movement | SICE Journal of Control Measurement and  | https://doi.org/10.9746/jcmsi.8.312
+  2004 | Towards decision support models for an un-gauded catchment in India, the case of Anas catchment [online] | Repository KITopen (Karlsruhe Institute  | https://doi.org/10.5445/ir/1372004
+  2019 | Evaluation of the impacts of different treatments of spatio-temporal variation in catch-per-unit-effort standa | Fisheries Research | https://doi.org/10.1016/j.fishres.2019.01.008
+  2020 | An Assist-as-Needed Controller for Passive, Assistant, Active, and Resistive Robot-Aided Rehabilitation Traini | Applied Sciences | https://doi.org/10.3390/app11010340
+  2016 | Assessment of a lumped coupled flow‐isotope model in data scarce Boreal catchments | Hydrological Processes | https://doi.org/10.1002/hyp.10835
+  1995 | The Cat That Catches Mice: China's Challenge to the Dominant Privatization Model | The William & Mary Law School Scholarshi | None
+  2025 | Physics-Assisted Deep Learning Model for Improved Construction Performance Monitoring of Cutter Suction Dredge | Water | https://doi.org/10.3390/w17243583
+  2007 | Socially assistive robotics for post-stroke rehabilitation | Journal of NeuroEngineering and Rehabili | https://doi.org/10.1186/1743-0003-4-5
+  2024 | Reading Between the Lines: Modeling User Behavior and Costs in AI-Assisted Programming | CHI Conference on Human Factors in Compu | https://doi.org/10.1145/3613904.3641936
+  2019 | Assist-as-needed EMG-based control strategy for wearable powered assistive devices | Portuguese National Funding Agency for S | None
+  1999 | Modeling and motor performance: An examination of model similarity and model types on children's motor perform | ThinkTech (Texas Tech University) | None
+  2016 | The Throw-and-Catch Model of Human Gait: Evidence from Coupling of Pre-Step Postural Activity and Step Locatio | Frontiers in Human Neuroscience | https://doi.org/10.3389/fnhum.2016.00635
+Q='catch trials assist-as-needed model of performance without assistance' ERROR HTTP Error 429: 
+### regression to the mean just-in-time adaptive intervention tailoring
+Q='regression to the mean just-in-time adaptive intervention tailoring' filter='' count=71724
+  2019 | A systematic review of just-in-time adaptive interventions (JITAIs) to promote physical activity | International Journal of Behavioral Nutr | https://doi.org/10.1186/s12966-019-0792-7
+  2025 | Just-in-Time Adaptive Intervention for Smoking Cessation in Low-Income Adults | JAMA Network Open | https://doi.org/10.1001/jamanetworkopen.2025.26691
+  2016 | Just-in-Time Adaptive Interventions (JITAIs) in Mobile Health: Key Components and Design Principles for Ongoin | Annals of Behavioral Medicine | https://doi.org/10.1007/s12160-016-9830-8
+  2022 | A Gambling Just-In-Time Adaptive Intervention (GamblingLess: In-The-Moment): Protocol for a Microrandomized Tr | JMIR Research Protocols | https://doi.org/10.2196/38958
+  2023 | Just-in-time adaptive ecological momentary assessment (JITA-EMA) | Behavior Research Methods | https://doi.org/10.3758/s13428-023-02083-8
+  2026 | Evaluating Cross-Study Generalization of Receptivity Models for Just-in-Time Adaptive Interventions | Proceedings of the ACM on Interactive Mo | https://doi.org/10.1145/3831652
+  2004 | A Conceptual Framework for Adaptive Preventive Interventions | Prevention Science | https://doi.org/10.1023/b:prev.0000037641.26017.00
+  2023 | The Promise of Just-in-Time Adaptive Interventions for Organizational Scholarship and Practice: Conceptual Dev | Organizational Research Methods | https://doi.org/10.1177/10944281231202740
+  2024 | A call to integrate menstrual cycle influences into just-in-time adaptive interventions for suicide prevention | Frontiers in Psychiatry | https://doi.org/10.3389/fpsyt.2024.1434499
+  2017 | MODEL, ARCHITECTURE AND APPLICATION OF CROSS-PLATFORM JUST-IN-TIME ADAPTIVE INTERVENTION (JITAI): AN IMPLEMENT | D-Scholarship@Pitt (University of Pittsb | None
+  2026 | Optimizing just-in-time adaptive interventions for interpersonal distress: mechanisms, prediction, and the cha | Scientific Reports | https://doi.org/10.1038/s41598-026-39518-z
+  2023 | An Automated, Online Feasibility Randomized Controlled Trial of a Just-In-Time Adaptive Intervention for Smoki | Nicotine & Tobacco Research | https://doi.org/10.1093/ntr/ntad032
+  2025 | Effectiveness of 2 Just-in-Time Adaptive Interventions for Reducing Stress and Stabilizing Cardiac Autonomic F | Journal of Medical Internet Research | https://doi.org/10.2196/69582
+  2025 | Physical activity and diet just-in-time adaptive intervention to reduce blood pressure: a randomized controlle | npj Digital Medicine | https://doi.org/10.1038/s41746-025-01844-3
+  2024 | A Physical Activity and Diet Just‐in‐Time Adaptive Intervention to Reduce Blood Pressure: The myBPmyLife Study | Journal of the American Heart Associatio | https://doi.org/10.1161/jaha.123.031234
+Q='regression to the mean just-in-time adaptive intervention tailoring' total=0
+### dynamic difficulty adjustment simulated player evaluation assist removal
+Q='dynamic difficulty adjustment simulated player evaluation assist removal' filter='' count=3100
+  2023 | Dynamic Difficulty Adjustment of Serious-Game Based on Synthetic Fog using Activity Theory Model | International Journal of Advanced Comput | https://doi.org/10.14569/ijacsa.2023.0140660
+  2018 | Enhanced nitrate-nitrogen removal by modified attapulgite-supported nanoscale zero-valent iron treating simula | Journal of Environmental Management | https://doi.org/10.1016/j.jenvman.2018.02.073
+  2024 | Cognition in elite soccer players: a general model | Frontiers in Psychology | https://doi.org/10.3389/fpsyg.2024.1477262
+  2025 | Adaptive Difficulty and Stealth Assessment in Collaborative Game‐Based Learning | Computer Applications in Engineering Edu | https://doi.org/10.1002/cae.70102
+  2026 | Rugby Players’ Profile Analysis | Portuguese National Funding Agency for S | None
+  2021 | The Complicit Player: How Assassin’s Creed II, Bioshock and Dark Souls Use Narrative and Gameplay Design to Ma | Nottingham ePrints (University of Nottin | None
+  2026 | Dynamic Task Allocation in Human-Robot Teams: Design, Implementation and Evaluation | reposiTUm (TU Wien) | https://doi.org/10.34726/hss.2026.135149
+  2008 | Hydrocarbon removal with constructed wetlands | ERA | None
+  2013 | Contextual information influences diagnosis accuracy and decision making in simulated emergency medicine emerg | BMJ Quality & Safety | https://doi.org/10.1136/bmjqs-2012-000972
+  2018 | Jumping Caveman: A Tool for Manipulating Player Experience and Answering Questions in Games Research |  | None
+  2006 | Detecting eye movements in dynamic environments | Behavior Research Methods | https://doi.org/10.3758/bf03193900
+  2024 | A review: The state-of-the-art of arsenic removal in wastewater | Water Reuse | https://doi.org/10.2166/wrd.2024.142
+  2011 | Strategies to enhance performance in gaelic football players by reducing the risk of injuries | Enlighten: Theses (The University of Gla | None
+  2019 | Can elite male academy players be taught to perform under pressure | Wolverhampton Intellectual Repository an | None
+  2021 | An investigation into football-specific dynamic balance measures | Sheffield Hallam University | https://doi.org/10.7190/shu-thesis-00463
+Q='dynamic difficulty adjustment simulated player evaluation assist removal' ERROR HTTP Error 429: 
+### scaffold fading decision accuracy evaluation simulation
+Q='scaffold fading decision accuracy evaluation simulation' filter='' count=1560
+  2026 | The Scaffold Jump Pattern: Progressive, Evidence-Gated Fading of Human Roles in Artificial Intelligence System | Research Square | https://doi.org/10.21203/rs.3.rs-10414106/v1
+  2024 | Scaffolded team-based computational modeling and simulation projects for promoting representational competence | International Journal of STEM Education | https://doi.org/10.1186/s40594-024-00494-3
+  2026 | Beyond the Checklist: A Scaffolded, Experiential Learning Framework for Medical Rescue Simulation (Part 1 of 2 | Panorama of emergency medicine. | https://doi.org/10.26738/poem.v4i1.3
+  2026 | Artificial intelligence as a constructivist scaffold in anaesthesia education: a mini review | Frontiers in Education | https://doi.org/10.3389/feduc.2026.1893582
+  2025 | Small-Scale-Fading-Aware Resource Allocation in Wireless Federated Learning | IEEE Transactions on Communications | https://doi.org/10.1109/tcomm.2025.3647783
+  2020 | Personal Memory, the Scaffolded Mind, and Cognitive Change in the Neolithic | Cambridge University Press eBooks | https://doi.org/10.1017/9781108753616.014
+  2026 | Embedding Digital Forensics Mindsets: A Scaffolded Teaching Approach | Lecture notes in networks and systems | https://doi.org/10.1007/978-3-032-15105-6_8
+  2022 | Lessons Learned and Future Directions of MetaTutor: Leveraging Multichannel Data to Scaffold Self-Regulated Le | Frontiers in Psychology | https://doi.org/10.3389/fpsyg.2022.813632
+  2026 | Scaffolded AI-Supported Problem-Based Learning for Medical Interns: Exploratory Retrospectively Registered Ran | JMIR Medical Education | https://doi.org/10.2196/95039
+  2025 | Simulation-Based Evaluation of Incident Commander (IC) Competencies: A Multivariate Analysis of Certification  | Fire | https://doi.org/10.3390/fire8090340
+  2023 | The Fading of the Sacred Value of Early Marriage in the Donggo Society |  | https://doi.org/10.31219/osf.io/xmrp8
+  2019 | Design and investigation of cooperative, scaffolded wiki learning activities in an online graduate-level cours | International Journal of Educational Tec | https://doi.org/10.1186/s41239-019-0141-6
+  2026 | Generative AI and adaptive systems for customising help-seeking scaffolds: A systematic review | Information Services & Use | https://doi.org/10.1177/18758789261486037
+  2014 | Teaching with simulations |  | https://doi.org/10.3990/1.9789402118438
+  2025 | Artificial Intelligence as a Pedagogical Scaffold in K–12 Language and Literacy Education | Annals of Human and Social Sciences | https://doi.org/10.35484/ahss.2025(6-iv)04
+Q='scaffold fading decision accuracy evaluation simulation' ERROR HTTP Error 429: 

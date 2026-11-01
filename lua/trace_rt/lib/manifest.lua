@@ -26,6 +26,44 @@ local M = {}
 --   started_at = ISO-8601 local timestamp string
 --   meta may also carry track_id, car_id, track_length_m (M3 apparatus
 --   provenance); each is stamped only when supplied.
+-- Panel metadata + runtime-derived extras -> the meta table M.build wants.
+--
+-- This exists because start_block used to assemble that table inline, copying
+-- panel fields across one at a time. The copy list silently fell out of date:
+-- `dry_run` was added to the panel, to this module and to the schema, but not
+-- to that list, so the toggle did nothing and four rehearsal blocks recorded as
+-- participant data. The tests passed throughout because they called M.build
+-- directly with a dry_run key -- they tested the wrong seam.
+--
+-- Keeping the mapping here, in the module that owns the manifest, means there is
+-- ONE list and it is headless-testable. Add a panel flag to PANEL_FLAGS below
+-- and it reaches the manifest; there is no second place to forget.
+M.PANEL_FIELDS = { 'participant_id', 'session', 'condition', 'pair_id' }
+
+-- Flags stamped only when truthy, so a block that is not one of these carries
+-- no key at all and no reader has to treat the field as three-valued.
+M.PANEL_FLAGS = { 'dev_block', 'dry_run' }
+
+function M.block_meta(panel, extras)
+  local meta = {}
+  for i = 1, #M.PANEL_FIELDS do
+    local key = M.PANEL_FIELDS[i]
+    meta[key] = panel[key]
+  end
+  for i = 1, #M.PANEL_FLAGS do
+    local key = M.PANEL_FLAGS[i]
+    if panel[key] then meta[key] = true end
+  end
+  -- sequence is optional and blank means "not applicable", not "empty string".
+  if panel.sequence ~= nil and panel.sequence ~= '' then
+    meta.sequence = panel.sequence
+  end
+  for key, value in pairs(extras or {}) do
+    meta[key] = value
+  end
+  return meta
+end
+
 function M.build(meta, hashes, versions, started_at)
   local m = {
     schema_version = 1,
@@ -92,7 +130,10 @@ end
 function M.stamp_autopilot(m, ai_level_pct)
   m.autopilot = true
   if type(ai_level_pct) == 'number' and ai_level_pct >= 0 then
-    m.ai_level_pct = ai_level_pct
+    -- Round: the value arrives as car.aiLevel * 100 through a float32, so 80%
+    -- stamps as 80.000001192093. Harmless arithmetically, but this field is
+    -- provenance that gets read by a human and quoted in the thesis.
+    m.ai_level_pct = math.floor(ai_level_pct * 100 + 0.5) / 100
   end
   return m
 end

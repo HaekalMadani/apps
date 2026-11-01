@@ -98,13 +98,15 @@ def runtime():
     lua.execute('package.path = "{}/?.lua;" .. package.path'.format(LUA_APP_DIR.as_posix()))
     fn = lua.eval(
         """
-        function(ann_json, ref_json, cfg_json, snaps_json, close_t, track_length_m)
+        function(ann_json, ref_json, cfg_json, snaps_json, close_t, track_length_m, mode)
           local json = require('lib/json')
           local pass_tracker = require('lib/pass_tracker')
           local pass_metrics = require('lib/pass_metrics')
           local evaluator = require('lib/evaluator')
           local controller = require('lib/controller')
           local pass_record = require('lib/pass_record')
+          local markers = require('lib/markers')
+          local kr = require('lib/kr')
 
           local corners = json.decode(ann_json).corners
           local reference = json.decode(ref_json)
@@ -120,7 +122,7 @@ def runtime():
           local open_metrics, history = {}, {}
           for i = 1, #corners do history[corners[i].id] = {} end
 
-          local passes, fades = {}, {}
+          local passes, fades, kr_messages = {}, {}, {}
 
           local function evaluate_pass(record)
             local st = open_metrics[record.corner_id]
@@ -142,8 +144,26 @@ def runtime():
             for j = 1, #evs do
               fades[#fades + 1] = pass_record.fade_record('BLK', evs[j])
             end
+            -- Mirrors trace_rt.lua's evaluate_pass(): KR is decided AFTER the
+            -- controller step, on the stage in force at the moment of delivery,
+            -- and from the salience LEVELS the renderer is about to draw.
+            local stages = controller.stages(ctrl)
+            local levels = {}
+            for e = 1, #controller.ELEMENTS do
+              local element = controller.ELEMENTS[e]
+              levels[element] = markers.level_of(
+                markers.presented_stage(mode, stages[element]))
+            end
+            local kr_out = kr.evaluate(cfg, ref_corner, metrics, evaluation, levels)
+            for e = 1, #kr_out.delivered do
+              kr_messages[#kr_messages + 1] = {
+                corner_id = record.corner_id, lap = record.lap,
+                element = kr_out.delivered[e].element,
+                text = kr_out.delivered[e].text,
+              }
+            end
             pass_record.attach(record, metrics, evaluation,
-              controller.qualified(ctrl, record.corner_id), controller.stages(ctrl))
+              controller.qualified(ctrl, record.corner_id), stages, kr_out.outcomes)
           end
 
           local function handle(events, snap)
@@ -179,7 +199,7 @@ def runtime():
           end
 
           return json.encode({
-            passes = passes, fades = fades,
+            passes = passes, fades = fades, kr_messages = kr_messages,
             disabled = controller.disabled_elements(ctrl),
             stages = controller.stages(ctrl),
           })
@@ -187,13 +207,16 @@ def runtime():
         """
     )
 
-    def run(snaps, close_t=None, reference=None, annotation=None, cfg=None):
+    def run(snaps, close_t=None, reference=None, annotation=None, cfg=None,
+            mode="adaptive"):
         out = fn(json.dumps(annotation or ANNOTATION), json.dumps(reference or REFERENCE),
-                 json.dumps(cfg or CFG), json.dumps(snaps), close_t, TRACK_LENGTH_M)
+                 json.dumps(cfg or CFG), json.dumps(snaps), close_t, TRACK_LENGTH_M,
+                 mode)
         result = json.loads(out)
         result.setdefault("passes", [])
         result.setdefault("fades", [])
         result.setdefault("disabled", [])
+        result.setdefault("kr_messages", [])
         return result
 
     return run
@@ -328,7 +351,13 @@ def test_an_improving_driver_shows_the_dwell_the_reset_enforces(runtime):
     laps = {f["transition"]: f["lap"] for f in apex}
     assert {"full_to_reduced", "reduced_to_probe"} <= set(laps), \
         "the improving driver must reach the probe for this test to mean anything"
-    assert laps["reduced_to_probe"] - laps["full_to_reduced"] >= 3
+    # The dwell the reset enforces is `required_passes` laps, not a literal 3:
+    # the advance resets every evidence window, so the next advance cannot fire
+    # until each applicable corner has refilled to `required_passes` under the
+    # NEW salience. This read `>= 3` and broke when required_passes went 3 -> 2
+    # at frozen-g1b, which is the rule working rather than changing.
+    assert (laps["reduced_to_probe"] - laps["full_to_reduced"]
+            >= CFG["qualification"]["required_passes"])
 
 
 def test_the_three_elements_fade_on_independent_trajectories(runtime):
@@ -359,9 +388,21 @@ def test_the_three_elements_fade_on_independent_trajectories(runtime):
 
 
 def test_a_block_ending_mid_probe_censors_and_closes_open_passes(runtime):
-    snaps = drive(9, 1.0)
+    # The block must END while an element is still IN a probe, so the lap count
+    # is derived from the ladder rather than written out. A perfect driver
+    # advances every `required_passes` laps, so it enters a probe at about
+    # 2 x required_passes and the probe then runs
+    # max(probe.laps, required_passes) more -- stopping one lap into it is
+    # 2 x required_passes + 1.
+    #
+    # This read `drive(9, ...)` and stopped censoring anything at frozen-g1b:
+    # the 6-lap ladder had COMPLETED by lap 9, so every element was `removed`
+    # and there was no probe left to censor. The test was passing on a
+    # coincidence of calibration, not on the censoring rule.
+    laps = 2 * CFG["qualification"]["required_passes"] + 1
+    snaps = drive(laps, 1.0)
     # Stop mid-corner-1, so a pass is open at block end as well.
-    snaps = [s for s in snaps if not (s["lap"] == 8 and s["spline"] > 0.20)]
+    snaps = [s for s in snaps if not (s["lap"] == laps - 1 and s["spline"] > 0.20)]
     result = runtime(snaps, close_t=9999.0)
 
     incomplete = [p for p in result["passes"]
@@ -403,8 +444,97 @@ def test_static_and_adaptive_blocks_log_identically(runtime):
     lives in the renderer. So the controller must produce byte-identical pass and
     fade records under either mode — that is what makes the two conditions
     comparable at all.
+
+    One field is exempt, and it is a design consequence rather than a leak: `kr`
+    records what the participant was TOLD, and the conditions differ in exactly
+    that (see the next test). Everything the controller produced is compared
+    here with `kr` stripped out.
     """
     static = json.loads(json.dumps(CFG))
     static["mode"] = "static"
     snaps = drive(12, 1.0)
+
+    def without_kr(result):
+        out = json.loads(json.dumps(result))
+        for record in out["passes"]:
+            record.pop("kr", None)
+        out.pop("kr_messages", None)
+        return out
+
+    # `cfg.mode` is validated and never read -- the block's condition is what
+    # the pipeline obeys -- so this pins both: the config field changes nothing,
+    # and neither does the condition itself, for every controller-produced field.
     assert runtime(snaps) == runtime(snaps, cfg=static)
+    assert without_kr(runtime(snaps, mode="adaptive")) ==         without_kr(runtime(snaps, mode="static"))
+
+
+def test_a_faded_element_loses_its_kr_and_a_static_one_does_not(runtime):
+    """The confound option (a) buys, stated rather than assumed away.
+
+    Suppressing KR during a probe is what keeps the probe a retention test
+    (Winstein & Schmidt 1990), and the literature review recommends it over
+    keeping KR running. The price is that an ADAPTIVE participant whose element
+    reaches probe stops getting that element's error messages, while a STATIC
+    participant keeps getting them for the whole block. So the two arms differ
+    in total feedback volume, not only in whether the guidance fades.
+
+    That is a limitation for the methods chapter, not a bug: the alternative
+    (KR through the probe) would mean the probe measures
+    performance-with-feedback. This test exists so the asymmetry is a measured
+    property of the apparatus rather than a sentence someone has to remember.
+    """
+    snaps = drive(14, 1.0)
+
+    def withdrawn(mode):
+        return sum(1 for p in runtime(snaps, mode=mode)["passes"]
+                   for e in ("braking", "corner_speed", "apex")
+                   if (p.get("kr") or {}).get(e, {}).get("outcome") == "withdrawn")
+
+    assert withdrawn("static") == 0
+    assert withdrawn("adaptive") > 0, "an on-the-reference driver must reach a probe"
+    # ...and `off` withdraws everything, for every element, from the first pass:
+    # sessions 1 and 3 measure unassisted performance, and an error signal is
+    # assistance.
+    off = runtime(snaps, mode="off")
+    assert off["kr_messages"] == []
+    assert all((p.get("kr") or {})[e]["outcome"] == "withdrawn"
+               for p in off["passes"] for e in ("braking", "corner_speed", "apex"))
+
+
+def test_a_novice_is_told_its_braking_error_every_pass(runtime):
+    """The section 0A diagnostic's precondition, through the real wiring.
+
+    A novice 40 m early at a 5 m band must be told so on every measured pass —
+    if the message does not fire at the measured bias there is nothing to
+    diagnose. It also shows the known consequence of `max_messages = 1` at the
+    frozen floors: braking monopolises the channel.
+    """
+    result = runtime(drive(6, 0.0))
+    braking = [p for p in result["passes"]
+               if (p.get("kr") or {}).get("braking", {}).get("outcome") == "delivered"]
+    assert braking, "a raw novice must be told its braking error"
+    assert all("early" in p["kr"]["braking"]["text"] for p in braking)
+
+    # At max_messages = 1 the causal order puts braking first WHERE IT CAN
+    # SPEAK. Corner 2 of this fixture is taken flat, so it has no braking
+    # reference and nothing to report, and the channel passes to the next
+    # element in the order rather than going silent -- which is the behaviour
+    # worth having and not something the priority rule states on its own.
+    by_corner = {}
+    for m in result["kr_messages"]:
+        by_corner.setdefault(m["corner_id"], set()).add(m["element"])
+    assert by_corner["1"] == {"braking"}
+    assert "braking" not in by_corner["2"]
+    assert all(len(v) == 1 for v in by_corner.values()), "max_messages = 1"
+
+
+def test_an_on_the_reference_driver_is_told_nothing_while_it_is_on_it(runtime):
+    """Bandwidth delivery's other half: inside the band the system is silent,
+    and the silence is the message. A driver on the reference should hear
+    almost nothing, and what silence there is must be logged as `inside_band`
+    rather than as an absence."""
+    result = runtime(drive(4, 1.0))
+    outcomes = [(p.get("kr") or {}).get("braking", {}).get("outcome")
+                for p in result["passes"]]
+    assert "delivered" not in outcomes, outcomes
+    assert "inside_band" in outcomes, outcomes

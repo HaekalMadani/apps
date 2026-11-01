@@ -20,23 +20,36 @@ This plan operationalises the evaluation described in the framing document. Ever
 
 | | |
 |---|---|
-| Design | Within-subjects, 2 conditions × 2 car-track pairs |
+| Design | **Between-subjects on condition, one car-track pair (pair 1).** *[REVISED 2026-10-15 — see `SESSION_BUDGET_BRIEF.md`. Was: within-subjects, 2 conditions × 2 car-track pairs.]* |
 | Conditions | **Adaptive** (fading controller active) vs **Static** (all three UI elements at full salience throughout training) |
-| Counterbalancing | 2×2 crossover, counterbalanced over the full factorial of pair order × condition coupling (4 sequences) |
-| Sample | n ≈ 15 main participants + 2 pilot participants (not pooled) |
-| Sessions | 3 per participant (+ optional exploratory retention probe, day 5–7) |
+| Counterbalancing | Condition assigned alternately at enrolment. **There is no crossover**: the 2×2 design needed two training blocks of ≥ 15 laps, which is ~37 min of driving before any instrument. |
+| Sample | n ≈ 15 main participants (~7–8 per arm) + 2 pilot participants (not pooled) |
+| Sessions | **One ~33-minute sitting** (15-lap training block, decided 2026-10-15), plus consent and the pre-study questionnaire beforehand and a remote follow-up call for the confidence questionnaire and the RQ3 interview. Rig time ~33 min; total participant commitment ~55-60 min. |
 | Framing | Systems-and-characterisation study; effect sizes with credible intervals, no confirmatory claims |
 
-**Crossover sequences** (participants assigned round-robin at enrolment; note this is the full set of four sequences, not a Latin square — the earlier label was incorrect):
+**Why the crossover was dropped, and what it costs.** The ceiling on *rig
+time* is about **30 minutes per participant**, against the ~3 h 15 this plan
+originally booked; the sitting lands at ~33 min because Gate G1 needs a 15-lap
+training block (see Phase 3). Measured lap times (62–76 s at National, 71–98 s at
+International — the plan's "~2-minute circuit" is wrong by nearly 2×) make the
+driving affordable; it is the *two-pair crossover* that is not, because every
+phase doubles. `SESSION_BUDGET_BRIEF.md` § D costs three alternative shapes;
+this is Shape B.
 
-| Seq | Session 2, block 1 | Session 2, block 2 |
-|---|---|---|
-| A | Pair 1 / Adaptive | Pair 2 / Static |
-| B | Pair 1 / Static | Pair 2 / Adaptive |
-| C | Pair 2 / Adaptive | Pair 1 / Static |
-| D | Pair 2 / Static | Pair 1 / Adaptive |
+The cost is stated plainly rather than minimised: **RQ2 keeps its form, not its
+substance.** Between subjects at ~7–8 per arm, with no unassisted baseline and
+3 valid retention laps per participant, the condition contrast will not be
+interpretable on its own. The thesis already declines to claim statistical
+significance; this makes that decline load-bearing rather than modest. RQ1 (what
+the controller did, per participant, per corner) and RQ3 (the interviews) are
+unaffected and are where the contribution sits.
 
-With n = 15: sequences receive 4/4/4/3 participants.
+**Also descoped: pair 2.** One pair per participant means `ks_audi_tt_cup` /
+`international` is no longer used, so its outstanding 100%-reference
+inconsistency stops being a blocker. The study then rests on **one car and one
+layout**, which narrows the generalisation claim it was already declining to
+make. Say the second apparatus was descoped; do not leave it half-finished and
+unmentioned.
 
 ---
 
@@ -48,7 +61,7 @@ With n = 15: sequences receive 4/4/4/3 participants.
 
 **Outputs.**
 - **Corner annotation files** (one per track, version-controlled): corner IDs, spline-position gates, type tags, per-element evaluation zones; published with the dataset.
-- `reference_laps/` — per-tick telemetry, 12 AI laps + 12 human validation laps × 2 pairs.
+- `reference_laps/` — per-tick telemetry, 12 AI laps per pair. *[The human validation laps were never recorded (see Phase 0); and from 2026-10-15 only pair 1 is used in the study, so pair 2 is apparatus history rather than study material.]*
 - **Per-corner reference table** (one row per annotated corner per pair): brake-initiation world coordinate, apex world coordinate, minimum-corner-speed envelope (mean ± band), apex lateral-line band, and the source of each corner's reference (AI or human-substituted).
 - ~~**AI-vs-human validation report**~~: not produced — see the procedure above. The tooling (`trace_kit.reference compare`) remains available; its absence is recorded as a limitation, not silently dropped.
 - Reference quality report: lap-time coefficient of variation across the 12 laps, plus the per-corner count of contributing laps.
@@ -65,17 +78,17 @@ Because the human bound is gone, **Gate G2 absorbs the work it would have done**
 
 **Procedure.** Generate ≥ 1,000 synthetic participant streams across a grid of learner types (fast improver, slow improver, non-improver, erratic, **staggered regressor** — regression onset spread across corners over several laps, since real regression is not synchronised). Run each stream through the controller. Tune the controller parameters and per-metric tolerance bands until the design targets below hold. Defaults under tune: per-corner qualification window (**3 of last 4 passes**), de-qualification rule (**2 consecutive failures**), element-level quorum (advance at **≥ 75%** of applicable corners qualified, revert below **50%**), probe length (**3 laps**), reversion cap (**2 cycles per element per block**), per-pass **consistency delta** for the braking criterion (default **0.5 × accuracy band**), and per-metric **band floors**. The **re-qualification-on-advance rule** (all corner qualification states reset on every stage advance; see Framing v6) is a fixed structural rule, not a tuned parameter, and the simulation must run with it active.
 
-**Expertise Variance Multiplier (EVM).** Tolerance bands are defined as `band_m = max(σ_ref,m × EVM_source, floor_m)`, where `σ_ref,m` is the reference laps' standard deviation for metric *m*. The multiplier exists because the AI reference lacks the inherent motor noise that persists even in expert human performance (Cohen & Sternad, 2009); bands taken from raw AI variance would be impossibly narrow for any human driver. Two structural guards: the **absolute per-metric floor** prevents the band being hostage to a near-zero baseline (the AI is consistent by construction, so σ_ref can be arbitrarily small at some corners), and the multiplier is **source-dependent** — **EVM_AI, provisional default 3.0**, for AI-sourced corners; **EVM_human, provisional default 1.25**, for human-substituted corners, whose σ_ref already contains human motor variability and would otherwise be inflated twice. Both multipliers and the floors are explicitly named free parameters of the controller configuration — the precedent is the named, empirically set `tolerance` parameters in Bugeja et al. (2017) — and their final values are fixed in Phase 2. EVM_AI = 3.0 is used to generate the synthetic learner streams.
+**Expertise Variance Multiplier (EVM).** Tolerance bands are defined as `band_m = max(σ_ref,m × EVM_source, floor_m)`, where `σ_ref,m` is the reference laps' standard deviation for metric *m*. The multiplier exists because the AI reference lacks the inherent motor noise that persists even in expert human performance (Cohen & Sternad, 2009); bands taken from raw AI variance would be impossibly narrow for any human driver. Two structural guards: the **absolute per-metric floor** prevents the band being hostage to a near-zero baseline (the AI is consistent by construction, so σ_ref can be arbitrarily small at some corners), and the multiplier is **source-dependent** — **EVM_AI, provisional default 3.0**, for AI-sourced corners; **EVM_human, provisional default 1.25**, for human-substituted corners, whose σ_ref already contains human motor variability and would otherwise be inflated twice. Both multipliers and the floors are explicitly named free parameters of the controller configuration, and their final values are fixed in Phase 2. **[CORRECTED 2026-10-14: the Bugeja et al. (2017) precedent cited here for "named, empirically set `tolerance` parameters" is not supported by any accessible version of that paper and is withdrawn. Phase 2 sets the floors by the contrasting-groups method (Jørgensen et al., 2018) and the window length by minimal detectable change (Weir, 2005) instead. Note also that `σ_ref × EVM` has never exceeded a floor in any run, so the EVM is specified but inoperative — see `BAND_CALIBRATION_BRIEF.md`.]** EVM_AI = 3.0 is used to generate the synthetic learner streams.
 
 **Design targets.**
-- A *typical improver* fully traverses the machine (full → reduced → probe → removed) for ≥ 2 of 3 elements within one training block (~13–15 laps); the default arithmetic is ~3–4 laps to broad qualification at full salience, ~3–4 laps to *re-qualify* at reduced salience (the dwell enforced by the re-qualification rule), then the 3-lap probe.
-- A *non-improver* never leaves full salience.
-- Probe reversion triggers on simulated broad regression (qualified share dropping below 50%) **at the earliest lap the evidence can support it, plus at most one lap**, and broad regression is **never answered by removal**. The staggered-regressor stream exists to keep the simulation honest about this, and the reversion cap must still prevent oscillation in the *erratic* learner type.
+- A *typical improver* fully traverses the machine (full → reduced → probe → removed) for ≥ 2 of 3 elements within one training block. **[UPDATED 2026-10-15: the block is **15 laps** and the arithmetic is now `2 × required_passes + max(probe.laps, required_passes)`, which at `frozen-g1b` (2-of-3, 2-lap probe) is a **6-lap** floor — 2 laps to broad qualification at full salience, 2 to *re-qualify* at reduced (the dwell the re-qualification rule enforces), then a 2-lap probe that still needs a fresh evidence window because `_quorum_ready` gates `probe_to_removed` too. The old "~3–4 + ~3–4 + 3" gave a 9-lap floor. Measured at 0.72 over 15 laps; it scores 0.43 at 12 laps and fails, which is why the block is 15 and why it must be enforced as a lap count rather than a time box.]**
+- A *non-improver* leaves full salience in at most **10% of streams**, and less often than a typical improver fails to traverse. **[RESTATED 2026-10-15.]** This read "*never* leaves full salience", at exactly 0.000, and that bar turned out to be satisfiable only by a system that never fades anything for anyone: at the `frozen-g1` band floors the braking and apex elements never advanced in a single **real recorded block** (`kit/tools/README.md` § `feasible.py`), and every calibration that made the machine work failed the clause. A conservatism target is trivially met by a system that never acts. It is now a stated **false-pass rate with the false-fail rate reported beside it** — the contrasting-groups style this plan already adopts for the band floors (Jørgensen et al. 2018) — and the asymmetry is asserted as well as the bound, because the design errs toward delayed withdrawal. Measured at `frozen-g1b`: false pass **5.75%**, false fail **28%**. The 10% bound is a **declared design parameter, provisional until Gate G2**, justified by that ratio rather than by any published value; see `simulate.TARGET_RATES`.
+- Probe reversion triggers on simulated broad regression (qualified share dropping below 50%) **at the earliest lap the evidence can support it, plus at most one lap**, and broad regression is answered by removal in at most **2% of regressing streams**. **[RESTATED 2026-10-15: this read "never answered by removal" at exactly 0.000 — the same unsatisfiable shape as the non-improver clause above, and satisfied at `frozen-g1` only because nothing was ever removed. It is bounded an order of magnitude tighter than the false-pass rate because the error is costlier — a late reversion costs one lap driven without the cue, a removal costs the rest of the block — and because the bound must discriminate: the adopted 2-of-3 ladder measures 0.75% while every 3-of-4 alternative at workable floors measures 12–26%. Provisional until Gate G2.]** The staggered-regressor stream exists to keep the simulation honest about this, and the reversion cap must still prevent oscillation in the *erratic* learner type.
 
   *[amended 2026-09-09]* This target previously read "within **one lap of onset when regression is synchronised across corners, and within two laps when it is staggered**". The two-lap staggered figure is **not reachable by any threshold setting**, and the simulation found it immediately. Reversion latency has a floor set by two rules acting together: a corner cannot de-qualify before its second consecutive failure, and the element cannot revert until *enough corners have de-qualified to put the qualified share below the threshold* — which, for onsets one lap apart across four corners, is not the first corner's onset but the **third**. The measured median lag from the first onset is therefore 3 laps, and no configuration in the 144-candidate sweep changed that. Measuring instead against the arithmetic floor separates the part the controller is responsible for from the part the design's own rules fix in advance; it is met at **zero excess** for both synchronised and staggered streams, and it collapses to the original one-lap figure exactly when regression is synchronised. The added "never answered by removal" clause is the safety property the latency was always a proxy for: a late reversion costs a lap of unscaffolded driving, whereas a removal costs the rest of the block. It is read strictly (0 tolerated failures) and counts only removals occurring once the regression could already have been detected — an element removed before that point was removed on evidence that was still good, and block-scoped permanence then correctly keeps it removed.
 
 **Outputs.** *[all produced 2026-09-08; see `configs/simulation/G1_REVIEW.md`]*
-- Frozen controller configuration file (window sizes, thresholds, EVM_AI/EVM_human, band floors, consistency delta, probe/reversion rules, re-qualification rule flag) — placed under version control; hash recorded. → `configs/controller_config.json`, `config_id: frozen-g1`, SHA-256 `c10fadc8ad8518902d4a7e3db1a581afbc003598a95fd47d0d07dbf30b345650`.
+- Frozen controller configuration file (window sizes, thresholds, EVM_AI/EVM_human, band floors, consistency delta, probe/reversion rules, re-qualification rule flag) — placed under version control; hash recorded. → `configs/controller_config.json`, `config_id: frozen-g1b` (re-frozen 2026-10-15). **The hash is deliberately NOT repeated here** — a copy went stale within a month last time. Read it from `configs/simulation/G1_REVIEW.md`, which is regenerated with the report it describes.
 - Feasibility figure: simulated fade trajectories by learner type (becomes a thesis figure). → `configs/simulation/feasibility_figure.svg`.
 - *(added)* The design-target verdicts and the parameter sweep behind the frozen values → `configs/simulation/simulation_report.json`, `sweep_report.json`.
 
@@ -133,7 +146,7 @@ and the return path from a G2 failure to this phase is unchanged.
 
 **Inputs.** Frozen controller config; full apparatus; session protocol scripts.
 
-**Procedure.** Each pilot participant completes a compressed version of one full session sequence (abbreviated baseline, one training block per condition, short unassisted block). Pilots may fall outside the main recruitment criteria; their data are never pooled with the main sample. A specific purpose of the pilot is to **empirically justify and calibrate both EVM multipliers and the band floors**, mirroring the empirical-observation approach of Bugeja et al. (2017).
+**Procedure.** Each pilot participant completes **the real sitting, unabridged** *[revised 2026-10-15: there is nothing left to compress — the sitting is 30 minutes and one condition, so the pilot now runs the main protocol exactly as specified in Phase 3, which also makes it the protocol-timing measurement]*. Pilots may fall outside the main recruitment criteria; their data are never pooled with the main sample. A specific purpose of the pilot is to **empirically justify and calibrate the band floors** — which from 2026-10-15 also means checking the `frozen-g1b` floors (12 m / 9 km/h / 1.5 m) against a **real novice**: they were set from the researcher’s own passes, and the researcher’s best lap is within 2.1% of the 85% AI reference, so those floors are a **lower bound** on what a true novice needs. The second pilot purpose is to resolve the 12-vs-15-lap tension recorded in Phase 3 — and to report the EVM as inoperative rather than calibrate it, since with the AI reference every band is set by its floor. **[CORRECTED 2026-10-14: "mirroring the empirical-observation approach of Bugeja et al. (2017)" is withdrawn — see the correction at the EVM definition above. The calibration follows contrasting-groups standard setting (Jørgensen et al., 2018), with the cut placed at a stated false-pass rate and the false-fail rate reported.]**
 
 **Outputs.**
 - Distribution comparison: real novice per-corner metrics vs the synthetic streams from Phase 1.
@@ -147,37 +160,103 @@ and the return path from a G2 failure to this phase is unchanged.
 
 ## Phase 3 — Main study (n ≈ 15)
 
-### Session 1 — Intake and baseline (~60 min)
+*[REWRITTEN 2026-10-15. This phase previously specified three sessions of
+60 + 75 + 60 min against a participant-time ceiling of 30 minutes for the whole
+study. The costing of the alternatives is `SESSION_BUDGET_BRIEF.md` § D; this is
+Shape B. The lap-validity rules, the integrity check and everything below them
+are unchanged.]*
 
-**Inputs.** Consent form; pre-study questionnaire; both car-track pairs, no UI elements active.
+### Before the sitting — outside the session budget (confirmed 2026-10-15)
 
-**Procedure.** Consent → questionnaire (driving history, gaming/sim hours, league check against inclusion criteria) → seating/wheel calibration (settings logged) → per pair: 3 familiarisation laps (discarded) + laps until **5 valid baseline laps** are recorded.
+Consent form, participant information sheet and the pre-study questionnaire
+(driving history, gaming/sim hours, league check against inclusion criteria) are
+read and e-signed **in advance**, and the ethics process is handled **outside
+the timed sitting**. This is settled, not an assumption: it was the one
+precondition that could have invalidated the whole shape, because the ~10
+minutes it takes does not fit inside the sitting at any lap count.
 
-**Outputs.** Participant record (moderators); apparatus calibration log; 5 valid baseline laps × 2 pairs (baseline covariate = mean valid baseline lap time per pair).
+**Consequence for reporting:** the quoted ~32.9 min is *rig time*, not total
+participant burden. Consent and questionnaire beforehand, plus a 10–15 minute
+remote interview afterwards, put the real per-participant commitment closer to
+**55–60 minutes**. Report both figures — the sitting is what the apparatus and
+the lap budget constrain; the total is what a participant is actually asked for.
 
-### Session 2 — Training (~75 min)
+### The sitting — one block, ~32.9 min (pair 1 only: `ks_bmw_m235i_racing` / `ks_silverstone` `national`)
 
-**Inputs.** Crossover sequence assignment; frozen controller config; per-corner reference table.
+**Inputs.** Consent and the pre-study questionnaire, both completed beforehand
+(see above); pair 1 annotated and referenced; frozen controller config; assigned
+condition.
 
-**Procedure.** Two training blocks of **30 minutes driving time** each (expected 13–15 laps on a ~2-minute circuit), one per pair, condition per the assigned sequence; 10-minute break between blocks. Adaptive blocks run the controller live; static blocks render all three elements at full salience. **NASA-TLX immediately after each block.**
+**Procedure.**
 
-**Outputs (per block).**
-- Per-tick telemetry (shared-memory read, logged at 20 Hz minimum; fields: world position, speed, brake/throttle/steer inputs, gear, lap/sector markers, off-track flags).
-- **Per-corner-pass records** — one row per corner pass (corner boundaries per the annotation files): corner id, lap, brake-initiation distance to reference point, distance to the corner's rolling brake-initiation mean (the consistency-gate input), brake-pressure modulation summary (descriptive, not gated), minimum corner speed and envelope deviation, RMS lateral deviation over the apex window, validity flag, per-element per-pass criterion booleans (accuracy and consistency gates separately for braking), per-element corner qualification state, element-level controller stage.
-- **Fade-event log** (adaptive blocks): timestamp, lap, element, transition type (full→reduced, reduced→probe, probe→removed, probe→revert, block-end probe-incomplete/censored), and the triggering quorum statistics (qualified share, which corners flipped).
-- TLX scores × 2.
+| phase | min | notes |
+|---|---|---|
+| Welcome, seating and wheel calibration | 4.0 | settings logged |
+| Task instruction — what each cue means | 3.0 | cannot be skipped for a novice; it is part of the apparatus |
+| Familiarisation, 1 lap | 1.2 | discarded |
+| **Training block — 15 laps** | **17.5** | condition per assignment; adaptive runs the controller live, static pins all three elements at full salience |
+| **Unassisted block — 4 laps** (3 valid) | 4.7 | all elements off (`off` condition), KR withdrawn with them |
+| NASA-TLX | 2.5 | immediately after the training block |
+| | **32.9** | |
 
-### Session 3 — Unassisted performance (~60 min)
+**15 laps, decided 2026-10-15.** The 12-lap variant that fit a 30-minute box is
+**rejected**: Gate G1's first target scores **0.72 at 15 laps and 0.43 at 12**,
+and the frozen configuration was certified at 15. Three laps cost ~3.5 minutes
+of session time; buying the same traversal rate by widening the band floors
+instead costs far more on both error margins (15/11/1.5 takes the false-pass
+rate from 5.8% to 8.0% and removal-despite-regression from 0.75% to 13.8%).
+**So the sitting is ~33 minutes, not 30.** Recorded here as the decision rather
+than left as a tension.
 
-**Inputs.** Both pairs, **no UI elements in either condition's block**. (Terminology note: this block is a retention / unassisted-performance test on the trained corners, deliberately *not* called "transfer"; transfer to novel corners or tracks is out of scope.)
+**The training block ends on a LAP COUNT, not a timer.** The measured lap time
+is ~70 s, so a time-boxed block containing two spins silently delivers 12–13
+laps — a configuration the gate rejects, with nothing about the block looking
+wrong. The experimenter panel must refuse to stop the block before 15 laps and
+record the reason if it is stopped anyway.
 
-**Procedure.** Per pair: 1 warm-up lap (discarded) + laps until **8 valid unassisted laps** are recorded. Then the confidence and perceived-dependence questionnaire, then a 10–15 minute semi-structured interview (audio recorded; guide covers workload, confidence, and awareness of fading — including whether the participant noticed elements disappearing and when).
+**Outputs** (unchanged in form from the previous three-session plan, minus the
+second pair):
 
-**Outputs.** 8 valid unassisted laps × 2 pairs (per-tick + per-corner records); questionnaire scores; interview audio + notes.
+- Per-tick telemetry (shared-memory read, logged at 20 Hz minimum; fields: world
+  position, speed, brake/throttle/steer inputs, gear, lap/sector markers,
+  off-track flags).
+- **Per-corner-pass records** — one row per corner pass: corner id, lap,
+  brake-initiation distance to reference point, distance to the corner's rolling
+  brake-initiation mean (the consistency-gate input), brake-pressure modulation
+  summary (descriptive, not gated), minimum corner speed and envelope deviation,
+  RMS lateral deviation over the apex window, validity flag, per-element per-pass
+  criterion booleans (accuracy and consistency gates separately for braking),
+  per-element corner qualification state, element-level controller stage, and the
+  per-element bandwidth-KR outcome.
+- **Fade-event log** (adaptive blocks): timestamp, lap, element, transition type
+  (full→reduced, reduced→probe, probe→removed, probe→revert, block-end
+  probe-incomplete/censored), and the triggering quorum statistics.
+- NASA-TLX scores.
 
-### Optional retention probe (day 5–7, exploratory)
+### After the sitting — remote, same day where possible
 
-5 valid unassisted laps per pair for whichever participants return. Reported descriptively only; excluded from the primary model.
+Confidence and perceived-dependence questionnaire, then the 10–15 minute
+semi-structured interview (audio recorded; guide covers workload, confidence,
+and awareness of fading — including whether the participant noticed elements
+disappearing and when). **Neither needs the rig**, and moving them out is what
+makes the sitting fit — confirmed 2026-10-15 as being outside the session
+budget, like the consent process. A delay between the drive and the interview is
+a limitation to state: RQ3 asks partly about moment-to-moment experience, and
+the further the interview sits from the drive the more it measures recollection.
+Run it the same day wherever possible and record the gap per participant so the
+limitation can be reported with a number rather than as a caveat.
+
+### What this costs the measurement, in one place
+
+- **No baseline block.** The pre-training baseline laps are gone. The only
+  proxy is **training laps 1–2**, where nothing has faded in either condition —
+  and it is measured *with* full scaffolding in both arms, so it is a covariate
+  for driving skill, **not** an unassisted baseline. Say so wherever it is used.
+- **3 valid unassisted laps**, against the 8 this plan previously specified.
+- **No retention probe** at day 5–7; the optional exploratory probe is dropped.
+- **No within-participant condition contrast**, so the fatigue confound the old
+  plan carried disappears and is replaced by between-group variance at ~7–8 per
+  arm.
 
 ### Lap-validity rules (applied uniformly, automated at logging time)
 
@@ -203,10 +282,55 @@ Automated script verifies: telemetry gaps < 0.5 s, expected lap counts present, 
 
 ### RQ2 — Adaptive vs static (estimation, not testing)
 
-- **Model:** Bayesian mixed-effects regression on lap-level observations; condition is *crossed* with participant (the earlier "lap nested in condition nested in participant" description was incorrect). Unassisted lap time ~ condition + baseline lap time (per pair, standardised) + **pair (fixed effect — two levels cannot support a group-level variance estimate, so the earlier `(1 | pair)` term is removed)** + condition order + pair order + (1 + condition | participant). The earlier `(1 | corner-cluster)` term is removed as undefined for a lap-time outcome; corner-level structure belongs to the secondary sector-level analyses, not the primary model. Secondary model with lap-time variability (per-participant SD of valid unassisted laps) as outcome.
-- **Priors:** weakly informative — Normal(0, 1) on standardised coefficients, Exponential(1) on group-level SDs; stated in full in the methods chapter and frozen with the analysis scripts.
-- **Known confound, stated:** both training blocks share a session, so the order terms absorb mean fatigue, but a fatigue × condition interaction is unidentifiable at n ≈ 15; it is reported as a limitation, not modelled.
-- **Output:** posterior distribution of the adaptive-minus-static difference with 95% credible interval, per pair and pooled; posterior predictive checks; order-term posteriors reported to document carryover handling. No significance language anywhere.
+*[RESPECIFIED 2026-10-15. The previous model was written for a within-subjects
+2×2 crossover over two car-track pairs. Shape B
+(`SESSION_BUDGET_BRIEF.md`) assigns condition **between subjects** on **one**
+pair, so four of the old model's terms no longer exist and one of its covariates
+is not measured. The model is **still deliberately not implemented** — Phase 4
+requires the analysis scripts frozen before results are seen, and writing it
+earlier would freeze a specification whose only test was simulator output.]*
+
+- **Model:** Bayesian regression on lap-level observations from the unassisted
+  block. `unassisted lap time ~ condition + early-training lap time
+  (standardised) + (1 | participant)`.
+  - **Condition is now a between-subjects factor**, so `(1 + condition |
+    participant)` is gone — a participant contributes only one condition and a
+    by-participant condition slope is not identifiable. `(1 | participant)`
+    remains, because each participant contributes several unassisted laps.
+  - **`pair`, `condition order` and `pair order` are all removed.** One pair is
+    driven, so `pair` is a constant; one block is driven, so neither order term
+    exists.
+  - **The baseline covariate changes meaning and must be labelled.** There is no
+    pre-training baseline block. The covariate is the mean of **training laps
+    1–2**, before any element can have faded — which makes it a covariate for
+    *driving skill measured with full scaffolding in both arms*, **not** an
+    unassisted baseline. It cannot adjust for unassisted ability, and saying so
+    is part of the result.
+  - Secondary model with lap-time variability (per-participant SD of valid
+    unassisted laps) as outcome, same right-hand side.
+- **Priors:** weakly informative — Normal(0, 1) on standardised coefficients,
+  Exponential(1) on group-level SDs; stated in full in the methods chapter and
+  frozen with the analysis scripts.
+- **Power, stated honestly and up front.** ~7–8 participants per arm, **3 valid
+  unassisted laps each**, no unassisted baseline. The posterior on the
+  adaptive-minus-static difference will be dominated by the prior and by
+  between-person variance. **RQ2 keeps its form, not its substance** — report the
+  interval, state that it does not support a directional claim, and do not let
+  it carry the thesis. RQ1 and RQ3 are where the contribution sits.
+- **Confounds, stated rather than modelled:**
+  - **Between-group confounding replaces the old fatigue confound.** With
+    condition assigned between subjects at n ≈ 15, prior sim-racing exposure is
+    not balanced by design; the pre-study questionnaire records it and group
+    differences are reported descriptively. The old "both training blocks share a
+    session" fatigue confound no longer applies, because there is one block.
+  - **An adaptive participant who reaches a probe receives less *total* feedback
+    than a static one**, not merely less guidance, because bandwidth KR is
+    withdrawn with the scaffold (`lib/kr.lua` rule 4). Unchanged by the
+    respecification, and still a methods-chapter item.
+- **Output:** posterior distribution of the adaptive-minus-static difference with
+  95% credible interval; posterior predictive checks; the group composition table
+  that documents what between-subjects assignment left unbalanced. No
+  significance language anywhere.
 
 ### RQ3 — Experience and alignment (thematic + alignment analysis)
 
@@ -216,7 +340,7 @@ Automated script verifies: telemetry gaps < 0.5 s, expected lap counts present, 
 
 ### Exclusion and missing-data rules (pre-committed)
 
-- A participant is excluded entirely only for: failure to complete Session 3, discovered violation of inclusion criteria, or hardware failure corrupting > 30% of their data. Partial data otherwise retained and modelled (Bayesian models tolerate unbalanced data).
+- A participant is excluded entirely only for: **failure to complete the sitting** (the training block and the unassisted block; the remote interview missing is NOT an exclusion, it is missing RQ3 data) *[updated 2026-10-15 from "failure to complete Session 3"]*, discovered violation of inclusion criteria, or hardware failure corrupting > 30% of their data. Partial data otherwise retained and modelled (Bayesian models tolerate unbalanced data).
 - All exclusions logged with reasons in the dataset README.
 
 ---
@@ -240,4 +364,4 @@ Automated script verifies: telemetry gaps < 0.5 s, expected lap counts present, 
 - Reference quality → Gate G0. The human-substitution fallback is **no longer available** (Phase 0); the residual risk that the AI reference is unreachable by novices is carried to Gate G2, where the band floors are calibrated against real pilot distributions.
 - Analysis flexibility → scripts and priors frozen before main data collection ends.
 - Carryover → order terms in the model; reported, not assumed away.
-- Recruitment / scheduling shortfall (the realistic long pole: ~45+ booked sessions) → **pre-committed degraded fallback, recorded now so a crisis becomes a documented contingency rather than an improvised one**: first drop the optional retention probe; then accept n = 10 as the minimum main sample (the Bayesian estimation framing degrades gracefully — intervals widen, the design does not break); the within-subjects structure and all gates are retained at every fallback level. Any invocation of the fallback is logged with date and reason in the dataset README.
+- Recruitment / scheduling shortfall → **pre-committed degraded fallback**, recorded now so a crisis becomes a documented contingency rather than an improvised one. *[Updated 2026-10-15: the booking load is now ~17 single sittings of 30 min rather than ~45 sessions of an hour, which removes most of this risk — the schedule was the reason the study was compressed, and the compression paid for itself here.]* The retention probe is already dropped. Accept **n = 10** as the minimum main sample (~5 per arm; the Bayesian estimation framing degrades gracefully — intervals widen, the design does not break), and note that between-subjects assignment makes n the binding constraint in a way the old crossover did not. All gates are retained at every fallback level. Any invocation of the fallback is logged with date and reason in the dataset README.

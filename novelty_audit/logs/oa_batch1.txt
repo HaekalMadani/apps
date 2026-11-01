@@ -1,0 +1,141 @@
+Q='probe trial guidance withdrawal adaptive fading decision' filter='from_publication_date:2010-01-01' count=618
+  2026 | Feedback Withdrawal and Independent Competence in AI-Assisted Laparoscopic Surgical Training | SSRN Electronic Journal | https://doi.org/10.2139/ssrn.7571293
+  2015 | CONSORT extension for reporting N-of-1 trials (CENT) 2015: Explanation and elaboration | BMJ | https://doi.org/10.1136/bmj.h1793
+  2015 | CONSORT extension for reporting N-of-1 trials (CENT) 2015: explanation and elaboration | Journal of Clinical Epidemiology | https://doi.org/10.1016/j.jclinepi.2015.05.018
+  2019 | Using Systematic Prompt Fading to Program a Self-Questioning Strategy with Elementary Students with Disabiliti |  | https://doi.org/10.31390/gradschool_dissertations.4967
+  2018 | Subjective decision threshold for accurate visual detection performance in rats | Scientific Reports | https://doi.org/10.1038/s41598-018-27696-4
+  2019 | A Pilot Randomized Clinical Trial of an Enhanced Pivotal Response Treatment Approach for Young Children with A | Journal of Autism and Developmental Diso | https://doi.org/10.1007/s10803-019-03909-1
+  2012 | Using Bug In Ear Feedback To Increase The Accuracy Of Discrete Trial Teaching Implementation | Journal of International Crisis and Risk | None
+  2024 | The power of jury duty: A map of emotions on a rape trial | The Open Review | https://doi.org/10.47967/tor9h859
+  2010 | Career decisions among Hong Kong immigrants | cIRcle (University of British Columbia) | https://doi.org/10.14288/1.0053766
+  2016 | Decision making by relatives of eligible brain dead organ donors | Radboud Repository (Radboud University) | None
+  2019 | How the Structure of Choices Influences Consumer Decisions and Experiences | eScholarship (California Digital Library | None
+  2017 | Development and Testing of Metacognitive Therapy for Prolonged Grief Disorder: A Randomised Controlled Trial | eSpace (Curtin University) | None
+  2020 | Trials Of Belonging: Indigenous Peoples' Struggle With Law And Power In Twentieth-Century North America | scholarworks - UTEP (The University of T | None
+  2021 | Behavioral and Socioemotional Outcomes of the Legacy for Children™ Randomized Control Trial to Promote Healthy | Journal of Developmental & Behavioral Pe | https://doi.org/10.1097/dbp.0000000000000962
+  2026 | The Effect of Dialogic Reading With an Adapted Reader on Narrative Reading Comprehension of High School Studen | Digital Scholarship - UNLV (University o | None
+
+Q='catch trials assist-as-needed adaptation' filter='from_publication_date:2010-01-01' count=29605
+  2014 | Controlling Asthma by Training of Capnometry-Assisted Hypoventilation (CATCH) vs Slow Breathing | CHEST Journal | https://doi.org/10.1378/chest.14-0665
+  2015 | Cas9-Assisted Targeting of CHromosome segments CATCH enables one-step targeted cloning of large gene clusters | Nature Communications | https://doi.org/10.1038/ncomms9101
+  2013 | Trial-by-Trial Adaptation of Movements during Mental Practice under Force Field | Computational and Mathematical Methods i | https://doi.org/10.1155/2013/109497
+  2014 | Climate Variability, Impacts and Adaptation Strategies: The Case of Mbeya and Makete Districts in Great Ruaha  | Journal of Water Resource and Protection | https://doi.org/10.4236/jwarp.2014.61007
+  2015 | Transformative adaptation: what it is, why it matters and what is needed |  | None
+  2013 | Phenotyping common beans for adaptation to drought | Frontiers in Physiology | https://doi.org/10.3389/fphys.2013.00035
+  2025 | Community Engagement for Novel Ecosystem Restoration and Assisted Adaptation Interventions: Observations and L | Society & Natural Resources | https://doi.org/10.1080/08941920.2025.2463088
+  2016 | Beech adaptation to climate change according to provenance trials in Europe | NYME Repository of Dissertations (Univer | None
+  2018 | Adaptation, Artificial Intelligence, and Physical Medicine and Rehabilitation | PM&R | https://doi.org/10.1016/j.pmrj.2018.04.013
+  2015 | New and emerging issues affecting climate change adaptation on the environment, economic development and settl | ResearchOnline - JCU (James Cook Univers | https://doi.org/10.25903/5bda38604eaeb
+  2012 | Monitoring the canaries of our catchments | Research Online (University of Wollongon | None
+  2026 | Structural heat adaptation and education in urban settings (SHAPES trial): study protocol for a cluster random | BMJ Open | https://doi.org/10.1136/bmjopen-2026-120115
+  2011 | Reduced short term adaptation to robot generated dynamic environment in children affected by Cerebral Palsy | Journal of NeuroEngineering and Rehabili | https://doi.org/10.1186/1743-0003-8-28
+  2019 | Assist-as-needed EMG-based control strategy for wearable powered assistive devices | Portuguese National Funding Agency for S | None
+  2022 | Catch FXIa |  | https://doi.org/10.26481/dis.20220217sb
+
+Q='unassisted performance decide reduce assistance training' filter='from_publication_date:2010-01-01' count=1582
+  2026 | Human-AI Conversational Behaviors Predict Unassisted Task Performance | arXiv (Cornell University) | None
+  2025 | Unassisted homebirths in Afghanistan: a qualitative exploration of underlying reasons |  | https://doi.org/10.48336/115
+  2023 | Unassisted Clinicians Versus Deep Learning–Assisted Clinicians in Image-Based Cancer Diagnostics: Systematic R | Journal of Medical Internet Research | https://doi.org/10.2196/43832
+  2022 | Reducing Squat Physical Effort Using Personalized Assistance From an Ankle Exoskeleton | IEEE Transactions on Neural Systems and  | https://doi.org/10.1109/tnsre.2022.3186692
+  2011 | Digital doorways and the analysis of software application usage in ‘unassisted learning’ environments in impov | Unisa Institutional Repository (Universi | None
+  2025 | Variants of active assist robotic therapy: feasibility of virtual assistance and proprioceptive training as ga | Journal of NeuroEngineering and Rehabili | https://doi.org/10.1186/s12984-025-01667-z
+  2021 | Communication with Unreliable Entanglement Assistance | arXiv (Cornell University) | https://doi.org/10.48550/arxiv.2112.09227
+  2016 | Human sit-to-stand transfer modeling towards intuitive and biologically-inspired robot assistance | Autonomous Robots | https://doi.org/10.1007/s10514-016-9553-5
+  2017 | Electromechanical-assisted training for walking after stroke | Cochrane Database of Systematic Reviews | https://doi.org/10.1002/14651858.cd006185.pub4
+  2014 | A Decision-Theoretic Model of Assistance | Journal of Artificial Intelligence Resea | https://doi.org/10.1613/jair.4213
+  2026 | AI Assistance for Human Review of Default Judgments | Proceedings of the AAAI/ACM Conference o | https://doi.org/10.1609/aies.v9i4.43347
+  2022 | Algorithmic Assistance with Recommendation-Dependent Preferences | RePEc: Research Papers in Economics | https://doi.org/10.48550/arxiv.2208.07626
+  2015 | Driving Behaviour and Driver Assistance at Traffic Light Intersections |  | None
+  2023 | The Effects of Artificial Intelligence Assistance on the Radiologists’ Assessment of Lung Nodules on CT Scans: | Journal of Clinical Medicine | https://doi.org/10.3390/jcm12103536
+  2023 | Performance of ChatGPT on USMLE: Potential for AI-assisted medical education using large language models | PLOS Digital Health | https://doi.org/10.1371/journal.pdig.0000198
+
+Q='mastery criterion accuracy simulated learners' filter='from_publication_date:2010-01-01' count=2330
+  2020 | On the Dependence Structure Between Learners' Response-time and Knowledge Mastery: If Not Linear, Then What? | ACM Conference on User Modeling, Adaptat | https://doi.org/10.1145/3340631.3394865
+  2020 | Enhancing the Calibration Accuracy of Adult Learners: A Multifaceted Intervention | Digital Scholarship - UNLV (University o | https://doi.org/10.34917/4332549
+  2014 | Learner Assessment for Technical Skills in Real vs. Simulated Environments: Is It Comparable? | Figshare | None
+  2022 | An empirical comparison of criterion-referenced data collected by mastery testing versus repeated item-examine | ScholarWorks@UMassAmherst (University of | https://doi.org/10.7275/10q8-5q83
+  2024 | Automatically assessing student mastery and designing optimal stopping policies |  | https://doi.org/10.5463/thesis.650
+  2026 | From Learner Behavior to Reusable Skills for Effective and Efficient Learner Simulation | arXiv (Cornell University) | https://doi.org/10.48550/arxiv.2609.37157
+  2018 | Learner Modeling for Integration Skills in Programming | D-Scholarship@Pitt (University of Pittsb | None
+  2026 | Leveraging Large Language Models for Mastery Tutor Construction |  | https://doi.org/10.22215/etd/2026-17143
+  2022 | Decision-making accuracy at the classwide level |  | https://doi.org/10.54014/3h8q-8xza
+  2022 | Cognitive Trait Model: Measurement Model for Mastery Level and Progression of Learning | Mathematics | https://doi.org/10.3390/math10152651
+  2026 | BEAGLE: Behavior-Enforced Agent for Grounded Learner Emulation | arXiv (Cornell University) | https://doi.org/10.48550/arxiv.2602.13280
+  2019 | Goal-Oriented Learning Is as Effective as Mastery Learning Provided by Cognitive Tutor | American Educational Research Associatio | https://doi.org/10.3102/1439480
+  2019 | Life Skills for Life-Long Learners |  | https://doi.org/10.33015/dominican.edu/2019.edu.o3
+  2026 | ResidencyRL: Reinforcement Learning in Simulated Clinical Environments | arXiv (Cornell University) | https://doi.org/10.48550/arxiv.2608.07418
+  2022 | Effect of Artificial Intelligence Tutoring vs Expert Instruction on Learning Simulated Surgical Skills Among M | JAMA Network Open | https://doi.org/10.1001/jamanetworkopen.2021.49008
+
+Q='premature mastery over-practice under-practice knowledge tracing' filter='from_publication_date:2010-01-01' count=1811
+  2026 | Disentangling Knowledge States with Ability and Proficiency Modeling for Knowledge Tracing | arXiv (Cornell University) | https://doi.org/10.48550/arxiv.2607.13103
+  2026 | Neural-Symbolic Knowledge Tracing: Injecting Educational Knowledge into Deep Learning for Responsible Learner  | arXiv (Cornell University) | https://doi.org/10.48550/arxiv.2604.08263
+  2023 | Adaptive Learning Path Navigation Based on Knowledge Tracing and Reinforcement Learning | arXiv (Cornell University) | https://doi.org/10.48550/arxiv.2305.04475
+  2026 | Robust knowledge tracing via bidirectional context and conditional diffusion | Scientific Reports | https://doi.org/10.1038/s41598-026-73422-w
+  2025 | Learning Path Recommendation Enhanced by Knowledge Tracing and Large Language Model | Electronics | https://doi.org/10.3390/electronics14224385
+  2025 | DA-TCKT: Adaptive time convolution knowledge tracing method based on discrete cosine transform attention mecha | Journal of King Saud University - Comput | https://doi.org/10.1007/s44443-025-00280-3
+  2018 | Constructing Writing Practices in Nursing | Journal of Nursing Education | https://doi.org/10.3928/01484834-20180618-04
+  2026 | Leveraging Large Language Models for Mastery Tutor Construction |  | https://doi.org/10.22215/etd/2026-17143
+  2017 | Sequential mastery detection and Bayesian learning promotion under cognitive diagnosis models | Illinois Digital Environment for Access  | None
+  2012 | Mastery Learning in the Context of University Education | Asian Journal of the Scholarship of Teac | https://doi.org/10.24112/ajsotl.23008
+  2013 | Authenticity in education: Theory into practice | Digital Commons - DU (University of Denv | None
+  2026 | Queer(ing) Design Research/Practice | Proceedings of DRS | https://doi.org/10.21606/drs.2026.125
+  2026 | Organisational learning in dementia practice | Stirling Online Research Repository (Uni | None
+  2020 | Can the Early Start Denver Model Be Considered ABA Practice? | Behavior Analysis in Practice | https://doi.org/10.1007/s40617-020-00474-3
+  2019 | Ethico-aesthetic practice of improvising: relations through motion | White Rose Research Online (University o | None
+
+Q='regression to the mean mastery learning' filter='from_publication_date:2010-01-01' count=57280
+  2012 | Simulation-based education with mastery learning improves residents' lumbar puncture skills | Neurology | https://doi.org/10.1212/wnl.0b013e31825dd39d
+  2014 | Dissemination of a simulation-based mastery learning intervention reduces central line-associated bloodstream  | BMJ Quality & Safety | https://doi.org/10.1136/bmjqs-2013-002665
+  2019 | Mastery Learning-Like Teaching with Achievements | arXiv (Cornell University) | https://doi.org/10.48550/arxiv.1906.03510
+  2021 | Mastery learning improves simulated central venous catheter insertion by emergency medicine teaching faculty | AEM Education and Training | https://doi.org/10.1002/aet2.10703
+  2026 | The Influence of Mastery Learning Strategy on Student Learning Outcomes in Islamic Religious Education Subject | al-Afkar Journal For Islamic Studies | None
+  2019 | The role of mastery learning in an intelligent tutoring system: Principal stratification on a latent variable | The Annals of Applied Statistics | https://doi.org/10.1214/18-aoas1196
+  2023 | The Development of an Automatic Test Assembly System for a Formative Assessment in Mastery Learning Instructio | IEEE Access | https://doi.org/10.1109/access.2023.3311615
+  2012 | The effects of mastery learning correctives on academic achievement and student affect | Mercer University Libraries (Mercer Univ | None
+  2025 | Analysis of Inquiry-Based Learning Teaching Approach in Developing Student’s Learning Mastery and Engagement i | International Journal of Academic Resear | https://doi.org/10.6007/ijarped/v14-i4/27035
+  2013 | Retention of Critical Care Skills After Simulation-Based Mastery Learning | Journal of Graduate Medical Education | https://doi.org/10.4300/jgme-d-13-00033.1
+  2017 | The Role of Mastery Learning in Intelligent Tutoring Systems: Principal Stratification on a Latent Variable | arXiv (Cornell University) | https://doi.org/10.48550/arxiv.1707.09308
+  2015 | Comparison of Mastery Learning and Traditional Lecture–Exam Models in a Large Enrollment Physics Course | ASEE Annual Conference & Exposition | https://doi.org/10.18260/p.23719
+Traceback (most recent call last):
+  File "C:\Users\haeka\AppData\Local\Temp\claude\D--SteamLibrary-steamapps-common-assettocorsa-apps\5d228a4e-7605-4698-a908-cf2291303f51\scratchpad\audit\oa.py", line 10, in <module>
+    print("  %s | %s | %s | %s" % (w.get("publication_year"), (w.get("title") or "")[:110], (v.get("display_name") or "")[:40], w.get("doi")))
+  File "C:\Users\haeka\anaconda3\envs\ac_dev\Lib\encodings\cp1252.py", line 19, in encode
+    return codecs.charmap_encode(input,self.errors,encoding_table)[0]
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+UnicodeEncodeError: 'charmap' codec can't encode character '\u2010' in position 39: character maps to <undefined>
+
+Q='guidance dependency removal visual feedback motor learning adaptive' filter='from_publication_date:2010-01-01' count=2636
+  2025 | Effects of self-control of feedback timing on motor learning | Frontiers in Psychology | https://doi.org/10.3389/fpsyg.2025.1638827
+  2024 | Visual feedbacks influence short-term learning of torque versus motion profile with robotic guidance among you | Human Movement Science | https://doi.org/10.1016/j.humov.2024.103221
+  2022 | Does modifying visual feedback facilitate learning to write new pseudoletters? | Human Movement Science | https://doi.org/10.1016/j.humov.2022.103046
+  2025 | Divergent effects of pitch feedback on online and offline motor sequence learning | Frontiers in Behavioral Neuroscience | https://doi.org/10.3389/fnbeh.2025.1680277
+  2019 | Visual dynamics cues in learning complex physical interactions | Scientific Reports | https://doi.org/10.1038/s41598-019-49637-5
+  2022 | An ecological dynamics approach to motor learning in practice: Reframing the learning and performing relations | Asian Journal of Sport and Exercise Psyc | https://doi.org/10.1016/j.ajsep.2022.04.003
+  2025 | Cognitive Strategies in motor learning and Rehabilitation | Frontiers research topics | https://doi.org/10.3389/978-2-8325-7153-8
+  2020 | Cathodal Cerebellar tDCS Combined with Visual Feedback Improves Balance Control | The Cerebellum | https://doi.org/10.1007/s12311-020-01172-0
+  2025 | Augmentor: a cognitive-inspired approach for context-aware adaptive learning with human guidance | Journal of Intelligent Manufacturing | https://doi.org/10.1007/s10845-025-02712-3
+  2023 | Continual Learning of a Transformer-Based Deep Learning Classifier Using an Initial Model from Action Observat | Bioengineering | https://doi.org/10.3390/bioengineering10020186
+  2013 | Parkinson's Disease Motor Symptoms in Machine Learning: A Review | Health Informatics - An International Jo | https://doi.org/10.5121/hiij.2013.2401
+Traceback (most recent call last):
+  File "C:\Users\haeka\AppData\Local\Temp\claude\D--SteamLibrary-steamapps-common-assettocorsa-apps\5d228a4e-7605-4698-a908-cf2291303f51\scratchpad\audit\oa.py", line 10, in <module>
+    print("  %s | %s | %s | %s" % (w.get("publication_year"), (w.get("title") or "")[:110], (v.get("display_name") or "")[:40], w.get("doi")))
+  File "C:\Users\haeka\anaconda3\envs\ac_dev\Lib\encodings\cp1252.py", line 19, in encode
+    return codecs.charmap_encode(input,self.errors,encoding_table)[0]
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+UnicodeEncodeError: 'charmap' codec can't encode character '\u2010' in position 16: character maps to <undefined>
+
+Q='reliability lap-to-lap sim racing telemetry' filter='from_publication_date:2010-01-01' count=23
+  2025 | Evaluating the Consistency of Key Performance Metrics Across Different Tracks in Sim Racing Using Machine Lear | SSRN Electronic Journal | https://doi.org/10.2139/ssrn.5263021
+  2025 | Evaluating the Consistency of Key Performance Metrics Across Different Tracks in Sim Racing Using Machine Lear | SSRN Electronic Journal | https://doi.org/10.2139/ssrn.5255017
+  2025 | A Comparative Performance Analysis of Load Cell and Hall-Effect Brake Sensors in Sim Racing | Sensors | https://doi.org/10.3390/s25133872
+  2025 | Optimum Racing: A F1 Strategy Predictor using Reinforcement Learning | International Journal for Research in Ap | https://doi.org/10.22214/ijraset.2025.69749
+  2026 | Design and Experimental Evaluationof an Open-Architecture Multi-Sensor Telemetry System for Real-Time Motorcyc | Electronics | https://doi.org/10.3390/electronics15122604
+  2026 | Multi-Strategy End-to-End Autonomous Racing Using Soft Actor-Critic | IEEE Intelligent Vehicles Symposium | https://doi.org/10.1109/iv66570.2026.11623852
+Traceback (most recent call last):
+  File "C:\Users\haeka\AppData\Local\Temp\claude\D--SteamLibrary-steamapps-common-assettocorsa-apps\5d228a4e-7605-4698-a908-cf2291303f51\scratchpad\audit\oa.py", line 10, in <module>
+    print("  %s | %s | %s | %s" % (w.get("publication_year"), (w.get("title") or "")[:110], (v.get("display_name") or "")[:40], w.get("doi")))
+  File "C:\Users\haeka\anaconda3\envs\ac_dev\Lib\encodings\cp1252.py", line 19, in encode
+    return codecs.charmap_encode(input,self.errors,encoding_table)[0]
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+UnicodeEncodeError: 'charmap' codec can't encode character '\u2010' in position 51: character maps to <undefined>
+

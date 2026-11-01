@@ -61,6 +61,7 @@ local hud = require('lib/hud')
 local evaluator = require('lib/evaluator')
 local controller = require('lib/controller')
 local pass_record = require('lib/pass_record')
+local kr = require('lib/kr')
 
 -- Keep in sync with manifest.ini [ABOUT] VERSION.
 local APP_VERSION = '0.4.0'
@@ -95,6 +96,16 @@ local show_markers = true
 local hud_plans = nil
 local hud_state = hud.new()
 local hud_readout = nil        -- last computed readout, for the cue window
+-- Bandwidth KR (lib/kr): the messages the last closed pass produced and the
+-- session-clock time they stop being shown. Set in evaluate_pass, expired in
+-- update_hud, rendered by the cue window -- never accumulated in the window
+-- itself, for the same reason the HUD's running minimum is not (an immediate-
+-- mode window stops being called the moment it is closed).
+local kr_active = nil          -- { messages = {...}, expires_t = <number> }
+local kr_counts = { delivered = 0, inside_band = 0, withdrawn = 0,
+                    not_measured = 0, clamped = 0, capped = 0, off = 0 }
+                    -- panel readout; start_block rebuilds it from kr.OUTCOMES,
+                    -- so this literal only has to be complete, never canonical
 -- REVIEW-ONLY stage override, for M5's exit test ("scripted controller states
 -- produce the intended visuals"). Stepping an element through full -> reduced ->
 -- probe by driving takes ~9 laps; this makes it a button press. nil means "use
@@ -433,7 +444,20 @@ local function reference_status()
     -- Marker world positions are precomputed once per reference load, straight
     -- from the extracted table — the M3 exit criterion is that nothing here is
     -- a hardcoded coordinate.
-    marker_list = doc and markers.build(doc) or nil
+    -- The braking band each corner is judged against, resolved once here from
+    -- the same evaluator arithmetic the criterion uses, and carried into the
+    -- marker list so the trapezoid on the road cannot drift from the tolerance
+    -- the controller applies.
+    local braking_bands = nil
+    if doc ~= nil and controller_cfg ~= nil then
+      braking_bands = {}
+      for i = 1, #doc.corners do
+        local cr = doc.corners[i]
+        local ok, b = pcall(evaluator.bands, controller_cfg, cr)
+        if ok and b ~= nil then braking_bands[cr.corner_id] = b.braking_m end
+      end
+    end
+    marker_list = doc and markers.build(doc, braking_bands) or nil
     -- The HUD's targets come from the same reference table and the same band
     -- arithmetic the evaluator uses, so the number on screen and the number the
     -- criterion is judged on cannot drift apart. Needs the annotation too, for
@@ -521,6 +545,10 @@ local function start_block()
   -- Same reasoning for the abort arm: a block must not begin one click from
   -- being stamped unusable.
   abort_armed = false
+  -- And the KR state, so a message from the previous block can never be on
+  -- screen when this one starts, and the panel's counts describe this block.
+  kr_active = nil
+  for i = 1, #kr.OUTCOMES do kr_counts[kr.OUTCOMES[i]] = 0 end
 
   local stamp = os.date('%Y%m%d_%H%M%S')
   local id = sanitize(meta.participant_id) .. '_s' .. meta.session
@@ -537,18 +565,15 @@ local function start_block()
     csp = tostring(ac.getPatchVersion()),
     ac = ac_version,
   }
-  local mmeta = {
+  -- One mapping, owned by lib/manifest, so a new panel flag cannot reach the
+  -- panel and the schema while silently missing the manifest (which is exactly
+  -- what happened to `dry_run` on 2026-10-10).
+  local mmeta = manifest.block_meta(meta, {
     block_id = id,
-    participant_id = meta.participant_id,
-    session = meta.session,
-    condition = meta.condition,
-    pair_id = meta.pair_id,
     track_id = full_id,
     car_id = car_id(),
     track_length_m = ac.getSim().trackLengthM,
-  }
-  if meta.sequence ~= '' then mmeta.sequence = meta.sequence end
-  if meta.dev_block then mmeta.dev_block = true end
+  })
 
   io.createDir(data_dir)
 
@@ -659,6 +684,46 @@ local function log_fade_events(events)
   if #events > 0 then flush_fades() end
 end
 
+-- ---------------------------------------------------------------------------
+-- presented stage (shared by the renderer and the KR)
+-- ---------------------------------------------------------------------------
+--
+-- Lives here, above the pass path, because two very different consumers need
+-- the same answer and must never compute it twice: the renderer asks it every
+-- frame to decide what to draw, and lib/kr asks it at pass close to decide
+-- whether this element's error message is withdrawn. Deriving KR visibility
+-- from CUE visibility is the whole of kr.lua's rule 4 — one rule, not a second
+-- condition check that could drift from the first.
+
+-- The presented stage for one element: the controller's, unless the block's
+-- mode overrides it, unless the review override is set. Everything about the
+-- decision is in lib/markers; this only supplies the inputs.
+local function presented_stage(element)
+  -- The review override deliberately bypasses the condition as well as the
+  -- controller: its whole job is to show a stage's VISUAL on demand, and it is
+  -- only reachable while idle (start_block clears it), so there is no block
+  -- whose condition it could contradict.
+  if stage_override ~= nil then return stage_override[element] end
+  local stage = 'full'
+  if block ~= nil and block.controller ~= nil then
+    stage = controller.stages(block.controller)[element]
+  end
+  -- The mode is the block's when one is running, and the panel's selection
+  -- otherwise, so an experimenter can check the `off` condition before starting.
+  local mode = (block ~= nil) and block.condition or meta.condition
+  return markers.presented_stage(mode, stage)
+end
+
+-- The per-element salience LEVEL, in lib/kr's input shape.
+local function presented_levels()
+  local out = {}
+  for i = 1, #controller.ELEMENTS do
+    local element = controller.ELEMENTS[i]
+    out[element] = markers.level_of(presented_stage(element))
+  end
+  return out
+end
+
 -- Evaluate one closed pass and run it through the controller (M4).
 --
 -- The order matters and is the same order the golden traces assume: metrics ->
@@ -702,9 +767,32 @@ local function evaluate_pass(record)
     end
   end
 
+  -- Bandwidth KR, decided AFTER the controller step on purpose. The message is
+  -- delivered now, so what governs whether it is withdrawn is the stage in
+  -- force at the moment of delivery — if this very pass pushed the element into
+  -- a probe, the driver is in the probe when the message would land, and the
+  -- probe is the retention test. Suppression therefore reads the same
+  -- presented stage the renderer is about to draw.
+  local kr_out = kr.evaluate(controller_cfg, ref_corner, metrics, evaluation,
+    presented_levels())
+  if #kr_out.delivered > 0 then
+    kr_active = {
+      messages = kr_out.delivered,
+      -- Same session clock as t_exit, so the log and the screen agree about
+      -- when the driver was told.
+      expires_t = block.t + controller_cfg.kr.hold_s,
+    }
+  end
+  for i = 1, #kr.ELEMENTS do
+    local o = kr_out.outcomes[kr.ELEMENTS[i]]
+    if o ~= nil and kr_counts[o.outcome] ~= nil then
+      kr_counts[o.outcome] = kr_counts[o.outcome] + 1
+    end
+  end
+
   pass_record.attach(record, metrics, evaluation,
     controller.qualified(block.controller, record.corner_id),
-    controller.stages(block.controller))
+    controller.stages(block.controller), kr_out.outcomes)
 end
 
 -- Fold tracker events into the passes buffer + the per-corner window summary.
@@ -865,7 +953,12 @@ local function stop_block(abort_reason)
     controller_on = block.controller ~= nil,
     null_criteria = block.null_criteria,
     stages = block.controller and controller.stages(block.controller) or nil,
+    kr_delivered = kr_counts.delivered,
+    kr_withdrawn = kr_counts.withdrawn,
   }
+  -- Nothing holds a message once the block is over: the clock that expires it
+  -- stops with the block.
+  kr_active = nil
   if abort_reason ~= nil then
     print('[TRACE] block ABORTED (' .. abort_reason .. ') -> ' .. block.ticks_path)
   else
@@ -878,7 +971,15 @@ end
 -- per-frame callback (runs whenever the app is enabled, window open or not)
 -- ---------------------------------------------------------------------------
 
+-- Forward declaration: defined in the reference-lap section below (it closes
+-- over `refrec`), but called from here. The chunk runs top to bottom at load,
+-- so the assignment has happened long before any frame callback fires.
+local maintain_ai_strength
+
 function script.update(dt)
+  -- Reference-lap upkeep runs whether or not a block is recording, so the
+  -- strength is already holding when Start is pressed.
+  if maintain_ai_strength ~= nil then pcall(maintain_ai_strength, dt) end
   if block == nil or block.fault ~= nil then return end
   local ok, err = pcall(sample_frame, dt)
   if not ok then
@@ -911,27 +1012,87 @@ local MARKER_BEHIND_M = 30.0    -- ...and briefly past it, so it does not blink 
 -- (TT Cup) it cleared and drew. Lift it a few centimetres so it reads as a mark
 -- ON the road for any car, without floating far enough to look detached.
 local MARKER_DISC_LIFT_M = 0.06
+-- The braking cue's trapezoid: half-widths across the track at the band's early
+-- and late edges. The taper is the cue -- see lib/markers.band_quad for why it
+-- narrows in the direction of travel. Both are clamped to the AI spline's own
+-- distance to the track edge, so the shape never spills onto grass on a narrow
+-- part of the circuit.
+local BAND_HALF_WIDTH_EARLY_M = 2.8
+local BAND_HALF_WIDTH_LATE_M = 1.2
+local BAND_EDGE_MARGIN_M = 0.5
+-- A band narrower than this leaves a trapezoid too short to read as a shape at
+-- racing speed; below it the cue falls back to the disc. At the frozen-g1
+-- braking floor of 5 m the trapezoid is 10 m long, which is legible but tight;
+-- the Gate G2 floor calibration is what makes it a real patch of road.
+local BAND_MIN_M = 1.0
 
 local marker_draw_error = nil
 local markers_drawn = 0
 
--- The presented stage for one element: the controller's, unless the block's
--- mode overrides it, unless the review override is set. Everything about the
--- decision is in lib/markers; this only supplies the inputs.
-local function presented_stage(element)
-  -- The review override deliberately bypasses the condition as well as the
-  -- controller: its whole job is to show a stage's VISUAL on demand, and it is
-  -- only reachable while idle (start_block clears it), so there is no block
-  -- whose condition it could contradict.
-  if stage_override ~= nil then return stage_override[element] end
-  local stage = 'full'
-  if block ~= nil and block.controller ~= nil then
-    stage = controller.stages(block.controller)[element]
+-- `presented_stage` and `presented_levels` live further up the file (just above
+-- the pass-evaluation section): the KR decision needs them at pass close, which
+-- happens before any of the drawing code below.
+
+-- Resolve one braking marker's trapezoid in world space, or nil to fall back to
+-- the disc. All the geometry is lib/markers.band_quad; this only samples the
+-- track and clamps the widths, which is the part that needs ac.*.
+--
+-- `ac.trackProgressToWorldCoordinate` follows the AI spline, which is also what
+-- the reference brake point was measured along, so the trapezoid lies on the
+-- same line the criterion is referenced to. `ac.getTrackAISplineSides` gives
+-- that point's distance to each track edge; the widths are clamped to it so the
+-- shape stays on tarmac without anything here knowing the circuit.
+local function band_quad_for(m)
+  if m.band_m == nil or m.band_m < BAND_MIN_M then return nil end
+  local track_length_m = ac.getSim().trackLengthM
+  if track_length_m == nil or track_length_m <= 0 then return nil end
+  local s_early, s_mid, s_late = markers.band_splines(m.spline, m.band_m, track_length_m)
+  local p_early = ac.trackProgressToWorldCoordinate(s_early)
+  local p_mid = ac.trackProgressToWorldCoordinate(s_mid)
+  local p_late = ac.trackProgressToWorldCoordinate(s_late)
+  if p_early == nil or p_mid == nil or p_late == nil then return nil end
+  local half_early = BAND_HALF_WIDTH_EARLY_M
+  local half_late = BAND_HALF_WIDTH_LATE_M
+  local sides_early = ac.getTrackAISplineSides(s_early)
+  local sides_late = ac.getTrackAISplineSides(s_late)
+  if sides_early ~= nil then
+    local room = math.min(sides_early.x, sides_early.y) - BAND_EDGE_MARGIN_M
+    if room < half_early then half_early = room end
   end
-  -- The mode is the block's when one is running, and the panel's selection
-  -- otherwise, so an experimenter can check the `off` condition before starting.
-  local mode = (block ~= nil) and block.condition or meta.condition
-  return markers.presented_stage(mode, stage)
+  if sides_late ~= nil then
+    local room = math.min(sides_late.x, sides_late.y) - BAND_EDGE_MARGIN_M
+    if room < half_late then half_late = room end
+  end
+  if half_early <= 0.1 or half_late <= 0.1 then return nil end
+  -- Shift the whole shape onto the marker, in ALL THREE AXES. The spline
+  -- samples sit on the AI `fast_lane`; the marker sits where the reference CAR
+  -- actually was at its brake point, which is a metre or two off the fast_lane
+  -- wherever the AI runs wide of it. Offsetting by that difference keeps the
+  -- trapezoid following the road's curvature AND centred on the cross and
+  -- stalk, instead of the exact point appearing off to one side of its own
+  -- tolerance band.
+  --
+  -- `dy` was missing until the 2026-10-15 dry run, and the trapezoid FLOATED
+  -- ABOVE THE TRACK because of it. X and Z were shifted onto the marker while
+  -- Y was left on the fast_lane's own vertical datum, which is not the same
+  -- datum as the recorded car position the disc uses -- so the two halves of
+  -- the same cue sat at different heights, and only the disc had ever been
+  -- checked on track. Offsetting Y by the mid-point delta puts the shape on the
+  -- marker's datum while KEEPING the per-vertex spline heights relative to it,
+  -- so the quad still follows elevation change and camber across its length
+  -- instead of being flattened to one height.
+  --
+  -- The lesson generalises and is already in CLAUDE.md in the other direction:
+  -- a flat thing built from logged car positions needs its vertical datum
+  -- checked, and a datum verified for one primitive is not verified for
+  -- another.
+  local dx, dz = m.x - p_mid.x, m.z - p_mid.z
+  local dy = m.y - p_mid.y
+  return markers.band_quad(
+    { x = p_early.x + dx, y = p_early.y + dy, z = p_early.z + dz },
+    { x = p_mid.x + dx, y = p_mid.y + dy, z = p_mid.z + dz },
+    { x = p_late.x + dx, y = p_late.y + dy, z = p_late.z + dz },
+    half_early, half_late)
 end
 
 -- Draw one marker per its visual description. `v` comes from markers.visual and
@@ -950,12 +1111,24 @@ local function draw_marker(m, v)
   end
   local at = vec3(m.x, m.y, m.z)
   if v.disc then
-    -- The disc is the part that survives to `minimal`, so it carries the whole
-    -- cue at reduced salience and gets a little more of the alpha budget there
-    -- than it does at full, where the cross and stalk are doing the pointing.
+    -- The footprint is the part that survives to `minimal`, so it carries the
+    -- whole cue at reduced salience and gets a little more of the alpha budget
+    -- there than it does at full, where the cross and stalk are doing the
+    -- pointing. Its SHAPE is per element: the braking cue draws a trapezoid
+    -- covering its tolerance band (the learner is judged on a range, so the cue
+    -- shows the range); the apex cue keeps the disc, because an apex criterion
+    -- is a lateral RMS about a line and has no along-track extent to draw.
     local fill = v.label and 0.45 or 0.7
-    render.circle(at + vec3(0, MARKER_DISC_LIFT_M, 0), vec3(0, 1, 0), MARKER_RADIUS_M,
-      rgbm(col.r, col.g, col.b, v.alpha * fill))
+    local shade = rgbm(col.r, col.g, col.b, v.alpha * fill)
+    local quad = (m.element == 'braking') and band_quad_for(m) or nil
+    if quad ~= nil then
+      render.quad(vec3(quad[1].x, quad[1].y + MARKER_DISC_LIFT_M, quad[1].z),
+                  vec3(quad[2].x, quad[2].y + MARKER_DISC_LIFT_M, quad[2].z),
+                  vec3(quad[3].x, quad[3].y + MARKER_DISC_LIFT_M, quad[3].z),
+                  vec3(quad[4].x, quad[4].y + MARKER_DISC_LIFT_M, quad[4].z), shade)
+    else
+      render.circle(at + vec3(0, MARKER_DISC_LIFT_M, 0), vec3(0, 1, 0), MARKER_RADIUS_M, shade)
+    end
   end
   if v.cross then render.debugCross(at, MARKER_RADIUS_M, col) end
   if v.stalk then render.debugLine(at, at + vec3(0, 2, 0), col) end
@@ -999,6 +1172,14 @@ end
 -- place to keep a running minimum, because it stops being called the moment the
 -- window is closed.
 local function update_hud()
+  -- Expire a held KR message. Same session clock the pass records use, which
+  -- only advances while a block is running — so an idle app never holds a stale
+  -- message from the block before it, and a paused block does not count the
+  -- pause against the hold.
+  if kr_active ~= nil and (block == nil or block.t > kr_active.expires_t) then
+    kr_active = nil
+  end
+
   local car = ac.getCar(0)
   if car == nil or hud_plans == nil then
     hud_readout = nil
@@ -1247,6 +1428,33 @@ local function drawActiveStatus()
       ui.textColored('  ' .. block.null_criteria .. ' unmeasurable criterion/criteria '
         .. '(no evidence)', rgbm(1, 0.8, 0.4, 1))
     end
+
+    -- KR status. On the panel because "is the participant actually being told
+    -- their error?" is the one question the section 0A diagnostic turns on, and
+    -- the experimenter cannot see the participant's cue window. Shown even when
+    -- disabled, so an unexpectedly silent block is visible in the hour it can
+    -- still be re-run rather than at analysis.
+    if controller_cfg.kr.enabled then
+      ui.text(string.format('  KR: %d sent, %d silent (in band), %d withdrawn, %d unmeasured',
+        kr_counts.delivered, kr_counts.inside_band, kr_counts.withdrawn,
+        kr_counts.not_measured))
+      -- Clamped is shown separately and only when it happens: it is not a
+      -- property of the driver but of the braking zone, so a count climbing
+      -- here during a block means an annotation to re-derive, and it is worth
+      -- seeing in the hour it can still be acted on rather than at analysis.
+      if kr_counts.clamped > 0 then
+        ui.textColored(string.format(
+          '  KR: %d clamped at a braking-zone edge (floor, not measured)',
+          kr_counts.clamped), rgbm(1, 0.6, 0.2, 1))
+      end
+      if kr_active ~= nil then
+        local m = kr_active.messages[1]
+        ui.textColored('  on screen now: ' .. m.label .. ' ' .. m.text,
+          rgbm(1, 0.82, 0.42, 1))
+      end
+    else
+      ui.textColored('  KR: DISABLED in config', rgbm(1, 0.6, 0.2, 1))
+    end
   elseif block.tracker ~= nil then
     ui.textColored('controller: OFF (no reference loaded)', rgbm(1, 0.6, 0.2, 1))
   end
@@ -1391,7 +1599,17 @@ end
 -- doing nothing. Every call is pcall-wrapped: an unavailable physics API must
 -- not take the window down mid-draw.
 
-local AI_STRENGTHS = { 95, 98, 100 }   -- eval plan: 95-100%
+-- Reference-lap AI strengths. 95/98/100 are the eval plan's documented range
+-- for the EXPERT reference; the lower values were added 2026-10-10 to test
+-- reference REACHABILITY. The dry run showed a 100% AI reference sitting ~15 m
+-- (braking) and ~9 km/h (corner speed) beyond a plateaued non-expert, i.e. the
+-- target, not the tolerance, is what novices cannot reach. Recording candidate
+-- references at lower strengths is how that gets measured rather than guessed.
+--
+-- NOTE: any reference recorded below 95% is NOT the expert reference the plan
+-- describes. If one is adopted, framing v6 and eval plan Phase 0 must be updated
+-- to say so, and the provenance is already stamped per block (`ai_level_pct`).
+local AI_STRENGTHS = { 80, 85, 90, 95, 98, 100 }
 local refrec = { strength = 98, autopilot = false, note = nil }
 
 local function physics_allowed()
@@ -1399,21 +1617,72 @@ local function physics_allowed()
   return ok and allowed == true
 end
 
+-- Set the player car's AI level, and REPORT WHAT THE SIM ACTUALLY DID.
+--
+-- 2026-10-10: a 12-minute block was recorded with the panel set to 85% and came
+-- out identical to the 100% reference -- every brake point within 0.25 m, a
+-- fraction of the reference's own lap-to-lap scatter -- with `car.aiLevel`
+-- reading 1.0 throughout. The pcall SUCCEEDED; the write simply had no effect.
+-- A call that returns cleanly and changes nothing is the worst kind, so this
+-- function no longer reports what it asked for: it reports what it reads back.
+--
+-- The likely cause is ordering: setCarAutopilot appears to (re)establish the
+-- user car's AI at the session default, so a level applied beforehand is lost.
+-- Hence apply-after-engage below, plus a periodic re-apply while autopilot runs.
+-- If the readback still refuses to move, the user car's autopilot ignores
+-- aiLevel altogether and a sub-maximal reference has to come from an AI
+-- OPPONENT car with the launcher's strength slider instead. The panel readback
+-- is what settles that in one glance rather than another 12-minute block.
 local function apply_ai_strength()
   local ok, err = pcall(function() physics.setAILevel(0, refrec.strength / 100.0) end)
-  refrec.note = ok and string.format('AI level set to %d%%', refrec.strength)
-    or ('setAILevel failed: ' .. tostring(err))
+  if not ok then
+    refrec.note = 'setAILevel failed: ' .. tostring(err)
+    return
+  end
+  local actual = car.aiLevel
+  if type(actual) ~= 'number' or actual < 0 then
+    refrec.note = string.format('asked for %d%%; car reports no AI (aiLevel %s)'
+      .. ' -- engage autopilot first, then apply', refrec.strength, tostring(actual))
+    return
+  end
+  local actual_pct = actual * 100
+  if math.abs(actual_pct - refrec.strength) <= 1.0 then
+    refrec.note = string.format('AI level CONFIRMED at %.0f%%', actual_pct)
+  else
+    refrec.note = string.format('REFUSED: asked for %d%%, car reports %.0f%%'
+      .. ' -- do NOT record a reference at this setting',
+      refrec.strength, actual_pct)
+  end
 end
 
 local function set_autopilot(active)
   local ok, err = pcall(function() physics.setCarAutopilot(active) end)
   if ok then
     refrec.autopilot = active
-    refrec.note = active and 'autopilot ON (AC marks the lap invalid; TRACE counts laps itself)'
-      or 'autopilot OFF'
+    if active then
+      refrec.note = 'autopilot ON (AC marks the lap invalid; TRACE counts laps itself)'
+      -- Apply AFTER engaging: see apply_ai_strength's note. Engaging autopilot
+      -- is the moment the user car's AI exists, so it is the moment the level
+      -- can stick.
+      apply_ai_strength()
+    else
+      refrec.note = 'autopilot OFF'
+    end
   else
     refrec.note = 'setCarAutopilot failed: ' .. tostring(err)
   end
+end
+
+-- Re-apply periodically while autopilot drives, in case engaging a session,
+-- crossing the line or AC's own logic resets it. Cheap (one call per second) and
+-- it only runs in reference mode with autopilot on.
+local ai_reapply_t = 0.0
+function maintain_ai_strength(dt)
+  if not refrec.autopilot then return end
+  ai_reapply_t = ai_reapply_t + dt
+  if ai_reapply_t < 1.0 then return end
+  ai_reapply_t = 0.0
+  pcall(function() physics.setAILevel(0, refrec.strength / 100.0) end)
 end
 
 local function drawReferenceMode()
@@ -1442,9 +1711,28 @@ local function drawReferenceMode()
     ui.sameLine()
   end
   ui.text('')
+  if refrec.strength < 95 then
+    ui.textColored('below the 95-100% expert range in the eval plan -- a reference '
+      .. 'recorded here is a REACHABILITY CANDIDATE, not the expert reference',
+      rgbm(1, 0.7, 0.3, 1))
+  end
   if ui.button('Apply AI strength') then apply_ai_strength() end
   ui.sameLine()
-  ui.text(string.format('(car reports aiLevel %.2f)', car.aiLevel or -1))
+  -- Requested vs ACTUAL, always both. The 2026-10-10 block was recorded
+  -- believing the panel rather than the sim; never again.
+  local actual = car.aiLevel
+  local actual_pct = (type(actual) == 'number' and actual >= 0) and (actual * 100) or nil
+  if actual_pct == nil then
+    ui.textColored('car reports NO AI (aiLevel ' .. tostring(actual) .. ')'
+      .. ' -- engage autopilot, then Apply', rgbm(1, 0.6, 0.2, 1))
+  elseif math.abs(actual_pct - refrec.strength) <= 1.0 then
+    ui.textColored(string.format('requested %d%%  |  car reports %.0f%%  CONFIRMED',
+      refrec.strength, actual_pct), rgbm(0.3, 1, 0.3, 1))
+  else
+    ui.textColored(string.format('requested %d%%  |  car reports %.0f%%  MISMATCH'
+      .. ' -- a reference recorded now would be mislabelled',
+      refrec.strength, actual_pct), rgbm(1, 0.3, 0.3, 1))
+  end
 
   ui.separator()
   if ui.button(refrec.autopilot and 'Autopilot: ON -> turn off' or 'Autopilot: off -> turn ON') then
@@ -1461,84 +1749,242 @@ local function drawReferenceMode()
 end
 
 -- ---------------------------------------------------------------------------
--- the corner-speed indicator (M5) — the participant-facing window
+-- the corner-speed indicator (M5) -- shared colours
 -- ---------------------------------------------------------------------------
 --
--- The third UI element, and the only one that is not world-anchored. It lives in
--- its OWN app window, separate from the experimenter panel, for the obvious
--- reason: the panel is for the researcher and must never be on the participant's
--- screen, while this is a study stimulus and must be.
+-- The third UI element, and the only one that is not world-anchored. It is
+-- drawn by `drawHudOverlay` further down, as a SCREEN OVERLAY.
 --
--- Why an app window rather than a fixed screen overlay. It uses only the ui.*
--- calls already proven in this app, the experimenter positions it once
--- (AC persists app window positions, and the apparatus fixes the display and
--- seating across participants anyway), and it can be shown or hidden without a
--- code path. The alternative — `ui.beginTransparentWindow` at a computed
--- centre-bottom position — is a nicer HUD and is the upgrade path if the window
--- chrome proves distracting at the G2 review; it is NOT taken now because it
--- would be an unverified API on the one element a participant stares at.
--- Recorded here as an M5 decision so the choice is reviewable rather than
--- accidental.
+-- The `cue` APP WINDOW that used to live here was DELETED on 2026-10-15, once
+-- the [UI_CALLBACKS] overlay was confirmed drawing in game by the protocol dry
+-- run. It had been kept only as the fallback for that confirmation, and two
+-- draw paths for one stimulus is one too many -- with both live a participant
+-- sees the readout twice. Its history is worth keeping in one line, because the
+-- reasoning was wrong in an instructive way: it was chosen as an app window
+-- because that used only ui.* calls already proven in this app, and the cost
+-- was that the cue's position and size lived in the player's imgui state
+-- rather than in this repository. It was then never opened in the month it
+-- existed, so no participant-facing element had ever been seen on screen. **A
+-- stimulus must not depend on a setup step.**
 --
--- Note what this function does NOT do: no minimum tracking, no corner
--- selection, no salience decision. All of that is lib/hud, computed every frame
--- from draw3d, because an immediate-mode window stops being called the moment
--- it is closed and a running minimum kept here would silently stop running.
+-- Note what the overlay does NOT do: no minimum tracking, no corner selection,
+-- no salience decision. All of that is lib/hud, computed every frame from
+-- draw3d -- which is also why the window could be deleted without touching any
+-- of it.
 
 local CUE_OK = rgbm(0.45, 0.95, 0.55, 1)
 local CUE_OFF = rgbm(1.0, 0.75, 0.3, 1)
+-- Bandwidth KR is an error message, never an instruction, and it is drawn at
+-- full opacity whatever the cue's salience stage is -- KR does not fade
+-- (lib/kr rule 5). One colour for all three elements, because the label already
+-- says which element it is and a per-element colour would imply a severity
+-- ranking the design does not have.
+local KR_LABEL = rgbm(0.70, 0.74, 0.84, 1)
+local KR_TEXT = rgbm(1.0, 0.82, 0.42, 1)
 
-local function drawCueWindow()
+-- ---------------------------------------------------------------------------
+-- The participant's HUD (screen overlay)
+-- ---------------------------------------------------------------------------
+--
+-- The same readout and the same KR message as the cue window above, drawn as a
+-- SCREEN OVERLAY instead of an app window: centre-bottom, no title bar, no
+-- frame, no background, TTF text with a dark outline so it is legible over
+-- tarmac, grass and sky alike. CSP calls this from
+-- `manifest.ini [UI_CALLBACKS] IN_GAME`, every frame, whether or not any TRACE
+-- window is open.
+--
+-- WHY THIS REPLACES THE WINDOW (2026-10-14). The window was chosen at M5 for
+-- good reasons that turned out to be the wrong ones:
+--
+--   * "the experimenter positions it once" -- nobody did, for a month: the
+--     window was never opened, so no participant-facing cue had ever been seen
+--     on screen at all. A stimulus that depends on a setup step is a stimulus
+--     that will be missing from somebody's session.
+--   * "AC persists app window positions" -- which is exactly the problem. The
+--     cue's position and size then live in the player's imgui state file rather
+--     than in this repository, so they are not part of the apparatus and are
+--     not pinned by anything. lib/hud.layout puts them back in code, where
+--     every participant gets the same geometry at any resolution.
+--   * it looked like an app, because it WAS an app: a titled, bordered, opaque
+--     panel sitting on top of the cockpit next to TRACE's own experimenter
+--     window. The three elements are supposed to read as driving assistance,
+--     not as a dialog. The two world markers already read that way; this one
+--     did not, and that asymmetry was between two of the study's three cues.
+--
+-- The window is deliberately LEFT IN PLACE (manifest.ini still declares it) as
+-- a fallback: if `IN_GAME` turns out not to be honoured for a user app, opening
+-- "TRACE cue" still gets the cue on screen. Once this is verified in game, the
+-- window goes. Until then the panel reports whether this callback is firing, so
+-- "nothing on screen" can be told apart from "nothing to show".
+
+-- A TTF font rather than an imgui one: `ui.Font.Title` is the panel's font and
+-- only comes in the sizes the app was built with, while a HUD has to scale with
+-- the display. Semibold reads better at a glance against a moving background
+-- than bold, which turns into a blob at the big target size.
+local HUD_FONT = 'Segoe UI;Weight=SemiBold'
+local HUD_OUTLINE = rgbm(0, 0, 0, 0.9)
+
+local hud_overlay_frames = 0
+local hud_overlay_error = nil
+
+-- One centred line. Returns its height, so the caller stacks downward without
+-- knowing anything about the font.
+local function hud_line(text, size, centre_x, y, col)
+  local m = ui.measureDWriteText(text, size)
+  ui.beginOutline()
+  ui.dwriteDrawText(text, size, vec2(centre_x - m.x * 0.5, y), col)
+  -- The outline carries the text's own alpha, or a faded cue would keep a
+  -- full-strength shadow and stop fading at exactly the point it matters.
+  ui.endOutline(rgbm(HUD_OUTLINE.r, HUD_OUTLINE.g, HUD_OUTLINE.b,
+                     HUD_OUTLINE.mult * col.mult), 1.4)
+  return m.y
+end
+
+-- Two differently-sized or differently-coloured runs, centred as one line.
+-- Used for "118 km/h" (the number is the cue, the unit is a caption) and for a
+-- KR message's label and body.
+local function hud_pair(a_text, a_size, a_col, b_text, b_size, b_col, centre_x, y)
+  local am = ui.measureDWriteText(a_text, a_size)
+  local bm = ui.measureDWriteText(b_text, b_size)
+  local x = centre_x - (am.x + bm.x) * 0.5
+  ui.beginOutline()
+  ui.dwriteDrawText(a_text, a_size, vec2(x, y), a_col)
+  -- Align the smaller run on the larger one's BASELINE, not its top, so the
+  -- unit sits under the number's shoulder the way a speedometer reads.
+  ui.dwriteDrawText(b_text, b_size, vec2(x + am.x, y + am.y - bm.y), b_col)
+  ui.endOutline(rgbm(HUD_OUTLINE.r, HUD_OUTLINE.g, HUD_OUTLINE.b,
+                     HUD_OUTLINE.mult * a_col.mult), 1.4)
+  if am.y > bm.y then return am.y end
+  return bm.y
+end
+
+local function drawHudOverlay()
   if INPUTS == nil and init_error == nil then
     local ok, err = pcall(init)
     if not ok then init_error = tostring(err) end
   end
-  local r = show_markers and hud_readout or nil
-  if r == nil then
-    -- Deliberately blank rather than explanatory: a participant must not be
-    -- shown apparatus state. Between corners, and whenever the element is
-    -- withdrawn, this window is simply empty.
-    return
-  end
+  if not show_markers then return end
+  local r = hud_readout
+  if r == nil and kr_active == nil then return end
 
-  local a = r.alpha
-  if r.show_label then
-    ui.textColored('CORNER ' .. r.corner_id, rgbm(0.75, 0.8, 0.9, a))
-  end
+  local size = ac.getUI().windowSize
+  local lay = hud.layout(size.x, size.y)
+  local y = lay.top_y
 
-  -- The target is the part that survives to `minimal`: it is the number the
-  -- driver is trying to reach, and the one thing the cue exists to supply.
-  ui.pushFont(ui.Font.Title)
-  ui.textColored(string.format('%.0f', r.target_kmh), rgbm(1, 1, 1, a))
-  ui.popFont()
-  ui.sameLine()
-  ui.textColored('km/h', rgbm(0.8, 0.8, 0.8, a))
+  ui.pushDWriteFont(HUD_FONT)
 
-  if r.show_actual and r.actual_kmh ~= nil then
-    local col = rgbm(0.8, 0.85, 0.95, a)
-    if r.within_band ~= nil then
-      col = r.within_band and rgbm(CUE_OK.r, CUE_OK.g, CUE_OK.b, a)
-        or rgbm(CUE_OFF.r, CUE_OFF.g, CUE_OFF.b, a)
+  if r ~= nil then
+    local a = r.alpha
+    if r.show_label then
+      y = y + hud_line('CORNER ' .. r.corner_id, lay.size_label, lay.centre_x, y,
+                       rgbm(0.80, 0.85, 0.95, a)) + lay.line_gap
     end
-    if r.phase == 'approach' then
-      -- Still slowing: show the live speed, with no verdict on it. A red/green
-      -- judgement here would be judging a number that is not the metric.
-      ui.textColored(string.format('now %.0f', r.actual_kmh), col)
+
+    -- THE BOX: a colour-coded panel holding the CURRENT speed, with the target
+    -- as a caption just outside its bottom edge (2026-10-15, from the dry run).
+    --
+    -- It was the other way round -- the target rendered at the big size with the
+    -- live speed as a small line under it -- and on track the target took the
+    -- attention the live number should have. The driver needs to read what they
+    -- are *doing*; the target is reference they can glance at. So the live
+    -- number is the big one, the box's fill carries the in-band verdict, and the
+    -- target sits below in small text.
+    --
+    -- The box is gated by `show_actual`, not drawn unconditionally: the box IS
+    -- the live-speed display and its colour is the verdict, so keeping it at
+    -- `minimal` would hand back the comparison `minimal` exists to withdraw.
+    if r.show_actual and r.actual_kmh ~= nil then
+      local x0 = lay.centre_x - lay.box_w * 0.5
+      local box_from, box_to = vec2(x0, y), vec2(x0 + lay.box_w, y + lay.box_h)
+
+      -- Neutral on the approach. The car is still slowing there, so the live
+      -- speed is not yet the metric and a red/green fill would be a verdict on
+      -- a number the criterion never sees.
+      local tint = rgbm(0.55, 0.62, 0.75, a)
+      if r.within_band ~= nil then
+        tint = r.within_band and rgbm(CUE_OK.r, CUE_OK.g, CUE_OK.b, a)
+          or rgbm(CUE_OFF.r, CUE_OFF.g, CUE_OFF.b, a)
+      end
+      -- Fill well under the border's alpha: the number has to stay the most
+      -- legible thing in the box against a moving background, and a saturated
+      -- panel fights it.
+      ui.drawRectFilled(box_from, box_to,
+                        rgbm(tint.r, tint.g, tint.b, a * 0.30), lay.box_radius)
+      ui.drawRect(box_from, box_to, rgbm(tint.r, tint.g, tint.b, a * 0.95),
+                  lay.box_radius, lay.box_border)
+
+      -- Centred in the box, vertically as well, so the glyphs sit in the panel
+      -- rather than hanging from its top edge.
+      local speed_text = string.format('%.0f', r.actual_kmh)
+      local m = ui.measureDWriteText(speed_text, lay.size_speed)
+      ui.beginOutline()
+      ui.dwriteDrawText(speed_text, lay.size_speed,
+                        vec2(lay.centre_x - m.x * 0.5,
+                             y + (lay.box_h - m.y) * 0.5),
+                        rgbm(1, 1, 1, a))
+      ui.endOutline(rgbm(HUD_OUTLINE.r, HUD_OUTLINE.g, HUD_OUTLINE.b,
+                         HUD_OUTLINE.mult * a), 1.4)
+      y = y + lay.box_h + lay.line_gap
+
+      -- The target, just outside the bottom edge. `km/h` rides with it rather
+      -- than with the big number: the unit belongs to both and repeating it
+      -- twice in one cue is clutter.
+      y = y + hud_line(string.format('target %.0f km/h', r.target_kmh),
+                       lay.size_target, lay.centre_x, y,
+                       rgbm(0.85, 0.88, 0.95, a)) + lay.line_gap
     else
-      ui.textColored(string.format('min %.0f  (%+.0f)', r.actual_kmh,
-        r.deviation_kmh or 0), col)
+      -- `minimal`, or a pass with no measurable speed yet: the target alone,
+      -- which is what the reduced form has always kept.
+      y = y + hud_pair(string.format('%.0f', r.target_kmh), lay.size_speed,
+                       rgbm(1, 1, 1, a), ' km/h', lay.size_target,
+                       rgbm(0.85, 0.85, 0.85, a), lay.centre_x, y) + lay.line_gap
     end
+  end
+
+  -- Bandwidth KR, at full opacity whatever the cue's stage is (lib/kr rule 5),
+  -- and BELOW the readout so a message appearing never moves it.
+  if kr_active ~= nil then
+    local k = kr_active
+    for i = 1, #k.messages do
+      local m = k.messages[i]
+      y = y + hud_pair(m.label .. '  ', lay.size_kr, KR_LABEL, m.text, lay.size_kr,
+                       KR_TEXT, lay.centre_x, y) + lay.line_gap
+    end
+  end
+
+  ui.popDWriteFont()
+end
+
+-- CSP invokes this once per frame for the in-game UI (manifest.ini
+-- [UI_CALLBACKS] IN_GAME = hudOverlay). Wrapped like every other fallible draw,
+-- but the error is NOT written to the screen the way the panel's is: this
+-- surface belongs to the participant, and a red Lua error across the middle of
+-- their cockpit is worse than a missing cue. It goes to the panel instead.
+function hudOverlay()
+  hud_overlay_frames = hud_overlay_frames + 1
+  local ok, err = pcall(drawHudOverlay)
+  if not ok then
+    hud_overlay_error = tostring(err)
+    -- The font stack is pushed inside the protected call, so an error after the
+    -- push would leave it unbalanced for every other window on screen.
+    pcall(ui.popDWriteFont)
   end
 end
 
-function windowCue(dt)
-  local ok, err = pcall(drawCueWindow)
-  if not ok then
-    -- Same defensive rule as the panel: an uncaught error mid-draw silently
-    -- abandons the rest of the frame. On the participant's window a bare error
-    -- string is still better than a window that mysteriously half-renders,
-    -- because the experimenter can see it during a block.
-    ui.textColored('cue error: ' .. tostring(err), rgbm(1, 0.3, 0.3, 1))
+script.hudOverlay = hudOverlay
+
+-- What the experimenter needs to know about the overlay, on the panel, because
+-- the overlay itself must never explain itself to a participant.
+local function drawHudOverlayStatus()
+  if hud_overlay_frames == 0 then
+    ui.textColored('HUD overlay: NOT DRAWING -- the in-game UI callback has '
+      .. 'never fired. Open "TRACE cue" from the apps sidebar as a fallback.',
+      rgbm(1, 0.35, 0.35, 1))
+  elseif hud_overlay_error ~= nil then
+    ui.textColored('HUD overlay error: ' .. hud_overlay_error, rgbm(1, 0.6, 0.2, 1))
+  else
+    ui.textColored(string.format('HUD overlay: drawing (%d frames)',
+      hud_overlay_frames), rgbm(0.5, 0.9, 0.6, 1))
   end
 end
 
@@ -1625,6 +2071,7 @@ function windowMain(dt)
     else
       ui.text('corner-speed cue: (nothing to show here)')
     end
+    drawHudOverlayStatus()
     ui.separator()
 
     if ui.button('Reload configs') then
@@ -1655,6 +2102,8 @@ function windowMain(dt)
             ui.text(string.format('  %d unmeasurable criterion/criteria',
               last_summary.null_criteria))
           end
+          ui.text(string.format('  %d KR message(s) delivered, %d withdrawn',
+            last_summary.kr_delivered or 0, last_summary.kr_withdrawn or 0))
         else
           ui.text('  controller was OFF (no reference)')
         end

@@ -226,3 +226,86 @@ def test_an_unreadable_instrument_file_is_reported(tmp_path):
     (tmp_path / "instrument_pre_study_P01_s1.json").write_text("{not json", encoding="utf-8")
     problems = integrity.check_instruments(tmp_path, [])
     assert any("unreadable" in p for p in problems), problems
+
+
+# --- the validate CLI -------------------------------------------------------
+#
+# Added at M6 so a hand-written instrument file can be checked while the
+# participant is still in the room. The format guess is the whole point: an
+# experimenter mid-session should not have to remember a --format flag.
+
+@pytest.mark.parametrize("name,expected", [
+    ("instrument_pre_study_P01_s1.json", "instrument"),
+    ("manifest_P01_s2_pair1_adaptive_20260908_120000.json", "session_manifest"),
+    ("annotation_ks_silverstone-national.json", "annotation"),
+    ("reference_pair1.json", "reference"),
+    ("controller_config.json", "controller_config"),
+    ("ticks_P01_s2.csv", None),
+    ("something_else.json", None),
+])
+def test_format_is_guessed_from_the_filename(name, expected):
+    assert pyval.guess_format(name) == expected
+
+
+def test_cli_passes_a_valid_instrument_file(tmp_path, capsys):
+    path = tmp_path / "instrument_pre_study_P01_s1.json"
+    path.write_text(json.dumps({
+        "schema_version": 1, "instrument": "pre_study", "participant_id": "P01",
+        "session": 1, "recorded_at": "2026-10-10T14:05:00",
+        "responses": PRE_STUDY}), encoding="utf-8")
+    assert pyval.main([str(path)]) == 0
+    assert "[PASS]" in capsys.readouterr().out
+
+
+def test_cli_reports_every_fault_at_once(tmp_path, capsys):
+    """One pass, all the problems: a session is the wrong place to iterate."""
+    path = tmp_path / "instrument_pre_study_P01_s1.json"
+    path.write_text(json.dumps({
+        "schema_version": 1, "instrument": "pre_study", "participant_id": "P01",
+        "session": 1, "recorded_at": "2026-10-10 14:05",
+        "responses": {"age_years": 24, "sim_racing_hours_total": "about forty",
+                      "league_participation": False}}), encoding="utf-8")
+    assert pyval.main([str(path)]) == 1
+    out = capsys.readouterr().out
+    assert "recorded_at" in out
+    assert "eligibility_confirmed" in out
+    assert "sim_racing_hours_total" in out
+
+
+def test_cli_reports_malformed_json_rather_than_raising(tmp_path, capsys):
+    path = tmp_path / "instrument_pre_study_P01_s1.json"
+    path.write_text("{not json", encoding="utf-8")
+    assert pyval.main([str(path)]) == 1
+    assert "JSON parse error" in capsys.readouterr().out
+
+
+def test_cli_declines_to_guess_rather_than_guessing_wrong(tmp_path, capsys):
+    path = tmp_path / "mystery.json"
+    path.write_text("{}", encoding="utf-8")
+    assert pyval.main([str(path)]) == 1
+    assert "--format" in capsys.readouterr().out
+
+
+def test_the_committed_templates_all_validate():
+    """The templates are the thing a tired experimenter copies at 9pm.
+
+    If one of them stops validating -- a schema change, a typo in an edit -- the
+    first person to find out should be this suite, not the dry run.
+    """
+    from pathlib import Path
+    templates = sorted((Path(__file__).resolve().parents[2] / "instruments"
+                        / "templates").glob("instrument_*.json"))
+    assert len(templates) == 4, "expected one template per instrument type"
+    for path in templates:
+        assert pyval.validate_file(path, "instrument") == [], path.name
+
+
+def test_an_autopilot_block_owes_no_questionnaires(tmp_path):
+    """The AC AI answers no questionnaires (regression 2026-10-10).
+
+    The 85%-strength reference block was recorded with the dev toggle off, so
+    without this the checker would chase the experimenter for its TLX.
+    """
+    loaded = [write_manifest(tmp_path, "85AI1_s2_a", session=2,
+                             autopilot=True, ai_level_pct=85)]
+    assert integrity.check_instruments(tmp_path, loaded) == []

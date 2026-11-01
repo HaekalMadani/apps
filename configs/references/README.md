@@ -58,10 +58,27 @@ Everything runs through the study's own pipeline; Phase 0 doubles as its
 end-to-end test.
 
 1. **Record the AI laps.** Load the pair, open TRACE, switch to **reference**
-   mode, set AI strength to 95–100%, and engage autopilot. Start a **dev block**
+   mode, set the AI strength, and engage autopilot. Start a **dev block**
    (the annotation/reference gates are for participant blocks; a dev block is
    stamped `dev_block: true` so these laps can never read as study data). Record
    12 clean laps under the fixed setup, then stop.
+
+   Four things this step has got wrong at least once each, all of them silent:
+
+   - **Set the fuel before you start.** The AI boxes when it runs dry, and a
+     fuel stop costs the whole lap plus the one before it. The first 85% block
+     yielded 8 clean laps out of 10 and fell below the 12-lap protocol.
+   - **Check the strength READBACK on the panel**, not the slider. Applying
+     `physics.setAILevel` before autopilot is engaged does nothing at all and
+     returns cleanly; one "85%" block was recorded at 100% and only came to
+     light because its reference table was identical to the existing one.
+   - **Do not delete the tick logs.** Both original 100% reference blocks' logs
+     are gone, so neither table can ever be re-extracted — which is why pair 1's
+     had to be *replaced* rather than re-extracted when the braking zones moved.
+     A reference that cannot be rebuilt from its own recording cannot be kept in
+     step with an annotation that changes.
+   - **Re-check the braking zones against the new table** (step 5). A reference
+     at a different strength brakes in a different place.
 2. **(Not currently done) Record human validation laps** the same way with
    autopilot off. See "Why the reference is AI-only" below — this step is
    deliberately skipped, and the tooling for it is kept for the day it can be
@@ -93,6 +110,25 @@ end-to-end test.
    Then commit the AI table, the human table, the comparison report **and** the
    substituted table, so every substitution decision is reconstructible from the
    repository alone.
+5. **Re-check the annotation's braking zones against the new table**, and
+   re-extract if they move. The extractor's `check_braking_zone_fit` reports
+   both failure modes — too little zone before the reference brake point (a
+   novice braking early goes undetected) and too little after it (a novice
+   braking late goes undetected) — and a zone edit changes the brake points the
+   next extraction finds, so the two steps iterate once.
+
+## Superseded tables
+
+`superseded/` holds reference tables the runtime no longer loads, kept because
+the strength comparison is a finding the thesis reports rather than a dead end:
+
+| file | strength | laps | why it is not the reference |
+|---|---|---|---|
+| `reference_pair1_ai100_20260908.json` | 100% | 12 | Unreachable by novices — the measured bias against it was 14.9 m early and 9.4 km/h slow, and nothing ever faded. Its tick log is deleted, so it cannot be re-extracted. |
+| `reference_pair1_ai80_20261010.json` | 80% | 12 | Over-corrects: brake and speed biases flip sign, and it scores worse than 85% on human pass rates. Kept as the other end of the bracket. |
+
+The current `reference_pair1.json` is **85%**, on 8 clean laps — short of the
+12-lap protocol, so Gate G0 is re-opened for pair 1. See `G0_REVIEW.md`.
 
 ## Why the reference is AI-only (M3 decision, 2026-09-08)
 

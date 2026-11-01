@@ -73,6 +73,11 @@
           ],
           "description": "The RAW brake-initiation sample (impl plan section 2.1.4): the session-clock time and spline position of the detected event. Stamped so the pilot's event-log audit can reconstruct the braking gate's exact input from the logs alone — the 20 Hz tick log cannot resolve it, because the evaluator consumes per-frame samples."
         },
+        "brake_initiation_clamped": {
+          "type": "boolean",
+          "const": true,
+          "description": "Present and true only when the brake-initiation event was CLAMPED to the braking zone's opening: the driver was already above the brake threshold on entering the zone, so the first in-zone sample became the event and brake_initiation_distance_m is a FLOOR (\"at least this early\"), not a measurement. Absent means not clamped — absent and false are the same fact, the dev_block / aborted pattern, so no reader needs a third state and every log written before this field existed stays valid. The criterion still consumes the distance and still FAILS on it, because the driver really did brake at least that early and turning the pass into a null would withhold real evidence from the controller; what the flag changes is that lib/kr says nothing (outcome `clamped`) and that trace_kit.analysis leaves the pass out of the CE/VE averages."
+        },
         "brake_rolling_mean_distance_m": {
           "type": ["number", "null"],
           "description": "Rolling mean of this corner's PRIOR brake-initiation distances (the passes forming the current qualification window), which is the consistency gate's datum. null on the first pass of a corner, where there is no prior sample and the consistency gate is vacuously met."
@@ -131,12 +136,55 @@
         "apex": { "$ref": "#/definitions/stage" }
       },
       "description": "Element-level controller stage at pass close (computed in all modes; salience pinned in static mode)."
+    },
+    "kr": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["braking", "corner_speed", "apex"],
+      "properties": {
+        "braking": { "$ref": "#/definitions/krOutcome" },
+        "corner_speed": { "$ref": "#/definitions/krOutcome" },
+        "apex": { "$ref": "#/definitions/krOutcome" }
+      },
+      "description": "What bandwidth knowledge of results did on this pass, per element (lib/kr). OPTIONAL and absent when KR was not configured at all — absent and a row of `off` are different facts, and pre-2026-10-10 blocks have neither. This is the one pass-record field that DIFFERS between conditions: everything the controller produces is byte-identical in adaptive and static, but `kr` records what the participant was told and the conditions differ in exactly that."
     }
   },
   "definitions": {
     "stage": {
       "type": "string",
       "enum": ["full", "reduced", "probe", "removed"]
+    },
+    "krOutcome": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["outcome"],
+      "properties": {
+        "outcome": {
+          "type": "string",
+          "enum": ["delivered", "inside_band", "withdrawn", "not_measured", "clamped", "capped", "off"],
+          "description": "`delivered`: a message was shown, and `text` is verbatim what it said. `inside_band`: the pass was within tolerance, so the system was silent and the silence was the message. `withdrawn`: the element is hidden (probe, removed, or the off condition), so its KR is suppressed — a retention test with feedback running measures performance-with-feedback. `not_measured`: the metric was null, which is no evidence and nothing to report. `clamped`: the error was measurable but is only a FLOOR, because the brake initiation was clamped to the braking zone's opening (see metrics.brake_initiation_clamped) — the magnitude is logged but was never said, because bandwidth KR must not report a quantity the apparatus did not measure. `capped`: outside the band, but it lost the kr.max_messages priority order. `off`: KR disabled, or this element is not in kr.elements. Four of these are silences and the section 0A diagnostic turns entirely on telling them apart."
+        },
+        "text": {
+          "type": "string",
+          "minLength": 1,
+          "description": "The message as shown, verbatim. Built in lib/kr and logged unchanged so what the participant was told and what the record says cannot drift apart."
+        },
+        "error_value": {
+          "type": "number",
+          "description": "The signed error the message reported, in the metric's own units: metres from the expert brake point (positive = earlier), km/h from the expert minimum (negative = slower), or metres of apex RMS in excess of the reference's own mean RMS (one-sided). Recorded for every outcome that had a measurable error, including the silent ones, so the CE/VE decomposition can be computed over all passes rather than only the ones that spoke. On a `clamped` outcome it is a LOWER BOUND on the magnitude rather than a measurement of it, and must be left out of any CE/VE average — trace_kit.analysis.kr_diagnostic does that."
+        },
+        "band": {
+          "type": "number",
+          "exclusiveMinimum": 0,
+          "description": "The tolerance band the error was judged against — the same max(sigma_ref x EVM, floor) the fading criterion used, so a re-scoring at different band floors can tell exactly which messages would have changed."
+        }
+      },
+      "allOf": [
+        {
+          "if": { "properties": { "outcome": { "const": "delivered" } }, "required": ["outcome"] },
+          "then": { "required": ["outcome", "text", "error_value", "band"] }
+        }
+      ]
     },
     "perElementBool": {
       "type": "object",

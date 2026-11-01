@@ -44,9 +44,24 @@
 --   prior sample, so the consistency gate is vacuously met and the criterion
 --   reduces to accuracy for that pass.
 --
---   CORNER SPEED — two-sided: |min corner speed - expert mean| <= band. Too
---   fast is an error too (the car runs wide), so this is a band about the mean,
---   not a floor under it.
+--   CORNER SPEED — ONE-SIDED from 2026-10-14 (`criteria.corner_speed_gate`):
+--   the pass fails only when the minimum is more than a band BELOW the expert's.
+--   Carrying MORE speed than the reference is not an error.
+--     slow_only:  min corner speed - expert mean >= -band     (the default)
+--     two_sided:  |min corner speed - expert mean| <= band     (kept, see below)
+--   It was two-sided, justified as "too fast is an error too (the car runs
+--   wide)". The shortHUDtest block refuted that on its own data: 15 of 24
+--   corner-speed failures were for carrying more speed than the 85% reference,
+--   1 of those 15 put a wheel outside (against 2 of 9 on the slow side), and
+--   within the fast passes more speed went with a BETTER apex line (r = -0.26).
+--   Two further reasons: the apex gate below is already one-sided on exactly
+--   this argument, and the metric is a MINIMUM over the corner-speed window --
+--   an unsustainably hot entry shows up as a LOWER minimum later in the same
+--   window, so the only way to post a high minimum is to have carried the speed
+--   through. `two_sided` stays available because it is the comparison case for
+--   the argument, and because the residual risk is real: a driver who sustains
+--   an over-the-limit minimum and ruins the EXIT is caught only by the apex
+--   element and by the pass's own track-limits flags.
 --
 --   APEX — ONE-SIDED: rms <= mean_rms_m + band. The metric is RMS lateral
 --   deviation from the expert LINE over the apex window, i.e. a deviation from
@@ -98,6 +113,11 @@ end
 -- has no braking reference. Exposed (not just used internally) because the
 -- experimenter panel and the Gate G2 audit both need to see the numbers a
 -- criterion was judged against.
+--
+-- The FLOOR wins every time in practice (the AI's sigma_ref is ~0.02 m, so
+-- sigma_ref x 3.0 is ~0.06 m and all 27 bands are floors). Keep the EVM term for
+-- the human-substitution path, but do not describe it as a mechanism doing work:
+-- see BAND_CALIBRATION_BRIEF.md, 2026-10-14.
 function M.bands(cfg, corner_ref)
   -- EVM is chosen by the CORNER's source, never globally: an AI-sourced corner
   -- and a human-substituted one in the same table take different multipliers.
@@ -111,6 +131,27 @@ function M.bands(cfg, corner_ref)
     b.braking_m = band_for(corner_ref.braking.sigma_ref_m, evm, floors.braking_m)
   end
   return b
+end
+
+-- --- the corner-speed verdict, in one place ---------------------------------
+
+-- Does this deviation from the expert minimum meet the corner-speed criterion?
+--
+-- A small function for a small comparison, because it has TWO callers and they
+-- must never disagree: M.evaluate records the verdict in the pass record, and
+-- lib/hud colours the live readout with it. The gate's SHAPE changed on
+-- 2026-10-14 and this is the only place in the Lua runtime that knows it.
+--
+--   gate = 'slow_only' (the default) or 'two_sided'; nil reads as 'slow_only'.
+function M.corner_speed_ok(deviation_kmh, band_kmh, gate)
+  if gate == 'two_sided' then
+    local d = deviation_kmh
+    if d < 0 then d = -d end
+    return d <= band_kmh
+  end
+  -- slow_only: only the slow side fails. Deliberately NOT `>= -band or faster`
+  -- with a second ceiling -- there is no ceiling, which is the whole decision.
+  return deviation_kmh >= -band_kmh
 end
 
 -- --- rolling mean (the consistency gate's datum) ----------------------------
@@ -195,7 +236,8 @@ function M.evaluate(cfg, corner_ref, metrics, history)
   if v ~= nil then
     local dev = v - corner_ref.corner_speed.mean_kmh
     out.speed_envelope_deviation_kmh = dev
-    criteria.corner_speed = (dev < 0 and -dev or dev) <= bands.corner_speed_kmh
+    criteria.corner_speed = M.corner_speed_ok(dev, bands.corner_speed_kmh,
+                                              cfg.criteria.corner_speed_gate)
   end
 
   -- --- apex: one-sided, against the reference's own mean RMS ---

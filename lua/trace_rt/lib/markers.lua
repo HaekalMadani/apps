@@ -23,13 +23,21 @@ local M = {}
 -- --- draw list --------------------------------------------------------------
 
 -- Flatten a validated reference table into markers, in corner order.
--- Each entry: { element = 'braking'|'apex', corner_id, spline, x, y, z }.
+-- Each entry: { element = 'braking'|'apex', corner_id, spline, x, y, z }, plus
+-- `band_m` on a braking marker when a band was supplied.
+--
+-- `bands` is an optional { [corner_id] = braking_band_metres } table, computed
+-- by the caller from evaluator.bands. It is passed as DATA rather than looked
+-- up here, because markers must not know about the evaluator -- and it is
+-- passed at build time rather than read at draw time so the trapezoid on screen
+-- and the band the criterion is judged on are the same number, resolved once,
+-- from the same reference load.
 --
 -- A corner with no braking zone contributes no braking marker at all: it is not
 -- applicable to the braking-point element (no marker, no criterion, out of that
 -- element's quorum denominator). A compound corner contributes one apex marker
 -- per apex gate, even though it yields only one apex criterion per pass.
-function M.build(reference)
+function M.build(reference, bands)
   local out = {}
   local corners = reference.corners
   for i = 1, #corners do
@@ -42,6 +50,7 @@ function M.build(reference)
         x = c.braking.world_pos[1],
         y = c.braking.world_pos[2],
         z = c.braking.world_pos[3],
+        band_m = bands and bands[c.corner_id] or nil,
       }
     end
     local gates = c.apex.gates
@@ -155,6 +164,74 @@ function M.visual(stage, salience)
     v.disc = true
   end
   return v
+end
+
+-- --- the braking band trapezoid (M6, 2026-10-10) ---------------------------
+--
+-- The braking cue was a disc at the reference brake point. It is now a
+-- TRAPEZOID lying on the road and spanning the accuracy band: its early edge
+-- sits `band_m` before the reference point and its late edge `band_m` after it,
+-- so the cue shows the learner the tolerance they are actually judged against
+-- instead of a point they can never hit exactly.
+--
+-- Why a trapezoid rather than a rectangle: the two edges mean different things.
+-- Braking early of the band costs lap time; braking late of it costs the
+-- corner, and is the side a novice cannot recover from. The shape narrows in
+-- the direction of travel so the cue reads from the seat as a funnel closing
+-- as the margin runs out, with the wide mouth at the forgiving end.
+--
+-- Two things this deliberately does NOT do. It does not mark the reference
+-- point inside the band -- at `full` the cross and the stalk already do that,
+-- and at `reduced` the band alone is exactly the right reduction: the learner
+-- is told the tolerance but no longer the exact point, which is strictly less
+-- than `full` tells them. And it does not resolve any world coordinates
+-- itself: trace_rt.lua samples the track spline (ac.trackProgressToWorldCoordinate,
+-- ac.getTrackAISplineSides) and passes the samples in, so this module stays
+-- pure and headless-testable like everything else in lib/.
+--
+-- KNOWN RISK, recorded rather than engineered away: showing the band may teach
+-- aiming at its edges rather than at the point, and a wider band shows a more
+-- permissive target. That is LITERATURE_BRIEF.md question 8 and an RQ3
+-- interview topic; it is a reason to ask about the trapezoid, not a reason to
+-- hide the tolerance the system is in fact applying.
+
+-- The spline positions the accuracy band spans, and the reference point between
+-- them. Wrap-aware, so a band straddling start/finish is still correct.
+function M.band_splines(spline, band_m, track_length_m)
+  local d = band_m / track_length_m
+  return (spline - d) % 1.0, spline % 1.0, (spline + d) % 1.0
+end
+
+-- Unit lateral (across-track) axis for a forward tangent, flattened to the
+-- track plane. Returns nil when the tangent is degenerate -- two samples at the
+-- same place, which happens if the band collapses to nothing.
+local function lateral_of(tx, tz)
+  local len = math.sqrt(tx * tx + tz * tz)
+  if len < 1e-6 then return nil end
+  -- Perpendicular in the XZ plane. Which side is "left" does not matter: the
+  -- quad is symmetric about the spline, so a flipped sign only reverses the
+  -- winding order.
+  return -tz / len, tx / len
+end
+
+-- The trapezoid's four corners, in winding order, as plain {x, y, z} tables.
+--
+-- `early`, `centre` and `late` are the three sampled track points (the band's
+-- edges and the reference point); the tangents are taken from the samples
+-- themselves rather than asked for separately, which keeps the braking zone's
+-- curvature in the shape without a second round of spline queries. Returns nil
+-- if the samples are degenerate -- the caller then draws nothing, rather than a
+-- zero-area quad or a NaN.
+function M.band_quad(early, centre, late, half_early, half_late)
+  local elx, elz = lateral_of(centre.x - early.x, centre.z - early.z)
+  local llx, llz = lateral_of(late.x - centre.x, late.z - centre.z)
+  if elx == nil or llx == nil then return nil end
+  return {
+    { x = early.x + elx * half_early, y = early.y, z = early.z + elz * half_early },
+    { x = early.x - elx * half_early, y = early.y, z = early.z - elz * half_early },
+    { x = late.x  - llx * half_late,  y = late.y,  z = late.z  - llz * half_late  },
+    { x = late.x  + llx * half_late,  y = late.y,  z = late.z  + llz * half_late  },
+  }
 end
 
 -- --- view culling -----------------------------------------------------------

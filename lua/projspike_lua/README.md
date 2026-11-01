@@ -1,5 +1,40 @@
 # projspike_lua — world-anchored marker spike
 
+> ## REMOVED FROM THE GAME, 2026-10-15 — this folder is now a record, not an app
+>
+> `manifest.ini` and `projspike_lua.lua` are **deleted**. Only this README
+> remains; both files are in git history at commit `5464f14` if the spike ever
+> needs to be re-run.
+>
+> **Why:** it was still being loaded and still drawing. The spike freezes an
+> anchor 25 m straight ahead of the car on its first 3D frame and draws a green
+> disc, a cross, a stalk and the floating text **"BRAKE"** there — which, from a
+> standing start, puts a stray braking cue **just past the start line** for the
+> rest of the session. It was found in the 2026-10-15 protocol dry run, having
+> been mistaken for a TRACE marker.
+>
+> It renders whether or not its window is open: `[CORE] LAZY = 0` plus
+> `[RENDER_CALLBACKS] TRANSPARENT = draw3d` means CSP calls `draw3d` every
+> frame once the app is enabled in UI Modules, and nothing about an unopened
+> window stops that. The same property is why TRACE's own markers need no
+> window — see `CLAUDE.md`, "A window's draw function stops being called when
+> the window is closed", which is true of *window* functions and emphatically
+> not of render callbacks.
+>
+> **This was an apparatus-contamination bug, not untidiness.** A participant
+> would have seen a cue the controller never asked for, in a condition that may
+> have been `static` or `off`, with no record of it in any log — and the fade
+> analysis would have been scored against a screen nobody could reconstruct. It
+> belongs to the same class as the duplicate `cue` window that `manifest.ini`
+> was already slated to delete: **two draw paths for one stimulus is one too
+> many.** Any throwaway with a `TRANSPARENT` callback must be deleted, not just
+> left unopened, and it must be checked for before a participant drives.
+>
+> **ALSO: disable "projspike lua" in Settings → General → UI Modules.** Deleting
+> the manifest stops CSP finding the app, but an install that already has it
+> enabled keeps the entry in its config. Confirm the stray marker is gone on
+> track before the next block.
+
 A throwaway technical spike that de-risks the **world-anchored braking-point
 marker** before the main study is built. It draws one marker, frozen to a fixed
 point on the track, that stays locked to its spot as the car approaches at speed
