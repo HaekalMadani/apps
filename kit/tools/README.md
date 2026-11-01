@@ -1081,3 +1081,184 @@ That rests on the assumed speed σ.
 
 **Apex** is biased by +0.11 to +0.17 under every rule (the null's
 Gaussian-on-RMS problem), so it gets no verdict.
+
+## `nullyield.py`: probe yield across σ, and the "too few probes" floor (S20)
+
+Written 2026-11-01 for ARS review roadmap S20 (DA M6). It has two parts:
+- **Yield:** brake and speed σ are scaled by s, and apex stays measured.
+- **Floor:** the `nulldecision.py` braking decision rule, at n = 4–15, binned by
+  the pooled uncensored probe count K.
+
+    python kit/tools/nullyield.py yield 3000 nullyield
+    python kit/tools/nullyield.py floor 300 30 1000 nullyield 15          # delta 0, 0.375
+    python kit/tools/nullyield.py floor 300 30 1000 nullyield 15 0.3      # near-MDI cell
+
+**Yield, 3000 participants per cell; pooled over n = 15 by resampling.**
+
+| braking σ | uncensored / participant | n = 15 median | P(K ≥ 7) | P(pilot n = 2 has 0) |
+|---|---|---|---|---|
+| 2 m | 0.82 | 12 | 1.00 | 0.04 |
+| 3 m | 0.79 | 12 | 0.99 | 0.07 |
+| **4 m (committed)** | **0.64** | **10** | **0.93** | **0.16** |
+| 5 m | 0.48 | 7 | 0.61 | 0.32 |
+| 6 m | 0.35 | 5 | 0.27 | 0.47 |
+| 8 m | 0.16 | 2 | 0.01 | 0.73 |
+
+- Corner speed gives 0.90 per participant and a median of 14 at every σ from
+  1 to 4 km/h, with P(K ≥ 7) = 1.00.
+- Apex gives 0.51 per participant and a median of 7–8, with P(K ≥ 7) ≈ 0.65.
+- The brief's "~0.8 per participant" counts censored probes too. The
+  uncensored count is what enters P_obs.
+
+**Floor, braking, committed σ, 300 studies per n per δ, 30 replicates,
+B = 1000 (378 s + 185 s).** Each cell is the share of studies in that K bin
+that return the verdict named in the row.
+
+| K bin | 0–2 | 3–4 | 5–6 | 7–8 | 9–10 | 11–13 |
+|---|---|---|---|---|---|---|
+| false "excess", Δ = 0 | 0.057 | 0.016 | 0.014 | 0.063 | 0.043 | 0.033 |
+| false "no excess", true Δ 0.23 | 0.533 | 0.232 | 0.098 | 0.030 | 0.032 | 0.009 |
+| false "no excess", true Δ 0.133 | 0.547 | 0.385 | 0.144 | 0.084 | 0.054 | 0.062 |
+
+- **The pre-stated criterion (false excess ≤ 0.05 from K up) was vacuous.** It
+  returned K* = 0.
+- **The failure at small K is a false "no excess".** With 2–3 contributing
+  participants the cluster bootstrap's interval is too narrow.
+- **K\* = 7 is post hoc.** It is the smallest bin that meets both conditions:
+  - false "no excess" ≤ 0.05 at true Δ 0.23;
+  - at true Δ 0.133 (just above the 0.10 MDI), the rate has reached its
+    ~5–8% plateau.
+- **The plateau does not shrink with K.** It is not fit uncertainty, because
+  `nullinterval.py` resamples the null's fit and moves every verdict rate by
+  ≤ 0.03. It is within ~2 MC SE of nominal, plus percentile-bootstrap
+  undercoverage at 15 clusters. *An earlier version blamed fit uncertainty;
+  R6 refuted that.*
+- **Stopping rule.** At σ ≤ 4 m, P(K ≥ 7) ≥ 0.93, so the σ gate is also the
+  yield rule. The pilot's own probe count is uninformative (P(0) = 0.16 at
+  the committed σ). *Round 2 (NEW-2) re-specified that gate as main-sample
+  σ_study ≤ 4.5 m; see `nullprimary.py` below.*
+
+## `nullinterval.py`: one interval procedure for Δ (round 2, R6)
+
+Written 2026-11-01 for the round 2 re-review residual on R6. Round 1's interval
+(`nulldecision.py`) bootstrapped participants but treated each participant's
+fitted null as known. **`nested`** adds an inner level: each sampled
+participant contributes one of M parametric-bootstrap refits of their own null.
+Both procedures run on the same simulated studies. Pre-stated adoption rule:
+`nested` is adopted unless its false excess exceeds 0.05 + 2 MC SE.
+
+    python kit/tools/nullinterval.py 200 20 10 30 1000 nullinterval 15
+
+**Run 2026-11-01: 200 studies per cell, M = 20 refits × 10 blocks, 30 point
+replicates, B = 1000 (657 s).**
+
+| element | true Δ | procedure | median width | P(excess) | P(no excess) | P(indet.) |
+|---|---|---|---|---|---|---|
+| braking | 0.000 | plug-in / **nested** | 0.353 / **0.372** | 0.015 / **0.015** | 0.265 / **0.240** | 0.720 / **0.745** |
+| braking | 0.079 | plug-in / **nested** | 0.401 / **0.413** | 0.125 / **0.110** | 0.165 / **0.135** | 0.710 / **0.755** |
+| braking | 0.239 | plug-in / **nested** | 0.487 / **0.502** | 0.445 / **0.465** | 0.020 / **0.020** | 0.535 / **0.515** |
+| braking | 0.374 | plug-in / **nested** | 0.506 / **0.523** | 0.730 / **0.745** | 0.015 / **0.010** | 0.255 / **0.245** |
+| corner speed | 0.000 | plug-in / **nested** | 0.008 / **0.022** | 0 / **0** | 0.945 / **0.945** | 0.055 / **0.055** |
+| corner speed | 0.178 | plug-in / **nested** | 0.310 / **0.306** | 0.430 / **0.430** | 0.070 / **0.070** | 0.500 / **0.500** |
+| corner speed | 0.363 | plug-in / **nested** | 0.388 / **0.391** | 0.880 / **0.880** | 0.030 / **0.030** | 0.090 / **0.090** |
+
+- **Nested is adopted**: false excess 0.015 against a bound of 0.081.
+- **It barely changes anything.** It is ~5% wider for braking and moves
+  every verdict rate by ≤ 0.03. Fit uncertainty is small next to
+  between-participant variation, so round 1's "somewhat optimistic" caveat
+  was nearly immaterial. The design-sensitivity conclusions stand: braking
+  needs Δ ≳ 0.4 for 80% detection, and indeterminate is the expected verdict
+  under no dependency.
+- **Not resampled:** the fit window's end (the first advance, a selection
+  event). The refits' 10 blocks add Monte Carlo noise to each refit's
+  P_null, which errs wide.
+- Δ = 0 false excess is 0.015 here and 0.04 in `nulldecision.py`. The gap is
+  within MC error (SE ~0.01 at 200–300 studies).
+
+## `nullprofile.py`: the time-profile reading rule and its horizon (round 2, R8)
+
+Written 2026-11-01 for the round 2 residual on R8. It is the same machinery as
+`nulltransient.py`, plus four additions:
+- transients of 2 and 3 laps;
+- two candidate late statistics beside the brief's L_u24 (L_u34 = unassisted
+  laps 3–4, and L_p = the second probe lap);
+- the full reading rule: **sustained** if L is significant, **decaying** if
+  T_p is significant and L is not, **neither** otherwise;
+- one-sided t at α = 0.05.
+
+Pre-stated adoption rule (braking): take the L whose misreading of a 2-lap
+transient as "sustained" is ≤ 0.10, with the best detection of a sustained
+0.25-band deficit.
+
+    python kit/tools/nullprofile.py 1000 nullprofile 15
+
+**Run 2026-11-01, 1000 studies per scenario (64 s).** Each cell is the share
+of studies read as sustained / decaying / neither.
+
+| scenario | braking, L_u24 | braking, **L_u34** | braking, L_p | corner speed, L_u24 | corner speed, **L_p** |
+|---|---|---|---|---|---|
+| none | 0.07/0.06/0.86 | **0.08/0.06/0.86** | 0.06/0.06/0.88 | 0.01/0.05/0.93 | **0.06/0.05/0.89** |
+| sustained 0.25 | 0.93/0.01/0.06 | **0.90/0.01/0.09** | 0.93/0.01/0.06 | 0.21/0.04/0.75 | **0.99/0.00/0.01** |
+| sustained 0.5 | 1.00/0/0 | **1.00/0/0** | 1.00/0/0 | 0.82/0.01/0.17 | **1.00/0/0** |
+| transient 1 lap, 0.25 | 0.06/0.73/0.21 | **0.06/0.73/0.21** | 0.05/0.75/0.20 | 0.02/0.95/0.03 | **0.04/0.93/0.02** |
+| transient 1 lap, 0.5 | 0.05/0.91/0.03 | **0.06/0.91/0.04** | 0.05/0.92/0.03 | 0.02/0.98/0.00 | **0.06/0.94/0.00** |
+| transient 2 laps, 0.5 | **0.76**/0.02/0.22 | **0.05/0.06/0.90** | 0.99/0/0.01 | 0.50/0.03/0.47 | **1.00/0/0** |
+| transient 3 laps, 0.5 | 0.98/0/0.02 | **0.86/0.01/0.14** | 0.99/0/0.01 | 0.72/0.01/0.27 | **1.00/0/0** |
+
+- **Braking adopts L_u34.** A 2-lap transient is misread 0.05 against 0.76
+  under the brief's L_u24, at a cost of 3 points of sustained detection.
+- **Braking's horizon is 2 laps.** A 3-lap transient fills the 4-lap block and
+  is read as sustained (0.86).
+- **Corner speed uses L_p.** Its unassisted statistic has only 1.5–4
+  contributors, because the element is usually removed by the end of
+  training. L_p's horizon is 1 lap.
+- **The reading's false alarm under no deficit is ~6–8% "sustained" and ~5–6%
+  "decaying".** Two tests at 5% sit on one rule, and no multiplicity
+  correction is applied; state that.
+- **A 2-lap braking transient reads as "neither".** The 2-lap probe sees all
+  of it, so T_p is ~0. That errs toward no construct reading.
+
+## `nullprimary.py`: the primary null's recovery, and the σ gate (round 2, R2 + NEW-2)
+
+Written 2026-11-01. `nullrecovery.py` tested the cue-off candidates. This
+script tests the **adopted primary null** (per-driver exponential and per-driver
+σ, fitted on full-salience laps) under exponential and power-law truths, with
+brake and speed σ scaled from 0.5× to 2×. It also calibrates the gate on the
+study's own pooled full-salience σ̂ (σ_study). The gate criterion was fixed
+before the run: the upper edge of the last bin, counting from below, whose
+braking RMSE is ≤ 0.045 and holds ≥ 30 studies.
+
+    python kit/tools/nullprimary.py 100 30 nullprimary 15
+
+**Run 2026-11-01: 100 studies per cell, n = 15, 30 replicates under common
+random numbers (192 s).** Braking:
+
+| truth | σ (m) | RMSE | bias | σ̂/σ | trend error in fit (σ) | trend error after fit (σ) | σ_study (median) |
+|---|---|---|---|---|---|---|---|
+| exp | 2 | 0.008 | +0.002 | 0.99 | 0.39 | 0.08 | 2.15 |
+| exp | 3 | 0.022 | −0.005 | 0.99 | 0.37 | 0.07 | 3.25 |
+| exp | **4** | **0.032** | −0.011 | 1.00 | 0.34 | 0.06 | 4.30 |
+| exp | 5 | 0.042 | −0.011 | 0.99 | 0.33 | 0.05 | 5.41 |
+| exp | 6 | 0.062 ✗ | −0.026 | 1.00 | 0.31 | 0.04 | 6.43 |
+| exp | 8 | 0.102 ✗ | −0.032 | 0.99 | 0.29 | 0.03 | 8.58 |
+| power | 2 | 0.027 | +0.022 | 1.27 | 0.87 | 1.12 | 2.73 |
+| power | 3 | 0.045 | +0.030 | 1.13 | 0.66 | 0.74 | 3.63 |
+| power | **4** | **0.051 ✗** | +0.019 | 1.07 | 0.55 | 0.53 | 4.66 |
+| power | 5 | 0.061 ✗ | +0.015 | 1.05 | 0.48 | 0.39 | 5.67 |
+| power | 8 | 0.092 ✗ | −0.029 | 1.02 | 0.38 | 0.24 | 8.78 |
+
+- **Braking gate: σ_max = 4.5 m.** Bin RMSEs are 0.010–0.041 up to
+  [4.0, 4.5), then 0.045 and rising.
+- **Corner speed** meets the criterion everywhere: RMSE ≤ 0.037 under both
+  forms up to 4 km/h. Its cut, 4.75 km/h, is just the edge of the range
+  tested.
+- **The trend form is the exposure.** A power-law truth fails at the committed
+  σ. Exponential recovery holds to 5 m.
+- **Extrapolation past the fit window (S6)** covers ~5–11 laps for braking.
+  The error there is small under an exponential truth and large under a power
+  law.
+- **The study-σ gate partly catches the wrong form**, because a power-law
+  truth inflates σ̂: σ_study is 4.66 at a true 4 m. So the gate trips on many
+  of the failing cells. That is a side effect, not a model check.
+- **σ_study sits ~0.3 m above the nominal σ**, because drivers differ in noise
+  (×exp(U(−0.5, 0.5))). Quote the gate in σ_study units, never as "σ".

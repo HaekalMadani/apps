@@ -51,7 +51,9 @@ The research question moved from "does adaptive fading help?" (v6, an adaptive v
 static contrast) to **"how often does a guided-performance rule fade a cue
 prematurely, and how much of that is guidance dependency rather than lap-to-lap
 variability?"** TRACE is both the engineered system and the **measuring
-instrument**: its probes are the observations.
+instrument**: its probes are the observations. *(v9's wording. The construct
+was renamed **guidance-contingent performance** on 2026-11-01; see Naming
+below.)*
 
 - **RQ1, within-session reliability:** per-element, per-corner ICC / SEM / MDC
   for novices, **detrended**. It is a finding in its own right (TRACK 2026 names
@@ -60,21 +62,30 @@ instrument**: its probes are the observations.
 - **RQ2, decision accuracy (core):** the **probe-failure excess**
   Δ = P_obs − P_null per element.
   - **Construct boundary (author decision 2026-10-30, ARS roadmap R8):**
-    - **Guidance dependency** is a **sustained** withdrawal deficit, read from
-      the late-unassisted residual level.
+    - **Guidance-contingent performance** is a **sustained** withdrawal
+      deficit, read from the late level L (defined in the round 2 rule below).
     - A deficit confined to the first withdrawn lap is the **withdrawal-transient
       rival**, read from probe decay (first probe lap − second).
     - The profile is pre-specified and asymmetric: a decay is also consistent
       with fast re-acquisition. Simulated separation is in
       `kit/tools/nulltransient.py`. Apex gets no reading.
+    - **Rule fixed in round 2 (R8, 2026-11-01, `kit/tools/nullprofile.py`).**
+      One-sided t over participants at α = 0.05. **Sustained** if the late
+      level L is significant, whatever T_p shows; **decaying** if only T_p is;
+      **neither** otherwise.
+      - Braking's L is **unassisted laps 3–4**, not 2–4: under 2–4, a 2-lap
+        transient was read as dependency 76% of the time; under 3–4, 5%.
+      - Corner speed's L is the **second probe lap**.
+      - The horizons are 2 laps (braking) and 1 lap (corner speed). A longer
+        transient is read as sustained, which is a stated limit.
   - **Immediate, not learning-level (author decision 2026-10-30, ARS roadmap
     R9).** The probe and the unassisted block are **immediate, within-session
     no-feedback tests**. The field judges dependency on a DELAYED retention or
     transfer test (Salmoni et al. 1984; Winstein & Schmidt 1990; the
     learning–performance distinction, Kantak & Winstein 2012).
-    - The construct is therefore **immediate guidance dependency**: a deficit
-      sustained across the ~4-lap no-feedback window. Never claim it is
-      dependency in the learning sense.
+    - The construct is therefore **immediate guidance-contingent
+      performance**: a deficit sustained across the ~4-lap no-feedback window.
+      Never claim it is dependency in the learning sense.
     - A delayed retention block was considered and not adopted.
     - **Terminology:** older prose, code comments, tests and one integrity
       message call the probe "the retention test". Read that as "the immediate
@@ -82,12 +93,26 @@ instrument**: its probes are the observations.
       because any no-feedback test with feedback running measures
       performance-with-feedback. Do not churn code or tests over the word; use
       "immediate no-feedback test" in new writing.
-  - **Naming (author decision):** the measured quantity is the *probe-failure
-    excess*; **guidance dependency** is its *interpretation*. "Guidance" means the
-    cue **and its KR**, because both are withdrawn during a probe. Never write
-    "cue dependency", and never present the interpretation as the measurement.
+  - **Naming (author decision, RENAMED 2026-11-01, ARS round 2 NEW-1):** the
+    measured quantity is the *probe-failure excess*. Its *interpretation* is
+    **guidance-contingent performance**: performance that holds with the
+    guidance and not without it.
+    - "Guidance" means the cue **and its KR**, because both are withdrawn
+      during a probe.
+    - The null is fitted on guided laps, so the construct covers both
+      **dependency** and **ongoing benefit** of the cue's information. An
+      immediate test cannot separate them.
+    - For the RQ it reads as a **premature fade** either way.
+    - **Guidance dependency** may be named only as one candidate mechanism,
+      never as the reading of Δ.
+    - Never write "cue dependency", and never present the interpretation as
+      the measurement.
+    - Older text (framing v9, code comments, simulation descriptions) says
+      "dependency". In a simulation that means the injected sustained
+      withdrawal deficit. Do not churn hash-pinned artefacts over it.
   - **The null** is a synthetic learner with **learning (practice trend) and
-    lap-to-lap noise but no guidance dependency**, run through the real
+    lap-to-lap noise, whose performance does not change when the guidance is
+    withdrawn**, run through the real
     controller under the same lap budget and selection rule.
   - **Fit the primary null on FULL-SALIENCE laps only; report the cue-off null
     as a lower bound** (decided 2026-10-30, ARS roadmap R5; this **reverses**
@@ -97,10 +122,11 @@ instrument**: its probes are the observations.
       braking Δ, and the full-only fit does not (1.01–1.11). The full-only fit
       costs 0.003 RMSE (0.032 vs 0.029).
     - **Definition (author decision):** a mean shift on withdrawal and a
-      variance increase on withdrawal **both** count as guidance dependency.
-      So the null that excludes dependency by definition is the one fitted on
-      guided laps. Δ therefore includes the loss of any benefit the guidance
-      gave while it was on. **State that in the RQ2 construct text (R8/R9).**
+      variance increase on withdrawal **both** count as guidance-contingent
+      performance. So the null that excludes it by definition is the one
+      fitted on guided laps. Δ therefore includes the loss of any benefit the
+      guidance gave while it was on, which is why the construct was renamed
+      from "dependency" (NEW-1). Stated in the brief's RQ2 construct text.
     - **Measured** (`kit/tools/nullabsorption.py`, tables in
       `kit/tools/README.md`): for braking and corner speed the cue-on null has
       attenuation 1.00–1.04, so it is unbiased. Its braking recovery RMSE is
@@ -162,7 +188,11 @@ instrument**: its probes are the observations.
   **clustered**. Analyse with a participant cluster bootstrap. The pooled ±0.12
   is optimistic, and per element the interval is ±0.2 or wider.
 - **Decision rule and censoring (author decisions 2026-10-30, ARS roadmap R6
-  and R7).** Per element, a 90% participant cluster bootstrap on Δ̂:
+  and R7).** Per element, a 90% participant cluster bootstrap on Δ̂. It is
+  **NESTED** (round 2, R6, 2026-11-01, `kit/tools/nullinterval.py`): each
+  sampled participant contributes one of M = 20 parametric-bootstrap refits of
+  their own null. It is only ~5% wider than the plug-in interval, and every
+  verdict rate moves by ≤ 0.03.
   - **excess:** the lower bound is above 0;
   - **no excess:** the upper bound is below the **minimum Δ of interest
     0.10**, tied to G1's ≤ 10% false-pass bound;
@@ -170,6 +200,16 @@ instrument**: its probes are the observations.
 
   **Censored probes are EXCLUDED** from P_obs and P_null alike, with the
   censored count reported. As-pass and as-fail are sensitivity analyses.
+
+  **Yield floor (S20, 2026-11-01, `kit/tools/nullyield.py`).** An element
+  with fewer than **7 pooled uncensored probes** gets no Δ (outcome gate 1).
+  - Below 7 the cluster bootstrap degenerates into a false **"no excess"**,
+    not a false excess.
+  - The floor is **post hoc**: the pre-stated criterion was vacuous.
+  - The pilot's probe count cannot drive a stopping rule (P(0) = 0.16 at
+    n = 2). The σ gate (re-specified in round 2: main-sample σ_study ≤ 4.5 m,
+    i.e. a nominal σ ≲ 4.2 m) gives P(K ≥ 7) ≈ 0.87–0.93, so it serves as
+    the yield rule.
 - **Outcome-by-outcome reporting (author decision 2026-10-30, ARS roadmap
   R1).** The table is in `novelty_audit/review/CONCEPT_BRIEF_v9.md` §6.
   - The gates run in order: ineligible, too few probes, check failed, excess,
@@ -181,9 +221,9 @@ instrument**: its probes are the observations.
 
   Measured (`kit/tools/nulldecision.py`):
   - every censoring rule is unbiased when applied identically (|bias| ≤ 0.02);
-  - braking false "excess" 4%, detection 45% at Δ 0.24 and 67% at Δ 0.37, so
-    80% needs Δ ≳ 0.4;
-  - with no dependency the braking verdict is indeterminate 67% of the time;
+  - braking false "excess" 1.5–4%, detection 47% at Δ 0.24 and 75% at Δ 0.37
+    (nested; plug-in 45% / 67–73%), so 80% needs Δ ≳ 0.4;
+  - with no dependency the braking verdict is indeterminate ~70% of the time;
   - corner speed resolves better (P_null ≈ 0) but rests on the assumed σ.
 - **The randomised probe-timing arm (v9 §7.4) is out of reach.** It needs ~80
   probes, i.e. ~28 typical participants, so Δ stays model-based. Do not build it.
@@ -226,10 +266,21 @@ instrument**: its probes are the observations.
     rate pooled across drivers, per-driver amplitudes and per-driver σ (RMSE
     0.043). Report Δ against it beside the primary, with the measured
     attenuation.
-  - **Pilot gate:** if G2's measured braking σ exceeds **4 m** (1× the
-    committed value, the highest level that recovered), braking Δ is not
-    reported as a dependency estimate, and that is stated as a limitation. The
-    region between 1× and 2× is untested, and so is the cue-on null at 2×.
+  - **σ gate, RE-SPECIFIED in round 2 (NEW-2 + R2, 2026-11-01,
+    `kit/tools/nullprimary.py`).** It **supersedes "pilot σ > 4 m"**, which had
+    no estimator and would have tripped about half the time at a true 4 m.
+    - **The rule:** at analysis, braking Δ is a dependency estimate only if
+      the **main sample's** pooled full-salience σ_study (√ of the mean
+      per-driver σ̂², from the primary null's own fits) is ≤ **4.5 m**.
+      Corner speed's cut is ≤ 4.75 km/h, the edge of the range tested.
+    - **How it was set:** calibrated on simulated studies' own σ_study,
+      against R2's 0.045 RMSE. The 2-driver pilot only forecasts.
+    - **Measured on the primary null:**
+      - under an **exponential** truth, recovery holds to 5 m (RMSE 0.032 at
+        4 m);
+      - under a **power-law** truth it FAILS at the committed 4 m (0.051).
+      - So the trend form, not the noise level, is the null's main exposure.
+        The gate partly catches it, because a power law inflates σ̂.
   - **Still open:**
     - the apex noise form (the cue-on apex null overstates Δ by 1.2–1.9×);
     - **the apex noise form:** a G2 decision from the pilot's apex distribution.
@@ -1714,8 +1765,9 @@ safest. `print(...)` and errors go to
 
 - One main idea (v9): **telemetry-driven, reversible UI fading whose fade
   decisions are audited.** Each fade is gated on a cue-off probe, and the probe
-  outcomes are read against a calibrated null, separating guidance dependency
-  from lap-to-lap variability. Everything serves it.
+  outcomes are read against a calibrated null, separating guidance-contingent
+  performance (a premature fade) from lap-to-lap variability. Everything serves
+  it.
 - **The null is the load-bearing novelty, not the idea of a null** (step 4).
   Simulated nulls, Type I errors and RTM corrections are standard (LC-CUSUM,
   Ye et al. 2016, Linden 2026). What is claimed is their use to attribute

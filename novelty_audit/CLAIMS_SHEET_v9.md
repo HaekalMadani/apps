@@ -16,15 +16,24 @@ rate-limited, and Scopus/WoS were not searched, so **"not found" never means
 ## 0. Terms (author decisions)
 
 - **Probe-failure excess:** the measured quantity, P_obs − P_null.
-- **Guidance dependency:** its *interpretation*. "Guidance" = the cue and its
-  bandwidth KR, which are withdrawn together during a probe.
-  - **Narrowed 2026-10-30 (ARS R8/R9):** the construct is *immediate*
-    guidance dependency, a deficit sustained across the immediate no-feedback
-    window. It is performance-level, not learning-level.
+- **Guidance-contingent performance:** its *interpretation* (RENAMED
+  2026-11-01, ARS round 2 NEW-1, author decision; formerly "guidance
+  dependency"). "Guidance" = the cue and its bandwidth KR, which are
+  withdrawn together during a probe.
+  - It means performance that holds with the guidance and not without it.
+    That covers **dependency** and **ongoing benefit** of the cue's
+    information, which an immediate test cannot separate. The null is fitted
+    on guided laps, so Δ includes any lost on-guidance benefit.
+  - For the RQ either way it reads as a **premature fade**. **Guidance
+    dependency** may be named only as a candidate mechanism, never as the
+    reading of Δ.
+  - **Narrowed 2026-10-30 (ARS R8/R9):** the construct is *immediate*, a
+    deficit sustained across the immediate no-feedback window. It is
+    performance-level, not learning-level.
   - It is read only where the pre-specified time profile is sustained. A
     transient deficit is the withdrawal-as-intervention rival.
 - **The null:** a learner with **learning (practice trend) and lap-to-lap noise,
-  but no guidance dependency**.
+  whose performance does not change when the guidance is withdrawn**.
   - **REVERSED 2026-10-30 (ARS R5):** it is fitted on **full-salience (cue-on)
     laps**, and the cue-off fit is reported as a lower bound.
   - The reason: the cue-off fit absorbs 20–80% of a real dependency, and the
@@ -36,7 +45,7 @@ rate-limited, and Scopus/WoS were not searched, so **"not found" never means
 
 | # | Claim | Status | May say (scope) | Must NOT say | Cite as |
 |---|---|---|---|---|---|
-| **K1** | Attributing post-withdrawal failures with a calibrated null | **Survives (step 4)**: the load-bearing novelty | The first use, among works found, of a calibrated learning-plus-noise null to attribute **post-withdrawal (probe) failures** in an adaptive guidance system, separating a probe-failure excess (read as *immediate* guidance dependency where the time profile is sustained) from regression to the mean under the system's own selection rule. **Headline contribution (2026-10-30, ARS R1):** the method is validated in simulation before data (recovery, unbiasedness under injected dependency, model-check power, decision calibration), so it stands whatever the empirical Δ verdict | That a simulated null, a Type I error under a null, or an RTM correction is new. All three are standard | **Lineage:** Biau et al. 2008 (LC-CUSUM; observes the post-signal dip, never attributes it); Ye et al. 2016 (non-learner-calibrated detection); Linden 2026 (closed-form single-cutoff case); Goldenholz et al. 2023 (simulated RTM under trial cutoffs). **Validity standard:** Käser & Alexandron 2023 |
+| **K1** | Attributing post-withdrawal failures with a calibrated null | **Survives (step 4)**: the load-bearing novelty | The first use, among works found, of a calibrated learning-plus-noise null to attribute **post-withdrawal (probe) failures** in an adaptive guidance system, separating a probe-failure excess (read as *immediate guidance-contingent performance*, i.e. a premature fade, where the time profile is sustained) from regression to the mean under the system's own selection rule. **Headline contribution (2026-10-30, ARS R1):** the method is validated in simulation before data (recovery, unbiasedness under injected dependency, model-check power, decision calibration), so it stands whatever the empirical Δ verdict | That a simulated null, a Type I error under a null, or an RTM correction is new. All three are standard | **Lineage:** Biau et al. 2008 (LC-CUSUM; observes the post-signal dip, never attributes it); Ye et al. 2016 (non-learner-calibrated detection); Linden 2026 (closed-form single-cutoff case); Goldenholz et al. 2023 (simulated RTM under trial cutoffs). **Validity standard:** Käser & Alexandron 2023 |
 | **K2** | Within-session reliability of per-corner sim-racing metrics (RQ1) | **Survives, gap confirmed** | Per-element ICC / SEM / MDC across corners, for novices, for brake point, apex line RMS and minimum corner speed, **detrended**. Fills the "first rung" TRACK names | "Sim-racing reliability has never been measured" | **Precedent:** Irwin, Mollica & Desbrow 2019 (t-test plus CV, one corner, unreliable); Irwin et al. 2013 (ICC, road driving). **Gap:** Çangırılı & Kurt 2026 (TRACK), §6. *Not* Hojaji 2025 (cross-track KPI consistency, not test-retest) |
 | **K3** | Probe-gated fading (C1) | **Narrowed: the idea is taken** | The first **implemented, real-time, per-element** probe-gated fading of **concurrent visual cues in a motor task**, within one session | "No system uses cue-off performance to decide fading." **Do not lead with this claim** (council: the weakest kind of novelty) | **Idea:** Eneano et al. 2026 (preprint; proposed, unimplemented). **Cognitive analogue:** ARRS (Li 2013). **Revert-on-cue-off-degradation:** Kinesthetic-CPR (Dong et al. 2026). **Post-removal readiness:** Debeauvais et al. 2014 |
 | **K4** | The system itself | Engineering contribution; not novelty-tested | A verified real-time controller with Lua/Python parity, world-anchored cues and bandwidth KR | That parity or real-time operation is a research finding | — |
@@ -58,7 +67,9 @@ rate-limited, and Scopus/WoS were not searched, so **"not found" never means
 
 - Statistical significance, a learning or retention benefit, or optimal thresholds.
 - That probe failure **harms** learning (desirable difficulty; v9 §4.3).
-- **Causal** guidance dependency. Without the randomised arm (out of reach:
+- That a sustained excess is **dependency rather than ongoing benefit** of the
+  cue (an immediate test cannot separate them).
+- **Causal** guidance-contingent performance. Without the randomised arm (out of reach:
   ~28 participants needed), Δ is model-based.
 - Dependency on the **cue alone**: KR is withdrawn with it.
 - Generalisation beyond one car and one track (pair 2 descoped) and this
@@ -100,7 +111,7 @@ rate-limited, and Scopus/WoS were not searched, so **"not found" never means
 | v9 location | Change |
 |---|---|
 | §1 one-line framing, §3 gap | Lead with K1, not K3. Replace "no system uses cue-off probe performance as the fading decision" with K3's scope |
-| §4.1 RQ2 | Name the quantity "probe-failure excess" and its interpretation "guidance dependency" |
+| §4.1 RQ2 | Name the quantity "probe-failure excess" and its interpretation "guidance-contingent performance" (premature fade; dependency and ongoing benefit not separated). *Renamed 2026-11-01 from "guidance dependency"* |
 | §4.1 RQ3, RQ4 | RQ3 → system chapter evidence; RQ4 → cut or appendix |
 | §5.2 controller | Per-element decisions, per-corner analysis; parameters to `frozen-g1b` (2-of-3, 2-lap probe), flag F8 |
 | §6 study design | One track, one car; a single 15-lap training block plus the 4-lap unassisted block (both used by the null) |

@@ -196,7 +196,7 @@ What has to change is the specification of the null and its check (SC-7, SC-8, S
 - [ ] S17 — obligation `should_fix`: falsifiability of the apex and corner-speed predictions (R3 W4)
 - [ ] S18 — obligation `consider`: G-theory as a considered alternative (R3 W5)
 - [ ] S19 — obligation `should_fix`: model-conditional separation in §1/§7 (DA M4)
-- [ ] S20 — obligation `should_fix`: probe-yield sensitivity and pilot stopping rule (DA M6)
+- [x] S20 — obligation `should_fix`: probe-yield sensitivity and pilot stopping rule (DA M6). **Resolved 2026-11-01.** Floor = 7 pooled uncensored probes (post hoc; `kit/tools/nullyield.py`). The pilot σ ≤ 4 m gate is also the yield rule (P(K ≥ 7) ≥ 0.93). Brief §6 updated.
 
 ### Response Letter Template
 
